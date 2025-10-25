@@ -31,3 +31,5 @@ Description par fichier :
 - convert_png_to_txt.py : Code qui applique l'OCR aux png pour récupérer leur contenu texte dans des fichiers texte grâce à poppler (1 fichier texte par fichier png de chaque PDF)
 - ocr_text_to_modernized_text.py : Code qui modernise et nettoye le vieux texte (prend entrée un fichier texte qui contient le contenu entier du PDF original et donne en sortie un fichier texte qui contient le texte entièrement modernisé et nettoyé)
 - convert_modernized_txt_to_word : Code qui écrit le résultat final, le texte modernisé dans un fichier Word du même nom que le fichier PDF original
+
+AUteur : Laurent Dv
