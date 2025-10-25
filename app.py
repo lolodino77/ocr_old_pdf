@@ -16,6 +16,14 @@ from convert_modernized_txt_to_word import (
     check_if_modernized_txt_already_exported_to_word,
     convert_modernized_txt_to_word
 )
+from convert_modernized_word_to_pdf import (
+    check_if_modernized_txt_already_exported_to_pdf,
+    convert_modernized_word_to_pdf
+)
+from convert_modernized_txt_to_markdown import (
+    check_if_modernized_txt_already_exported_to_markdown,
+    convert_modernized_word_to_markdown
+)
 
 # --- Config page ---
 st.set_page_config(page_title="Modernisation de livres anciens", layout="wide")
@@ -121,8 +129,11 @@ if start:
         st.error("Aucun fichier à traiter : téléversez d'abord des PDF.")
     else:
         generated_docx = []
+        generated_pdf = []
+        generated_markdown = []
         total = len(document_list)
         for idx, doc_name in enumerate(document_list, start=1):
+            # doc_name est le nom sans extension du document à convertir
             try:
                 log_box.markdown(f"### 🛠️ Traitement : **{doc_name}**  ({idx}/{total})")
                 # verification si déjà modernisé
@@ -158,8 +169,8 @@ if start:
                     log_box.info("✅ Modernisation effectuée.")
 
                 # --- Étape 4 : Export en Word ---
-                already_exported = check_if_modernized_txt_already_exported_to_word(doc_name, directory='.')
-                if already_exported:
+                already_exported_in_word = check_if_modernized_txt_already_exported_to_word(doc_name, directory='.')
+                if already_exported_in_word:
                     log_box.info("Étape 4/4 — Fichier Word déjà exporté. Aucun nouvel export.")
                     # On peut retrouver le nom de sortie attendu
                     out_name = f"{os.path.splitext(doc_name)[0]}_modernized_cleaned_text.docx"
@@ -175,11 +186,47 @@ if start:
                         generated_docx.append(str(OUTPUT_DIR / modernized_word_filename))
                     log_box.info(f"✅ Export Word généré : {modernized_word_filename}")
 
+                # --- Étape 5 : Export en PDF ---
+                already_exported_in_pdf = check_if_modernized_txt_already_exported_to_pdf(doc_name, directory='.')
+                if already_exported_in_pdf:
+                    log_box.info("Étape 5/5 — Fichier PDF déjà exporté. Aucun nouvel export.")
+                    out_name_pdf = f"{os.path.splitext(doc_name)[0]}_modernized_cleaned_text.pdf"
+                    if (OUTPUT_DIR / out_name_pdf).exists():
+                        generated_pdf.append(str(OUTPUT_DIR / out_name_pdf))
+                else:
+                    log_box.info("Étape 5/5 — Conversion du document Word modernisé en PDF ...")
+                    modernized_word_filename = f"{doc_name}_modernized_cleaned_text.docx"
+                    modernized_pdf_filename = f"{doc_name}_modernized_cleaned_text.pdf"
+                    convert_modernized_word_to_pdf(modernized_word_filename, modernized_pdf_filename)
+                    # vérifier l'existence du fichier de sortie
+                    if (OUTPUT_DIR / modernized_pdf_filename).exists():
+                        generated_pdf.append(str(OUTPUT_DIR / modernized_pdf_filename))
+                    log_box.info(f"✅ Export PDF généré : {modernized_pdf_filename}")
+
+                # --- Étape 6 : Export en Markdown ---
+                already_exported_in_markdown = check_if_modernized_txt_already_exported_to_markdown(doc_name, directory='.')
+                if already_exported_in_markdown:
+                    log_box.info("Étape 6/6 — Fichier Markdown déjà exporté. Aucun nouvel export.")
+                    out_name_md = f"{os.path.splitext(doc_name)[0]}_modernized_cleaned_text.md"
+                    if (OUTPUT_DIR / out_name_md).exists():
+                        generated_markdown.append(str(OUTPUT_DIR / out_name_md))
+                else:
+                    log_box.info("Étape 6/6 — Conversion du document Word modernisé en Markdown ...")
+                    modernized_word_filename = f"{doc_name}_modernized_cleaned_text.docx"
+                    modernized_markdown_filename = f"{doc_name}_modernized_cleaned_text.md"
+                    convert_modernized_word_to_markdown(modernized_txt_filename, modernized_markdown_filename)
+                    # vérifier l'existence du fichier de sortie
+                    if (OUTPUT_DIR / modernized_markdown_filename).exists():
+                        generated_markdown.append(str(OUTPUT_DIR / modernized_markdown_filename))
+                    log_box.info(f"✅ Export Markdown généré : {modernized_markdown_filename}")
+
                 # update progress
                 progress_bar.progress(idx / total)
                 
                 # generated_docx = ["caca"]
-                st.session_state["generated_docx"] =  [f"{doc_name}_modernized_cleaned_text.docx" for doc_name in document_list]
+                st.session_state["generated_docx"] = generated_docx
+                st.session_state["generated_pdf"] = generated_pdf
+                # st.session_state["generated_docx"] =  [f"{doc_name}_modernized_cleaned_text.docx" for doc_name in document_list]
                 if(len(uploaded_files) == 1):
                     st.session_state["word_filename"] = (doc_name + "_modernized_cleaned_text.docx")
 
@@ -193,32 +240,108 @@ if start:
         progress_bar.progress(1.0)
         st.success("🎉 Traitement terminé pour tous les documents (voir détails ci-dessous).")
 
-if "generated_docx" in st.session_state:
-    st.markdown("### 📁 Fichiers Word générés")
+if "generated_docx" in st.session_state and "generated_pdf" in st.session_state and "generated_markdown" in st.session_state:
+    st.markdown("### 📁 Fichiers générés")
     generated_docx = st.session_state["generated_docx"]
-    for p in generated_docx:
-        st.write(f"- {p}")
-        
-    if(len(uploaded_files) == 1):
-        # Bouton ouvrir le fichier Word généré (PDF modernisé)
-        word_filename = st.session_state["word_filename"]
-        print("word_filename =", word_filename)
+    generated_pdf = st.session_state["generated_pdf"]
+    generated_markdown = st.session_state["generated_markdown"]
+    for i in range(len(generated_docx)):
+        st.write(f"- DOCX : {generated_docx[i]}")
+        st.write(f"- PDF  : {generated_pdf[i]}")
+        st.write(f"- MD   : {generated_markdown[i]}")
+    
+     # Affiche les fichiers disponibles
+    if generated_docx or generated_pdf or generated_markdown:
+        for doc_name in document_list:
+            st.markdown(f"### 📘 {doc_name}")
 
-        # Maintenant que la modernisation est finie, on affiche le bouton
-        # télécharger le résultat
-        st.session_state.download_word_file = True
-        word_path = Path(word_filename)  # ton fichier Word généré
-        if word_path.exists() and st.session_state.download_word_file:
-            with open(word_path, "rb") as f:
-                word_data = f.read()
+            # Création du nom des fichiers attendus
+            word_file = Path(f"{doc_name}_modernized_cleaned_text.docx")
+            pdf_file = Path(f"{doc_name}_modernized_cleaned_text.pdf")
+            md_file = Path(f"{doc_name}_modernized_cleaned_text.md")
 
-            # Bouton unique pour télécharger
-            st.download_button(
-                label="💾 Télécharger le document modernisé (en Word)",
-                data=word_data,
-                file_name=word_path.name,
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            )
+            col1, col2, col3 = st.columns(3)
+
+            # Bouton Word
+            if word_file.exists():
+                with open(word_file, "rb") as f:
+                    word_data = f.read()
+                col1.download_button(
+                    label="💾 Télécharger Word",
+                    data=word_data,
+                    file_name=word_file.name,
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    key=f"dl_word_{doc_name}"
+                )
+            else:
+                col1.write("❌ Word non généré")
+
+            # Bouton PDF
+            if pdf_file.exists():
+                with open(pdf_file, "rb") as f:
+                    pdf_data = f.read()
+                col2.download_button(
+                    label="📄 Télécharger PDF",
+                    data=pdf_data,
+                    file_name=pdf_file.name,
+                    mime="application/pdf",
+                    key=f"dl_pdf_{doc_name}"
+                )
+            else:
+                col2.write("❌ PDF non généré")
+
+            # Bouton Markdown
+            if md_file.exists():
+                with open(md_file, "rb") as f:
+                    md_data = f.read()
+                col3.download_button(
+                    label="📝 Télécharger Markdown",
+                    data=md_data,
+                    file_name=md_file.name,
+                    mime="text/markdown",
+                    key=f"dl_md_{doc_name}"
+                )
+            else:
+                col3.write("❌ Markdown non généré")
+
+        st.divider()
+
+        # Bouton de suppression global
+        if st.button("🗑️ Supprimer tous les fichiers générés"):
+            for f_list in [generated_docx, generated_pdf, generated_markdown]:
+                for file_path in f_list:
+                    try:
+                        os.remove(file_path)
+                    except FileNotFoundError:
+                        pass
+            st.success("✅ Tous les fichiers générés ont été supprimés.")
+            st.session_state.generated_docx = []
+            st.session_state.generated_pdf = []
+            st.session_state.generated_markdown = []
+
+    else:
+        st.info("Aucun fichier Word, PDF ou Markdown trouvé à télécharger.")
+
+    # if(len(uploaded_files) == 1):
+    #     # Bouton ouvrir le fichier Word généré (PDF modernisé)
+    #     word_filename = st.session_state["word_filename"]
+    #     print("word_filename =", word_filename)
+
+    #     # Maintenant que la modernisation est finie, on affiche le bouton
+    #     # télécharger le résultat
+    #     st.session_state.download_word_file = True
+    #     word_path = Path(word_filename)  # ton fichier Word généré
+    #     if word_path.exists() and st.session_state.download_word_file:
+    #         with open(word_path, "rb") as f:
+    #             word_data = f.read()
+
+    #         # Bouton unique pour télécharger
+    #         st.download_button(
+    #             label="💾 Télécharger le document modernisé (en Word)",
+    #             data=word_data,
+    #             file_name=word_path.name,
+    #             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    #         )
 
         # Ouvrir le fichier word (version logiciel local bureau)
         # if(st.button("📂 Ouvrir le document modernisé au format Word")):
@@ -236,16 +359,16 @@ if "generated_docx" in st.session_state:
         #     # Pour pas que le Word se réouvre à l'infini même quand on n'a pas cliqué sur le bouton
         #     st.session_state.open_word = False
             
-    # Bouton pour supprimer les fichiers générés par le logiciel
-    if(st.button("❌ Supprimer les fichiers Word générés")):
-        st.session_state["delete_generated_files"] = True
+    # # Bouton pour supprimer les fichiers générés par le logiciel
+    # if(st.button("❌ Supprimer les fichiers Word générés")):
+    #     st.session_state["delete_generated_files"] = True
     
-    delete_generated_files = st.session_state["delete_generated_files"]
-    if(delete_generated_files == True):
-        for p in generated_docx:
-            os.remove(p)
-            st.success(f"Le fichier {p} a été supprimé ✅")
-        st.session_state["delete_generated_files"] = False
+    # delete_generated_files = st.session_state["delete_generated_files"]
+    # if(delete_generated_files == True):
+    #     for p in generated_docx:
+    #         os.remove(p)
+    #         st.success(f"Le fichier {p} a été supprimé ✅")
+    #     st.session_state["delete_generated_files"] = False
             
 else:
     st.info("Aucun fichier Word généré (peut-être que tout était déjà présent).")
