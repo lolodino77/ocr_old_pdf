@@ -27,23 +27,17 @@ st.markdown(
 )
 
 ### Définition des chemins de Tesseract poppler (PDF => PNG) et (OCR PNG => texte) 
-# On part du dossier courant (là où le programme est exécuté)
-base_path = "."
+# --- Chemins pour Linux / Streamlit Cloud / Codespaces ---
+st.session_state["poppler_path"] = "/usr/bin" #"./_internal/poppler-23.11.0/Library/bin"
+st.session_state["tesseract_path"] = "/usr/bin/tesseract" #"./_internal/Tesseract/tesseract.exe"
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract" #"./_internal/Tesseract/tesseract.exe"
 
-# Si un dossier "_internal" existe, on l'utilise comme base pour les binaires
-# Si un dossier "_internal" existe, c’est qu’on est en version packagée
-if os.path.isdir("./_internal"):
-    st.session_state["poppler_path"] = "./_internal/poppler-23.11.0/Library/bin"
-    st.session_state["tesseract_path"] = "./_internal/Tesseract/tesseract.exe"
-    pytesseract.pytesseract.tesseract_cmd = "./_internal/Tesseract/tesseract.exe"
-# S'il n'existe pas, on utilise comme base le répertoire courant
-else:
-    st.session_state["poppler_path"] = "./poppler-23.11.0/Library/bin"
-    st.session_state["tesseract_path"] = "./Tesseract/tesseract.exe"
-    pytesseract.pytesseract.tesseract_cmd = "./Tesseract/tesseract.exe"
-    
-st.write(f"Tesseract path : {st.session_state["poppler_path"]}")
-st.write(f"Poppler path   : {st.session_state["tesseract_path"]}")
+# Chemin vers les fichiers de langue Tesseract
+os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/5/tessdata/"
+
+st.write(f"Tesseract path : {pytesseract.pytesseract.tesseract_cmd}")
+st.write(f'Tesseract path : {st.session_state["poppler_path"]}')
+st.write(f'Poppler path   : {st.session_state["tesseract_path"]}')
 
 # --- Upload ---
 uploaded_files = st.file_uploader(
@@ -113,9 +107,12 @@ start = st.button("🚀 Démarrer la modernisation")
 log_box = st.empty()
 progress_bar = st.progress(0)
 
-if "open_word" not in st.session_state:
-    st.session_state.open_word = False
-    
+# if "open_word" not in st.session_state:
+#     st.session_state.open_word = False
+
+if "download_word_file" not in st.session_state:
+    st.session_state.download_word_file = False
+
 if "delete_generated_files" not in st.session_state:
     st.session_state.delete_generated_files = False
 
@@ -206,21 +203,38 @@ if "generated_docx" in st.session_state:
         # Bouton ouvrir le fichier Word généré (PDF modernisé)
         word_filename = st.session_state["word_filename"]
         print("word_filename =", word_filename)
-    
-        if(st.button("📂 Ouvrir le document modernisé au format Word")):
-            st.session_state.open_word = True
 
-        if st.session_state.open_word == True:
-            st.write(f"{word_filename} : word_filename")
+        # Maintenant que la modernisation est finie, on affiche le bouton
+        # télécharger le résultat
+        st.session_state.download_word_file = True
+        word_path = Path(word_filename)  # ton fichier Word généré
+        if word_path.exists() and st.session_state.download_word_file:
+            with open(word_path, "rb") as f:
+                word_data = f.read()
+
+            # Bouton unique pour télécharger
+            st.download_button(
+                label="💾 Télécharger le document modernisé (en Word)",
+                data=word_data,
+                file_name=word_path.name,
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            )
+
+        # Ouvrir le fichier word (version logiciel local bureau)
+        # if(st.button("📂 Ouvrir le document modernisé au format Word")):
+        #     st.session_state.open_word = True
+
+        # if st.session_state.open_word == True:
+        #     st.write(f"{word_filename} : word_filename")
             
-            if(os.path.exists(word_filename)):
-                os.startfile(word_filename)
-                st.success(f"Le fichier {word_filename} a été ouvert dans Word ✅")
-            else:
-                st.error("❌ Fichier introuvable !")
+        #     if(os.path.exists(word_filename)):
+        #         os.startfile(word_filename)
+        #         st.success(f"Le fichier {word_filename} a été ouvert dans Word ✅")
+        #     else:
+        #         st.error("❌ Fichier introuvable !")
             
-            # Pour pas que le Word se réouvre à l'infini même quand on n'a pas cliqué sur le bouton
-            st.session_state.open_word = False
+        #     # Pour pas que le Word se réouvre à l'infini même quand on n'a pas cliqué sur le bouton
+        #     st.session_state.open_word = False
             
     # Bouton pour supprimer les fichiers générés par le logiciel
     if(st.button("❌ Supprimer les fichiers Word générés")):

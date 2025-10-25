@@ -1,6 +1,10 @@
 # Generated files
 *.docx
 *.pdf
+*.txt
+!requirements.txt
+!packages.txt
+
 uploads/
 output/
 pages_images/
