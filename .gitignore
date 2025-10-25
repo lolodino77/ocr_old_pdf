@@ -1,3 +1,12 @@
+# Generated files
+*.docx
+*.pdf
+uploads/
+output/
+pages_images/
+pages_textes/
+pages_cleaned_textes/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
