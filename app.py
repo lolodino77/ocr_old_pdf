@@ -227,6 +227,7 @@ if start:
                 # generated_docx = ["caca"]
                 st.session_state["generated_docx"] = generated_docx
                 st.session_state["generated_pdf"] = generated_pdf
+                st.session_state["generated_markdown"] = generated_markdown
                 # st.session_state["generated_docx"] =  [f"{doc_name}_modernized_cleaned_text.docx" for doc_name in document_list]
                 if(len(uploaded_files) == 1):
                     st.session_state["word_filename"] = (doc_name + "_modernized_cleaned_text.docx")
