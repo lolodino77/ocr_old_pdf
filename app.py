@@ -180,6 +180,7 @@ if start:
                     log_box.info("Étape 4/4 — Conversion du texte modernisé en Word ...")
                     modernized_txt_filename = f"{doc_name}_modernized_cleaned_text.txt"
                     modernized_word_filename = f"{doc_name}_modernized_cleaned_text.docx"
+                    print("modernized_txt_filename =", modernized_txt_filename)
                     convert_modernized_txt_to_word(modernized_txt_filename, modernized_word_filename)
                     # vérifier l'existence du fichier de sortie
                     if (OUTPUT_DIR / modernized_word_filename).exists():
@@ -197,7 +198,7 @@ if start:
                     log_box.info("Étape 5/5 — Conversion du document Word modernisé en PDF ...")
                     modernized_word_filename = f"{doc_name}_modernized_cleaned_text.docx"
                     modernized_pdf_filename = f"{doc_name}_modernized_cleaned_text.pdf"
-                    convert_modernized_word_to_pdf(modernized_word_filename, modernized_pdf_filename)
+                    convert_modernized_word_to_pdf(modernized_word_filename)
                     # vérifier l'existence du fichier de sortie
                     if (OUTPUT_DIR / modernized_pdf_filename).exists():
                         generated_pdf.append(str(OUTPUT_DIR / modernized_pdf_filename))
@@ -211,8 +212,8 @@ if start:
                     if (OUTPUT_DIR / out_name_md).exists():
                         generated_markdown.append(str(OUTPUT_DIR / out_name_md))
                 else:
-                    log_box.info("Étape 6/6 — Conversion du document Word modernisé en Markdown ...")
-                    modernized_word_filename = f"{doc_name}_modernized_cleaned_text.docx"
+                    log_box.info("Étape 6/6 — Ecriture du texte modernisé (variable string) dans un fichier Markdown .md ...")
+                    modernized_txt_filename = f"{doc_name}_modernized_cleaned_text.txt"
                     modernized_markdown_filename = f"{doc_name}_modernized_cleaned_text.md"
                     convert_modernized_word_to_markdown(modernized_txt_filename, modernized_markdown_filename)
                     # vérifier l'existence du fichier de sortie

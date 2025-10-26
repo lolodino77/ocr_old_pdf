@@ -1,7 +1,5 @@
 import os
-# import docx2pdf
-# import pandoc
-import pypandoc
+import subprocess
 from pathlib import Path
 
 def check_if_modernized_txt_already_exported_to_pdf(document_name, directory='.'):
@@ -28,21 +26,45 @@ def check_if_modernized_txt_already_exported_to_pdf(document_name, directory='.'
     # Vérification d'existence
     return os.path.exists(full_path)
 
-def convert_modernized_word_to_pdf(word_filename, pdf_filename):
+import subprocess
+import os
+
+def convert_docx_to_pdf_with_libreoffice(docx_path, output_dir=None):
+    """
+    Convertit un fichier Word (.docx) en PDF à l'aide de LibreOffice.
+    Aucun watermark, 100 % gratuit, compatible Linux/Streamlit Cloud.
+
+    Exemple d’utilisation
+    convert_docx_to_pdf("Daille_S_133_Noel_minus_modernized_cleaned_text.docx")
+    """
+    if output_dir is None:
+        output_dir = os.path.dirname(docx_path) or "."
+
+    # Commande LibreOffice headless
+    subprocess.run([
+        "soffice",
+        "--headless",
+        "--convert-to", "pdf",
+        "--outdir", output_dir,
+        docx_path
+    ], check=True)
+
+    print(f"✅ Conversion terminée : {os.path.join(output_dir, os.path.basename(docx_path).replace('.docx', '.pdf'))}")
+
+def convert_modernized_word_to_pdf(word_filename):
     """
     Convertit un fichier Word (.docx) en PDF sans Microsoft Word.
     Compatible Linux / Streamlit Cloud.
     """
     word_path = Path(word_filename)
-    pdf_path = Path(pdf_filename)
     
     if not word_path.exists():
         raise FileNotFoundError(f"❌ Le fichier Word {word_filename} est introuvable.")
     
     try:
         # Conversion via Pandoc
-        pypandoc.convert_file(str(word_path), 'pdf', outputfile=str(pdf_path))
-        return str(pdf_path)
+        convert_docx_to_pdf_with_libreoffice(word_filename)
+        return str("Le fichier a été converti avec succès en PDF : ")
     except Exception as e:
         raise RuntimeError(f"Erreur de conversion DOCX→PDF : {e}")
 
