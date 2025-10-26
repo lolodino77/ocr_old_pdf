@@ -1,4 +1,6 @@
 tesseract-ocr
 tesseract-ocr-fra
+tesseract-ocr-spa
+tesseract-ocr-deu
 poppler-utils
 libreoffice
