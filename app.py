@@ -86,14 +86,39 @@ if uploaded_files:
 else:
     st.info("Aucun fichier PDF téléversé.")
     
-if(len(uploaded_files) == 1):
-    if(st.button("📂 Ouvrir le document PDF original à moderniser")):
-        fichier_PDF = uploaded_files[0].name
-        st.write(f"PDF name : {fichier_PDF}")
-        if os.path.exists(fichier_PDF):
-            os.startfile(fichier_PDF)  # ouvre avec l'application par défaut (Word)
-        else:
-            st.error("❌ Fichier introuvable !")
+# if(len(uploaded_files) == 1):
+#         if(st.button("📂 Ouvrir le document PDF original à moderniser")):
+#                 fichier_PDF = uploaded_files[0].name
+#                         st.write(f"PDF name : {fichier_PDF}")
+#                                 if os.path.exists(fichier_PDF):
+#                                             os.startfile(fichier_PDF)  # ouvre avec l'application par défaut (Word)
+
+# --- Choix de la langue du document ---
+text_language = st.selectbox(
+    "🌐 Choix de la langue du document",
+    [
+        "Français",
+        "Anglais",
+        "Espagnol",
+        "Allemand"
+    ],
+    index=0
+)
+
+# Dictionnaire pour faire correspondre la langue affichée à l'abréviation Tesseract et au nom minuscule
+lang_mapping = {
+    "Français": {"tesseract_lang": "fra", "language": "français"},
+    "Anglais":  {"tesseract_lang": "eng", "language": "anglais"},
+    "Espagnol": {"tesseract_lang": "spa", "language": "espagnol"},
+    "Allemand": {"tesseract_lang": "deu", "language": "allemand"}
+}
+
+# Définit les variables selon la sélection
+tesseract_lang = lang_mapping[text_language]["tesseract_lang"]
+language   = lang_mapping[text_language]["language"]
+
+st.write(f"Langue sélectionnée : {text_language}")
+st.write(f"tesseract_lang = {tesseract_lang}, language = {language}")
 
 # --- CONFIGURATION DU LLM ---
 # --- LISTE DÉROULANTE : Choisir le modèle LLM qu'on veut ---
@@ -160,12 +185,16 @@ if start:
 
                     # --- Étape 2 : OCR PNG -> texte ---
                     log_box.info("Étape 2/4 — OCR des images en cours ...")
-                    texte_total = png_to_txt(doc_name, input_dir=str(PAGES_IMAGES_DIR), output_dir=str(PAGES_TEXTS_DIR), lang="fra")
+                    texte_total = png_to_txt(doc_name, input_dir=str(PAGES_IMAGES_DIR), 
+                                            output_dir=str(PAGES_TEXTS_DIR), 
+                                            lang=tesseract_lang)
                     log_box.info("✅ OCR terminé.")
 
                     # --- Étape 3 : Modernisation du texte OCRisé ---
                     log_box.info("Étape 3/4 — Modernisation et nettoyage du texte OCRisé ...")
-                    modernized_cleaned_text = modernize_and_clean_ocr_text(doc_name, LLM_model_name)
+                    modernized_cleaned_text = modernize_and_clean_ocr_text(doc_name, 
+                                                                           LLM_model_name,
+                                                                           language)
                     log_box.info("✅ Modernisation effectuée.")
 
                 # --- Étape 4 : Export en Word ---

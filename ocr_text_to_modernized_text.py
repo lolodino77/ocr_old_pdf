@@ -26,7 +26,7 @@ def check_if_already_modernized(document_name, directory='.'):
     # Vérification d'existence
     return os.path.exists(full_path)
 
-def modernize_and_clean_ocr_text(document_name, LLM_model_name):
+def modernize_and_clean_ocr_text(document_name, LLM_model_name, language):
     """
     Nettoie et modernise le texte OCRisé d'un document en français ancien
     en utilisant le modèle Gemini 2.5 Pro.
@@ -36,7 +36,9 @@ def modernize_and_clean_ocr_text(document_name, LLM_model_name):
     document_name : str
         Nom du document (ex. 'Daille_S_133_Noel')
     LLM_model_name: str
-        Nom du modèle LLM choisi (ex. gemini-)
+        Nom du modèle LLM choisi (ex. gemini-2.5-pro)
+    language : str
+        Langue du document à moderniser (ex. 'français')
     api_key : str
         Clé API Google Gemini
 
@@ -57,7 +59,7 @@ def modernize_and_clean_ocr_text(document_name, LLM_model_name):
     print("client =", client)
 
     # Prompt de base
-    task = '''Nettoie ce texte en vieux français avec ces instructions :
+    task = '''Nettoie ce texte en vieux {language} avec ces instructions :
         - Ne changer les mots
         - Supprime les caractères spéciaux, césures, retours à la ligne inutiles, 
         - Remplace les vieux symboles si possible en mots (par exemple & par et), les anciens caractères 
@@ -73,11 +75,15 @@ def modernize_and_clean_ocr_text(document_name, LLM_model_name):
 
     # Choix : supprimer ou garder les en-têtes
     remove_pages = '''Supprime les en-têtes en haut de page qui se répètent à chaque page (Sur Jean, chapitre 4, verset 17. et Sermon vingt-huitième.) et les numéros de page'''
-    keep_pages = '''Garde les en-têtes et les numéros de page'''
+    # keep_pages = '''Garde les en-têtes et les numéros de page'''
 
     # Prompt complet (ici, on choisit de supprimer les en-têtes)
     task_full_text = task.replace("{}", remove_pages)
-    task_keep_pages = task.replace("{}", keep_pages)
+    # task_keep_pages = task.replace("{}", keep_pages)
+
+    # Ajustement de la langue dans le prompt
+    task_full_text = task_full_text.replace("{language}", language)
+
     
     # Lecture du texte OCRisé
     with open(f"{document_name}_ocr_text.txt", "r", encoding="utf-8") as fichier:
@@ -85,6 +91,10 @@ def modernize_and_clean_ocr_text(document_name, LLM_model_name):
 
     # Construction du prompt
     prompt = task_full_text + block
+
+    # Sauvegarde du prompt
+    with open(f"{document_name}_modernization_prompt.txt", 'w', encoding='utf-8') as f_prompt:
+        f_prompt.write(prompt)
 
     # Appel à l’API Gemini
     response_cleaned_text = client.models.generate_content(
