@@ -54,7 +54,7 @@ def modernize_and_clean_ocr_text(document_name, LLM_model_name, language):
     document_name = os.path.splitext(os.path.basename(document_name))[0]
 
     # Configuration du client Gemini
-    api_key = "AIzaSyC8mpIJGNbSAOk_FwrlqdlMX-Ym9aFTSDQ"
+    api_key = "AIzaSyDBWAT_6PJQ9pktF1dDXCb6Hrl-5r8Y0Ig"
     client = genai.Client(api_key=api_key)
     print("client =", client)
 
