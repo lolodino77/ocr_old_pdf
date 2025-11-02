@@ -50,7 +50,7 @@ def setup_tesseract_langs():
             print(f"❌ Erreur téléchargement {lang}: {e}")
 
     # --- 5) Dire à Tesseract d’utiliser ce dossier ---
-    os.environ["TESSDATA_PREFIX"] = str(local_tessdata.parent)
+    os.environ["TESSDATA_PREFIX"] = str(local_tessdata)
     print(f"TESSDATA_PREFIX défini sur {os.environ['TESSDATA_PREFIX']}")
 
     # --- 6) Vérifier que Tesseract les voit ---

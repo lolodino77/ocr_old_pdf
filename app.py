@@ -79,7 +79,7 @@ pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract" #"./_internal/Tesse
 # Chemin vers les fichiers de langue Tesseract
 # os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/5/tessdata/"
 # os.environ["TESSDATA_PREFIX"] = "/home/vscode/.local/share/tessdata/"
-os.environ["TESSDATA_PREFIX"] = "/home/vscode/.local/share/"
+# os.environ["TESSDATA_PREFIX"] = "/home/vscode/.local/share/"
 
 ### Installation des langues manquantes pour Tesseract (lituanien, polonais, danois)
 ### Car l'installation native via apt-get comme sudo apt install -y tesseract-ocr-nl
@@ -146,6 +146,7 @@ text_language = st.selectbox(
         "Anglais",
         "Espagnol",
         "Allemand",
+        "Néerlandais",
         "Danois",
         "Lituanien",
         "Polonais"
@@ -161,7 +162,8 @@ lang_mapping = {
     "Allemand": {"tesseract_lang": "deu", "language": "allemand"},
     "Danois":   {"tesseract_lang": "dan", "language": "danois"},
     "Lituanien":{"tesseract_lang": "lit", "language": "lituanien"},
-    "Polonais": {"tesseract_lang": "pol", "language": "polonais"}
+    "Polonais": {"tesseract_lang": "pol", "language": "polonais"},
+    "Néerlandais":{"tesseract_lang": "nld", "language": "néerlandais"}
 }
 
 # Définit les variables selon la sélection
