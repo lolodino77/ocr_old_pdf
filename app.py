@@ -4,6 +4,8 @@ import sys
 import shutil
 from pathlib import Path
 from typing import List
+import base64
+import dl_languages
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import pytesseract
@@ -29,6 +31,40 @@ from convert_modernized_txt_to_markdown import (
 st.set_page_config(page_title="Modernisation de livres anciens", layout="wide")
 st.title("📜 Modernisation automatique de livres anciens (OCR → Modernisation → Word)")
 
+# --- Lecture et encodage du logo ---
+logo_path = Path("logo_dark.png")
+if logo_path.exists():
+    logo_bytes = logo_path.read_bytes()
+    logo_b64 = base64.b64encode(logo_bytes).decode()
+
+    # --- Insertion HTML + CSS ---
+    st.markdown(
+        f"""
+        <style>
+            .logo-container {{
+                position: fixed;
+                top: 15px;
+                right: 20px;
+                width: 60px; /* <-- Taille du logo ajustée */
+                z-index: 9999; /* Toujours visible */
+            }}
+            .logo-container img {{
+                width: 100%;
+                height: auto;
+                object-fit: contain;
+            }}
+        </style>
+        <div class="logo-container">
+            <img src="data:image/png;base64,{logo_b64}">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.warning("⚠️ Logo non trouvé : logo_dark.png")
+
+# st.image("logo_dark.png")
+
 st.markdown(
     "Téléversez un ou plusieurs fichiers PDF puis cliquez sur **Démarrer la modernisation**. "
     "L'application effectue : conversion PDF→PNG → OCR → modernisation → export DOCX. "
@@ -41,7 +77,16 @@ st.session_state["tesseract_path"] = "/usr/bin/tesseract" #"./_internal/Tesserac
 pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract" #"./_internal/Tesseract/tesseract.exe"
 
 # Chemin vers les fichiers de langue Tesseract
-os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/5/tessdata/"
+# os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/5/tessdata/"
+# os.environ["TESSDATA_PREFIX"] = "/home/vscode/.local/share/tessdata/"
+# os.environ["TESSDATA_PREFIX"] = "/home/vscode/.local/share/"
+
+### Installation des langues manquantes pour Tesseract (lituanien, polonais, danois)
+### Car l'installation native via apt-get comme sudo apt install -y tesseract-ocr-nl
+# Appeler la fonction au démarrage
+st.write("🔧 Vérification et installation des langues Tesseract...")
+dl_languages.setup_tesseract_langs()
+st.success("✅ Langues Tesseract prêtes à l'emploi !")
 
 st.write(f"Tesseract path : {pytesseract.pytesseract.tesseract_cmd}")
 st.write(f'Tesseract path : {st.session_state["poppler_path"]}')
@@ -100,7 +145,11 @@ text_language = st.selectbox(
         "Français",
         "Anglais",
         "Espagnol",
-        "Allemand"
+        "Allemand",
+        "Néerlandais",
+        "Danois",
+        "Lituanien",
+        "Polonais"
     ],
     index=0
 )
@@ -110,7 +159,11 @@ lang_mapping = {
     "Français": {"tesseract_lang": "fra", "language": "français"},
     "Anglais":  {"tesseract_lang": "eng", "language": "anglais"},
     "Espagnol": {"tesseract_lang": "spa", "language": "espagnol"},
-    "Allemand": {"tesseract_lang": "deu", "language": "allemand"}
+    "Allemand": {"tesseract_lang": "deu", "language": "allemand"},
+    "Danois":   {"tesseract_lang": "dan", "language": "danois"},
+    "Lituanien":{"tesseract_lang": "lit", "language": "lituanien"},
+    "Polonais": {"tesseract_lang": "pol", "language": "polonais"},
+    "Néerlandais":{"tesseract_lang": "nld", "language": "néerlandais"}
 }
 
 # Définit les variables selon la sélection

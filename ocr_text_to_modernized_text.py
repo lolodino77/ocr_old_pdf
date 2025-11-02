@@ -67,7 +67,7 @@ def modernize_and_clean_ocr_text(document_name, LLM_model_name, language):
         - Ajoute les accents manquants, par exemple accents graves, aigus, etc.
         - {}
         - Harmonise la ponctuation et les espaces
-        - Modernise les vieux mots mais sans les changer comme par exemple nostre en notre, aumosne en aumône,
+        - Modernise les vieux mots mais sans les changer comme par exemple si c'est en français nostre en notre, aumosne en aumône,
         seroit en serait, etc.
         - Donne en sortie uniquement le texte nettoyé, sans explications ni commentaires ou répétition du
         prompt envoyé.
