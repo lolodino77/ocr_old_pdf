@@ -98,7 +98,7 @@ def modernize_and_clean_ocr_text(document_name, LLM_model_name, language):
 
     # Appel à l’API Gemini
     response_cleaned_text = client.models.generate_content(
-                    model="gemini-2.5-pro",
+                    model=LLM_model_name,
                     contents=prompt
             )
     modernized_cleaned_text = response_cleaned_text.text
