@@ -2,6 +2,7 @@
 from browser_llm import (
     END_MARKER, SITES, BrowserLLMUnavailable, join_chunks, run_prompts, split_in_chunks, write_log,
 )
+import api_llm
 from quality_checks import AUTO_FIXED, check_chunk, check_junctions, residual_archaic
 import os
 
@@ -144,7 +145,8 @@ def modernize_and_clean_ocr_text(document_name, site, language, timeout_s=300):
     document_name : str
         Nom du document (ex. 'Daille_S_133_Noel')
     site : str
-        Site à utiliser : 'gemini' ou 'gpt' (clés de browser_llm.SITES)
+        'gemini' ou 'gpt' (LLM piloté dans le navigateur, sans clé API) ou 'api:<modèle>' (API Gemini,
+        clé requise, voir api_llm.py), par exemple 'api:gemini-2.5-flash'
     language : str
         Langue du document à moderniser (ex. 'français')
 
@@ -153,8 +155,8 @@ def modernize_and_clean_ocr_text(document_name, site, language, timeout_s=300):
     Crée le fichier {document_name}_modernized_cleaned_text.txt et retourne le texte nettoyé.
     """
     document_name = os.path.splitext(os.path.basename(document_name))[0]
-    if site not in SITES:
-        raise ValueError(f"Site inconnu : {site} (choix : {', '.join(SITES)})")
+    if site not in SITES and not api_llm.is_api(site):
+        raise ValueError(f"Site inconnu : {site} (choix : {', '.join(SITES)} ou api:<modèle>)")
 
     task = '''Tu es un éditeur spécialiste des textes anciens. Voici un extrait d'un livre ancien en {language}, issu d'une reconnaissance de texte (OCR) imparfaite. Réécris-le en ORTHOGRAPHE MODERNE.
 

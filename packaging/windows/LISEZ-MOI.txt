@@ -1,0 +1,60 @@
+MODERNISATEUR DE LIVRES ANCIENS - VERSION PORTABLE POUR WINDOWS
+================================================================
+
+Le programme lit le texte de vieux livres en PDF (OCR), le modernise (orthographe actuelle) avec Gemini,
+et vous rend un document Word, PDF et Markdown.
+
+Il vous faut : Windows 10 ou 11 (PC classique, Intel ou AMD), une connexion Internet, et environ 2 Go de
+place libre. Rien ne s'installe ailleurs sur l'ordinateur : tout reste dans le dossier que vous allez
+extraire. Aucun mot de passe d'administrateur n'est demandé.
+
+PREMIÈRE FOIS
+-------------
+1. Clic droit sur le fichier .zip reçu, puis « Extraire tout... ». Choisissez un emplacement simple,
+   par exemple C:\Modernisateur, puis « Extraire ».
+   (Évitez un dossier OneDrive et un chemin très long : le programme pèse environ 1 Go une fois prêt.)
+2. Dans le dossier extrait, double-cliquez sur « Ouvrir le Modernisateur ».
+   Si Windows affiche « Windows a protégé votre ordinateur » : cliquez sur « Informations complémentaires »,
+   puis sur « Exécuter quand même ». (Ce message s'affiche pour tout programme qui ne vient pas d'un magasin.)
+3. Une fenêtre noire prépare le programme (Python, Tesseract, langues...). Comptez 5 à 10 minutes, une seule
+   fois. Ne la fermez pas. À la fin, le programme s'ouvre dans votre navigateur.
+
+ENSUITE
+-------
+- Dans le dossier, double-cliquez sur l'icône « Modernisateur de livres anciens », créée à côté de
+  « Ouvrir le Modernisateur ». Les deux font la même chose.
+  Astuce : clic droit sur l'icône > « Envoyer vers » > « Bureau (créer un raccourci) ».
+- Le programme s'ouvre dans votre navigateur : déposez vos PDF, choisissez la langue, puis cliquez sur
+  « Démarrer la modernisation ». Les documents produits se téléchargent depuis la page.
+- Pour le fermer : bouton « Quitter le programme », dans la colonne de gauche de la page.
+  (Fermer seulement l'onglet ne l'arrête pas : il continue discrètement, et l'icône rouvre la page.)
+
+DEUX FAÇONS D'UTILISER GEMINI
+-----------------------------
+- « Navigateur (sans clé API) » : rien à configurer. Une fenêtre Microsoft Edge s'ouvre pendant la
+  modernisation : ne la fermez pas.
+- « API Gemini (clé requise) » : créez une clé gratuite sur https://aistudio.google.com/apikey et
+  collez-la dans le champ prévu sur la page. Pour ne plus avoir à la saisir : copiez le fichier
+  programme\.env.example en programme\.env, et remplacez « votre_cle_ici » par votre clé.
+
+DÉPLACER LE DOSSIER
+-------------------
+Possible à tout moment (programme fermé). Ensuite, double-cliquez sur « Ouvrir le Modernisateur » : il se
+répare tout seul en une ou deux minutes, puis l'icône fonctionne de nouveau.
+
+METTRE À JOUR
+-------------
+Quand vous recevez une nouvelle version : fermez le programme, puis extrayez le nouveau .zip AU MÊME
+ENDROIT que l'ancien et acceptez de remplacer les fichiers. Double-cliquez ensuite sur « Ouvrir le
+Modernisateur ». Vos documents, votre clé API et vos réglages sont conservés.
+
+DÉSINSTALLER
+------------
+Fermez le programme (bouton « Quitter le programme »), puis supprimez le dossier.
+Attention : les PDF déposés et les documents produits, enregistrés dans ce dossier, sont supprimés avec lui.
+
+EN CAS DE PROBLÈME
+------------------
+- La préparation s'arrête : lisez le message dans la fenêtre noire, puis relancez « Ouvrir le Modernisateur »
+  (elle reprend sans rien perdre).
+- Le programme ne s'ouvre pas : le détail est dans le fichier programme\modernisateur.log.

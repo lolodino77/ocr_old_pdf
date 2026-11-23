@@ -7,6 +7,8 @@ from typing import List
 import base64
 import dl_languages
 import browser_llm
+import api_llm
+import site_login
 from system_paths import find_poppler_path, find_tesseract_cmd
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -32,6 +34,17 @@ from convert_modernized_txt_to_markdown import (
 # --- Config page ---
 st.set_page_config(page_title="Modernisation de livres anciens", layout="wide")
 st.title("📜 Modernisation automatique de livres anciens (OCR → Modernisation → Word)")
+
+# Version portable (packaging/, lancée par lancer_app.py) : le programme tourne en arrière-plan, sans fenêtre ;
+# ce bouton l'arrête (fermer l'onglet ne suffit pas).
+if os.environ.get("OCR_PORTABLE"):
+    with st.sidebar:
+        st.markdown("### Modernisateur de livres anciens")
+        if st.button("⏻ Quitter le programme", help="Arrête le programme. Pour le rouvrir : double-cliquez sur son icône."):
+            st.success("Le programme est arrêté. Vous pouvez fermer cet onglet.")
+            import threading
+            threading.Timer(1.0, os._exit, args=(0,)).start()
+            st.stop()
 
 # --- Lecture et encodage du logo ---
 logo_path = Path("logo_dark.png")
@@ -78,8 +91,7 @@ st.session_state["poppler_path"] = find_poppler_path()
 st.session_state["tesseract_path"] = find_tesseract_cmd()
 pytesseract.pytesseract.tesseract_cmd = st.session_state["tesseract_path"]
 if st.session_state["poppler_path"] is None:
-    st.error("❌ Poppler introuvable (pdftoppm). Installez-le (Windows : `winget install oschwartz10612.Poppler`) "
-             "puis relancez l'application.")
+    st.caption("Poppler absent : les pages du PDF sont converties en images avec pypdfium2.")
 if not shutil.which(st.session_state["tesseract_path"]) and not Path(st.session_state["tesseract_path"]).exists():
     st.error("❌ Tesseract introuvable. Installez-le (Windows : `winget install UB-Mannheim.TesseractOCR`) "
              "puis relancez l'application.")
@@ -108,6 +120,16 @@ uploaded_files = st.file_uploader(
 
 # Dossier pour stocker les uploads et outputs
 ROOT_DIR = Path(".").resolve()
+
+
+def short_document_name(name: str, max_len: int = 50) -> str:
+    """Nom de travail du document, raccourci s'il est long : Windows limite les chemins à 260 caractères et
+    chaque étape y ajoute des suffixes (« _modernized_cleaned_text.docx », sous-dossiers de pages)."""
+    name = name.strip().rstrip(". ")
+    if len(name) <= max_len:
+        return name
+    cut = name[:max_len].rsplit(" ", 1)[0].rstrip(" ,.;:-") or name[:max_len]
+    return cut
 UPLOAD_DIR = ROOT_DIR / "pdf_uploads"
 PAGES_IMAGES_DIR = ROOT_DIR / "pages_images"
 PAGES_TEXTS_DIR = ROOT_DIR / "pages_textes"
@@ -126,12 +148,14 @@ document_list: List[str] = []
 if uploaded_files:
     # Enregistre les fichiers sur le disque
     for uploaded_file in uploaded_files:
-        target_path = UPLOAD_DIR / uploaded_file.name
+        document_name = short_document_name(os.path.splitext(uploaded_file.name)[0])
+        target_path = UPLOAD_DIR / (document_name + ".pdf")
         # Écrase si déjà présent
         with open(target_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
-        document_name = os.path.splitext(uploaded_file.name)[0]
         document_list.append(document_name)
+        if document_name != os.path.splitext(uploaded_file.name)[0]:
+            st.caption(f"Nom raccourci (limite de longueur des chemins Windows) : « {document_name} »")
 
     st.success(f"{len(document_list)} fichier(s) uploaded et prêts à être traités.")
 
@@ -180,14 +204,84 @@ language   = lang_mapping[text_language]["language"]
 st.write(f"Langue sélectionnée : {text_language}")
 st.write(f"tesseract_lang = {tesseract_lang}, language = {language}")
 
-# --- CONFIGURATION DU LLM ---
-# --- LISTE DÉROULANTE : Choisir le modèle LLM qu'on veut ---
-# Le LLM est utilisé via le navigateur (Playwright, profil persistant) : pas de clé API.
-# Première utilisation : python browser_llm.py login  (connexion manuelle à Gemini / ChatGPT)
-LLM_site_labels = {"Gemini (gemini.google.com)": "gemini", "ChatGPT (chatgpt.com)": "gpt"}
-LLM_site_label = st.selectbox("🖥️ Choix du LLM (piloté dans le navigateur)", list(LLM_site_labels), index=0)
-LLM_model_name = LLM_site_labels[LLM_site_label]
-st.caption("Une fenêtre Chrome s'ouvre pendant l'étape 3 : ne la fermez pas et traitez un éventuel captcha.")
+@st.cache_resource
+def _login_window() -> site_login.LoginWindow:
+    return site_login.LoginWindow()  # un seul objet pour toutes les réexécutions de la page
+
+
+def _login_panel(selected: str) -> None:
+    """Connexion facultative (mais fortement conseillée) à Gemini et ChatGPT : jamais bloquante."""
+    window = _login_window()
+    profile = browser_llm.default_profile_dir()
+    with st.expander("🔐 Connexion à Gemini et ChatGPT — facultative, fortement conseillée", expanded=True):
+        st.caption("Sans compte, les modèles sont limités et les captchas, refus et erreurs plus fréquents. "
+                   "Connectez-vous une seule fois dans la fenêtre qui s'ouvre : la connexion est mémorisée. "
+                   "Le programme ne voit jamais votre mot de passe.")
+        for site, info in site_login.SITES.items():
+            col_state, col_btn = st.columns([3, 2])
+            logged = None if window.is_open else site_login.status(site, profile)
+            label = {True: "✅ connecté", False: "⚠️ non connecté", None: "❔ état inconnu"}[logged]
+            col_state.markdown(f"**{info['label']}** : {label}" + (" *(site choisi)*" if site == selected else ""))
+            if col_btn.button(f"Se connecter à {info['label']}", key=f"login_{site}", disabled=window.is_open):
+                try:
+                    window.open(site, profile)
+                    st.rerun()
+                except Exception as exc:  # noqa: BLE001 - jamais bloquant : on explique et on continue
+                    st.warning(str(exc))
+        if window.is_open:
+            st.info(f"Fenêtre de connexion à {site_login.SITES[window.site]['label']} ouverte : connectez-vous, puis "
+                    "cliquez sur « C'est fait » (ou fermez la fenêtre). Ne lancez pas la modernisation avant.")
+            if st.button("✅ C'est fait", key="login_done"):
+                window.close()
+                st.rerun()
+        st.caption("Vous pouvez ignorer cette étape : la modernisation vous laissera alors 5 minutes pour vous "
+                   "connecter dans sa propre fenêtre.")
+
+
+# --- CONFIGURATION DU LLM : deux modes au choix ---
+#  - Navigateur : Gemini / ChatGPT piloté dans Chrome (Playwright), sans clé API, poste avec écran requis.
+#    Première utilisation avec un compte : python browser_llm.py login
+#  - API : API Gemini (clé requise), sans navigateur, utilisable sur un serveur comme Streamlit Cloud.
+MODE_BROWSER = "🌐 Navigateur (sans clé API)"
+MODE_API = "🔑 API Gemini (clé requise)"
+llm_mode = st.radio("🖥️ Comment appeler le LLM ?", [MODE_BROWSER, MODE_API], horizontal=True)
+
+use_api_fallback, api_fallback_model = False, api_llm.DEFAULT_MODEL
+if llm_mode == MODE_BROWSER:
+    LLM_site_labels = {"Gemini (gemini.google.com)": "gemini", "ChatGPT (chatgpt.com)": "gpt"}
+    LLM_site_label = st.selectbox("Site", list(LLM_site_labels), index=0)
+    LLM_model_name = LLM_site_labels[LLM_site_label]
+    _login_panel(LLM_model_name)
+    st.caption("Une fenêtre de navigateur s'ouvre pendant l'étape 3 : ne la fermez pas. Si vous ne vous êtes pas "
+               "connecté ci-dessus, faites-le dans cette fenêtre (5 minutes pour le faire) et traitez un éventuel captcha. "
+               "Ce mode ne fonctionne pas sur un serveur sans écran.")
+    use_api_fallback = st.checkbox(
+        "Utiliser l'API Gemini en secours si le navigateur échoue (clé requise)",
+        help="Les morceaux que le navigateur n'a pas pu traiter sont renvoyés par l'API.")
+    if use_api_fallback:
+        api_fallback_model = st.selectbox("Modèle de l'API pour le secours", api_llm.API_MODELS, index=0)
+else:
+    api_model = st.selectbox("Modèle Gemini", api_llm.API_MODELS, index=0)
+    LLM_model_name = api_llm.spec(api_model)
+
+if llm_mode == MODE_API or use_api_fallback:
+    typed_key = st.text_input(
+        "Clé API Gemini", type="password", value="",
+        help="Gardée en mémoire le temps de la session, jamais écrite sur le disque ni dans les logs. "
+             "Sinon définissez la variable d'environnement GEMINI_API_KEY, ou st.secrets sur Streamlit Cloud.")
+    secret_key = None
+    try:  # st.secrets lève une exception s'il n'y a pas de fichier de secrets
+        secret_key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
+    except Exception:  # noqa: BLE001
+        pass
+    api_llm.set_api_key(typed_key or secret_key)
+    if api_llm.key_source():
+        st.caption(f"✅ Clé API trouvée ({api_llm.key_source()}).")
+    else:
+        st.warning("Aucune clé API Gemini : saisissez-la ci-dessus ou définissez la variable d'environnement GEMINI_API_KEY.")
+else:
+    api_llm.set_api_key(None)
+api_llm.set_fallback(api_fallback_model if use_api_fallback else None)
 
 # Bouton de lancement
 start = st.button("🚀 Démarrer la modernisation")
@@ -208,6 +302,11 @@ if "delete_generated_files" not in st.session_state:
 if start:
     if not document_list:
         st.error("Aucun fichier à traiter : téléversez d'abord des PDF.")
+    elif _login_window().is_open:
+        st.error("La fenêtre de connexion est encore ouverte (même profil de navigateur) : cliquez sur "
+                 "« C'est fait » dans l'encadré de connexion, puis relancez.")
+    elif (llm_mode == MODE_API or use_api_fallback) and not api_llm.get_api_key():
+        st.error("Clé API Gemini manquante : saisissez-la ou choisissez le mode navigateur sans secours API.")
     else:
         run_log = browser_llm.start_run_log()
         st.caption(f"Log de l'exécution (prompts envoyés) : {run_log}")
@@ -461,3 +560,83 @@ if "generated_docx" in st.session_state and "generated_pdf" in st.session_state 
             
 else:
     st.info("Aucun fichier Word généré (peut-être que tout était déjà présent).")
+
+
+# --- Visualisation du résultat : page d'origine, texte OCR, texte modernisé ---
+def _read_text(path: Path) -> str:
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return ""
+
+
+@st.cache_data(show_spinner="Préparation de l'aperçu du PDF ...")
+def _pdf_pages(path: str, modified: float, scale: float = 1.6) -> list[bytes]:
+    """Pages d'un PDF en images PNG (pypdfium2, sans Poppler ni LibreOffice). ``modified`` invalide le cache quand
+    le PDF est régénéré. Liste vide si le PDF est illisible."""
+    try:
+        import io
+
+        import pypdfium2 as pdfium
+
+        pdf = pdfium.PdfDocument(path)
+        try:
+            out = []
+            for i in range(len(pdf)):
+                buffer = io.BytesIO()
+                pdf[i].render(scale=scale).to_pil().save(buffer, format="PNG")
+                out.append(buffer.getvalue())
+            return out
+        finally:
+            pdf.close()
+    except Exception:  # noqa: BLE001 - l'aperçu est facultatif
+        return []
+
+
+def show_result(doc_name: str) -> None:
+    """Affiche, pour un document traité, l'OCR page par page (image à gauche, texte reconnu à droite) puis les
+    textes complets (OCR brut, texte modernisé). Les parties absentes du disque sont simplement omises."""
+    images = sorted((PAGES_IMAGES_DIR / doc_name).glob("*.png"))
+    ocr_text = _read_text(ROOT_DIR / f"{doc_name}_ocr_text.txt")
+    modern_text = _read_text(ROOT_DIR / f"{doc_name}_modernized_cleaned_text.txt")
+    if not (images or ocr_text or modern_text):
+        return
+    st.markdown(f"### 🔍 Résultat : {doc_name}")
+    tabs = st.tabs(["📖 OCR page par page", "📝 Texte modernisé", "🔤 OCR brut complet"])
+    with tabs[0]:
+        if not images:
+            st.info("Les images des pages ne sont plus sur le disque.")
+        else:
+            n = len(images)
+            page = st.slider("Page", 1, n, 1, key=f"page_{doc_name}") if n > 1 else 1
+            image_path = images[page - 1]
+            left, right = st.columns(2)
+            left.image(str(image_path), caption=f"Page {page}/{n} (image d'origine)", width="stretch")
+            page_text = _read_text(PAGES_TEXTS_DIR / doc_name / (image_path.stem + ".txt"))
+            right.text_area("Texte reconnu par l'OCR (modifiable pour copier)", page_text or "(aucun texte reconnu)",
+                            height=700, key=f"ocr_{doc_name}_{page}")
+    with tabs[1]:
+        pdf_path = ROOT_DIR / f"{doc_name}_modernized_cleaned_text.pdf"
+        pages = _pdf_pages(str(pdf_path), pdf_path.stat().st_mtime) if pdf_path.exists() else []
+        if pages:
+            st.caption(f"{len(pages)} page(s) — aperçu du PDF généré ; le fichier se télécharge plus haut.")
+            with st.container(height=800):
+                for number, png in enumerate(pages, start=1):
+                    st.image(png, caption=f"Page {number}/{len(pages)}", width="stretch")
+        elif pdf_path.exists():
+            st.warning("Le PDF n'a pas pu être affiché ; téléchargez-le plus haut.")
+        elif not modern_text:
+            st.info("Pas encore de texte modernisé pour ce document.")
+        if modern_text:
+            with st.expander(f"Texte brut ({len(modern_text.split())} mots)", expanded=not pages):
+                st.text_area("Texte modernisé", modern_text, height=500, key=f"modern_{doc_name}")
+    with tabs[2]:
+        if ocr_text:
+            st.caption(f"{len(ocr_text.split())} mots, {len(images)} page(s)")
+            st.text_area("Texte OCR brut", ocr_text, height=700, key=f"rawocr_{doc_name}")
+        else:
+            st.info("Pas de texte OCR pour ce document.")
+
+
+for _doc in document_list:
+    show_result(_doc)

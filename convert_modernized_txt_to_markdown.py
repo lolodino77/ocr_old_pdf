@@ -1,5 +1,12 @@
 import os
 
+def _is_up_to_date(output_path, source_path):
+    """Vrai si l'export existe et n'est pas plus ancien que sa source : un export périmé (texte modernisé relancé
+    depuis) doit être refait, sinon le Word et le PDF montrent l'ancien texte (constaté)."""
+    return os.path.exists(output_path) and (
+        not os.path.exists(source_path) or os.path.getmtime(output_path) >= os.path.getmtime(source_path))
+
+
 def check_if_modernized_txt_already_exported_to_markdown(document_name, directory='.'):
     """
     Vérifie si le texte modernisé existe déjà en markdown pour un document donné.
@@ -22,7 +29,7 @@ def check_if_modernized_txt_already_exported_to_markdown(document_name, director
     # print(f"Fichiers présents dans {os.path.abspath(directory)} : {os.listdir(os.path.abspath(directory))}")
 
     # Vérification d'existence
-    return os.path.exists(full_path)
+    return _is_up_to_date(full_path, os.path.splitext(full_path)[0] + ".txt")
 
 def convert_modernized_word_to_markdown(modernized_txt_filename, output_markdown_file):
     """

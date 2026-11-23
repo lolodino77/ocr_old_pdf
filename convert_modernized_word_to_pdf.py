@@ -3,6 +3,13 @@ import shutil
 import subprocess
 from pathlib import Path
 
+def _is_up_to_date(output_path, source_path):
+    """Vrai si l'export existe et n'est pas plus ancien que sa source : un export périmé (texte modernisé relancé
+    depuis) doit être refait, sinon le Word et le PDF montrent l'ancien texte (constaté)."""
+    return os.path.exists(output_path) and (
+        not os.path.exists(source_path) or os.path.getmtime(output_path) >= os.path.getmtime(source_path))
+
+
 def check_if_modernized_txt_already_exported_to_pdf(document_name, directory='.'):
     """
     Vérifie si le texte modernisé existe déjà en PDF pour un document donné.
@@ -25,10 +32,66 @@ def check_if_modernized_txt_already_exported_to_pdf(document_name, directory='.'
     # print(f"Fichiers présents dans {os.path.abspath(directory)} : {os.listdir(os.path.abspath(directory))}")
 
     # Vérification d'existence
-    return os.path.exists(full_path)
+    return _is_up_to_date(full_path, os.path.splitext(full_path)[0] + ".docx")
 
 import subprocess
 import os
+
+def find_soffice():
+    """Chemin de LibreOffice (soffice), ou None s'il n'est pas installé."""
+    soffice = shutil.which("soffice") or shutil.which("libreoffice")
+    for candidate in (r"C:\Program Files\LibreOffice\program\soffice.exe",
+                      "/Applications/LibreOffice.app/Contents/MacOS/soffice"):
+        if soffice is None and os.path.exists(candidate):
+            soffice = candidate
+    return soffice
+
+
+# Polices Unicode courantes (accents, « œ », guillemets) pour l'export PDF sans LibreOffice
+_FONTS = [
+    r"C:\Windows\Fonts\arial.ttf", r"C:\Windows\Fonts\calibri.ttf",
+    "/System/Library/Fonts/Supplemental/Arial.ttf", "/Library/Fonts/Arial.ttf",
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "/usr/share/fonts/dejavu/DejaVuSans.ttf",
+    "/usr/share/fonts/TTF/DejaVuSans.ttf", "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+    "/usr/share/fonts/liberation-sans/LiberationSans-Regular.ttf", "/usr/share/fonts/noto/NotoSans-Regular.ttf",
+]
+
+
+def _unicode_font():
+    for path in _FONTS:
+        if os.path.exists(path):
+            return path
+    import glob
+    found = sorted(glob.glob("/usr/share/fonts/**/DejaVuSans.ttf", recursive=True)
+                   + glob.glob("/usr/share/fonts/**/*Sans-Regular.ttf", recursive=True))
+    return found[0] if found else None
+
+
+def convert_docx_to_pdf_with_fpdf(docx_path):
+    """PDF simple (texte du Word, paragraphe par paragraphe) quand LibreOffice n'est pas installé :
+    cas de la version portable du programme. Utilise une police Unicode du système."""
+    from docx import Document
+    from fpdf import FPDF
+
+    font = _unicode_font()
+    if font is None:
+        raise RuntimeError("aucune police Unicode trouvée sur cet ordinateur pour fabriquer le PDF "
+                           "(installez LibreOffice, ou une police comme DejaVu Sans)")
+    pdf = FPDF(format="A4")
+    pdf.set_margins(20, 20, 20)
+    pdf.set_auto_page_break(True, margin=20)
+    pdf.add_font("texte", "", font)
+    pdf.set_font("texte", size=11)
+    pdf.add_page()
+    for paragraph in Document(docx_path).paragraphs:
+        text = paragraph.text.strip()
+        if text:
+            pdf.multi_cell(0, 6, text)
+        pdf.ln(3)
+    out = os.path.splitext(docx_path)[0] + ".pdf"
+    pdf.output(out)
+    print(f"✅ Conversion terminée (sans LibreOffice) : {out}")
+
 
 def convert_docx_to_pdf_with_libreoffice(docx_path, output_dir=None):
     """
@@ -42,10 +105,7 @@ def convert_docx_to_pdf_with_libreoffice(docx_path, output_dir=None):
         output_dir = os.path.dirname(docx_path) or "."
 
     # Commande LibreOffice headless
-    soffice = shutil.which("soffice") or shutil.which("libreoffice")
-    if soffice is None and os.name == "nt":
-        win_path = r"C:\Program Files\LibreOffice\program\soffice.exe"
-        soffice = win_path if os.path.exists(win_path) else None
+    soffice = find_soffice()
     subprocess.run([
         soffice or "soffice",
         "--headless",
@@ -67,8 +127,10 @@ def convert_modernized_word_to_pdf(word_filename):
         raise FileNotFoundError(f"❌ Le fichier Word {word_filename} est introuvable.")
     
     try:
-        # Conversion via Pandoc
-        convert_docx_to_pdf_with_libreoffice(word_filename)
+        if find_soffice():
+            convert_docx_to_pdf_with_libreoffice(word_filename)
+        else:  # version portable : pas de LibreOffice, PDF simple fabriqué en Python
+            convert_docx_to_pdf_with_fpdf(word_filename)
         return str("Le fichier a été converti avec succès en PDF : ")
     except Exception as e:
         raise RuntimeError(f"Erreur de conversion DOCX→PDF : {e}")

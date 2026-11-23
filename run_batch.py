@@ -1,6 +1,11 @@
 """Traitement en lot d'un dossier de PDF : mêmes étapes que l'application Streamlit, sans interface.
 
-Usage : python run_batch.py <dossier> [--site gemini|gpt] [--lang fra] [--language français]
+Usage : python run_batch.py <dossier> [--mode browser|api] [--site gemini|gpt] [--model gemini-2.5-flash]
+                           [--api-fallback] [--lang fra] [--language français]
+
+Deux modes d'appel au LLM : « browser » (défaut : Gemini ou ChatGPT dans Chrome, sans clé) ou « api » (API Gemini,
+clé dans la variable d'environnement GEMINI_API_KEY). Avec --api-fallback, les morceaux que le navigateur n'a pas
+pu traiter sont renvoyés par l'API.
 
 PDF → PNG → OCR → modernisation (LLM dans le navigateur) → Word → PDF → Markdown, pour chaque PDF du
 dossier. Les sorties sont écrites dans ce dossier ; le log de l'exécution (prompts envoyés, contrôles
@@ -19,6 +24,7 @@ sys.path.insert(0, str(PROJECT_DIR))
 
 import pytesseract  # noqa: E402
 
+import api_llm  # noqa: E402
 import browser_llm  # noqa: E402
 import dl_languages  # noqa: E402
 from browser_llm import split_in_chunks, write_log  # noqa: E402
@@ -71,10 +77,20 @@ def process(doc, poppler_path, site, tesseract_lang, language):
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("folder")
-    parser.add_argument("--site", default="gemini", choices=list(browser_llm.SITES))
+    parser.add_argument("--mode", default="browser", choices=["browser", "api"],
+                        help="browser : LLM dans le navigateur (sans clé) ; api : API Gemini (GEMINI_API_KEY)")
+    parser.add_argument("--site", default="gemini", choices=list(browser_llm.SITES), help="site en mode browser")
+    parser.add_argument("--model", default=api_llm.DEFAULT_MODEL, help="modèle Gemini en mode api, ou pour le secours")
+    parser.add_argument("--api-fallback", action="store_true",
+                        help="en mode browser, renvoie par l'API les morceaux que le navigateur n'a pas pu traiter")
     parser.add_argument("--lang", default="fra", help="langue Tesseract (fra, eng, deu…)")
     parser.add_argument("--language", default="français", help="langue du texte, pour le prompt")
     args = parser.parse_args()
+
+    site = api_llm.spec(args.model) if args.mode == "api" else args.site
+    if (args.mode == "api" or args.api_fallback) and not api_llm.get_api_key():
+        parser.error("clé API Gemini introuvable : définissez la variable d'environnement GEMINI_API_KEY")
+    api_llm.set_fallback(args.model if args.mode == "browser" and args.api_fallback else None)
 
     folder = Path(args.folder).resolve()
     poppler_path = find_poppler_path()
@@ -84,11 +100,11 @@ def main():
 
     docs = sorted(p.stem for p in folder.glob("*.pdf") if not p.stem.endswith("_modernized_cleaned_text"))
     print("log :", browser_llm.start_run_log())
-    write_log(f"lot | dossier={folder} | {len(docs)} document(s) | site={args.site}")
+    write_log(f"lot | dossier={folder} | {len(docs)} document(s) | site={site}" + (f" | repli API={args.model}" if api_llm.get_fallback() else ""))
     rows = []
     for i, doc in enumerate(docs, start=1):
         print(f"\n=== [{i}/{len(docs)}] {doc}", flush=True)
-        rows.append(process(doc, poppler_path, args.site, args.lang, args.language))
+        rows.append(process(doc, poppler_path, site, args.lang, args.language))
         with open(folder / "batch_summary.csv", "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=list(rows[0]))
             writer.writeheader()

@@ -60,6 +60,9 @@ def default_profile_dir():
     return Path(os.environ.get("OCR_BROWSER_PROFILE") or Path.home() / ".ocr_old_pdf" / "browser_profile")
 
 
+LOGIN_WAIT_S = 300  # temps laissé pour se connecter dans la fenêtre à la première utilisation
+
+
 class BrowserSession:
     """Chrome piloté par Playwright, profil persistant, fenêtre visible (connexion et captcha manuels)."""
 
@@ -142,11 +145,18 @@ class BrowserSession:
                 raise BrowserLLMUnavailable(f"{site} : la page ne se charge pas ({exc})") from exc
             try:
                 page.wait_for_selector(cfg["input"], timeout=60000)
-            except Exception as exc:  # noqa: BLE001
-                raise BrowserLLMUnavailable(
-                    f"{site} : zone de saisie introuvable (déconnecté ? captcha ? interface modifiée ? "
-                    "lancez « python browser_llm.py login »)"
-                ) from exc
+            except Exception:  # noqa: BLE001
+                # Première utilisation (profil vide) : la fenêtre est visible, on laisse le temps à l'utilisateur
+                # de se connecter ou de traiter un captcha, puis la saisie apparaît d'elle-même.
+                print(f"{site} : connectez-vous dans la fenêtre du navigateur (ou traitez le captcha) ; "
+                      f"attente de {LOGIN_WAIT_S // 60} minutes maximum ...", flush=True)
+                try:
+                    page.wait_for_selector(cfg["input"], timeout=LOGIN_WAIT_S * 1000)
+                except Exception as exc:  # noqa: BLE001
+                    raise BrowserLLMUnavailable(
+                        f"{site} : zone de saisie introuvable après {LOGIN_WAIT_S // 60} minutes (non connecté ? "
+                        "captcha ? interface modifiée ?). Relancez et connectez-vous dans la fenêtre qui s'ouvre."
+                    ) from exc
             self._dismiss_banners(page)
             for attempt in (1, 2):
                 try:
@@ -167,13 +177,34 @@ class BrowserSession:
             except Exception:  # noqa: BLE001
                 pass
 
+    @staticmethod
+    def _last_reply(page, cfg):
+        """(texte de la dernière réponse du modèle, textes de TOUS ses blocs de code).
+
+        Le modèle coupe parfois sa réponse en plusieurs blocs de code malgré la consigne : ne lire que le dernier
+        bloc de la page perdait alors le début du texte (constaté : titre et première phrase d'un sermon disparus)."""
+        try:
+            replies = page.locator(cfg["reply"])
+            n = replies.count()
+            if not n:
+                return "", []
+            last = replies.nth(n - 1)
+            return last.inner_text(), [t for t in last.locator(cfg["code"]).all_inner_texts() if t.strip()]
+        except Exception:  # noqa: BLE001
+            return "", []
+
     def _wait_answer(self, page, site, cfg, timeout_s):
         start = time.monotonic()
         while time.monotonic() - start < timeout_s:
-            for key in ("code", "reply"):
-                text = self._last_text(page, cfg[key])
-                if END_MARKER in text:
-                    return text
+            reply, blocks = self._last_reply(page, cfg)
+            if END_MARKER in reply or any(END_MARKER in b for b in blocks):
+                if not blocks:
+                    return reply
+                text = "\n\n".join(blocks)
+                return text if END_MARKER in text else f"{text}\n{END_MARKER}"
+            text = self._last_text(page, cfg["code"])  # page dont la structure ne correspond pas au sélecteur
+            if not reply and END_MARKER in text:
+                return text
             reply = self._last_text(page, cfg["reply"])
             if time.monotonic() - start > 20 and _REFUSAL_RE.search(reply):
                 # Refus du modèle : inutile d'attendre la ligne de fin, une nouvelle conversation répond souvent
@@ -343,12 +374,8 @@ def log_prompts(document, site, chunks, sent, error=None):
     )
 
 
-def run_prompts(site, prompts, timeout_s=300, document="", allow_partial=False):
-    """Envoie les prompts à ``site`` et renvoie les réponses nettoyées (une par prompt).
-
-    Le nombre de prompts réellement envoyés (réessais compris) est consigné dans le log de l'exécution
-    (``logs/``, voir ``start_run_log``). Avec ``allow_partial``, un prompt en échec donne ``None`` au lieu
-    de faire échouer l'ensemble (sauf si tous échouent).
+def _run_browser(site, prompts, timeout_s):
+    """Envoie les prompts au site dans un sous-processus. Retourne ``{"answers", "prompts_sent", "error"?}``.
 
     Playwright tourne dans un **sous-processus** : il a besoin d'une boucle asyncio capable de lancer des
     processus, ce que le thread de Streamlit n'offre pas sous Windows (NotImplementedError).
@@ -357,29 +384,66 @@ def run_prompts(site, prompts, timeout_s=300, document="", allow_partial=False):
     import subprocess
     import tempfile
 
+    n = len(prompts)
     with tempfile.TemporaryDirectory() as tmp:
         src, dst = Path(tmp) / "prompts.json", Path(tmp) / "answers.json"
         src.write_text(json.dumps(prompts, ensure_ascii=False), encoding="utf-8")
         # Durée maximale : chaque prompt peut épuiser son délai et ses nouveaux essais. Au-delà, le navigateur
         # est considéré comme bloqué (constaté : sous-processus figé plus d'une heure) et il est arrêté.
-        max_s = len(prompts) * 3 * (timeout_s + 100) + 120
+        max_s = n * 3 * (timeout_s + 100) + 120
         try:
             proc = subprocess.run(
                 [sys.executable, str(Path(__file__).resolve()), "batch", site, str(src), str(dst), str(timeout_s)],
                 capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=max_s,
             )
         except subprocess.TimeoutExpired:
-            error = f"navigateur bloqué : aucune fin après {max_s} s, sous-processus arrêté"
-            log_prompts(document, site, len(prompts), 0, error + " (prompts envoyés inconnus)")
-            raise BrowserLLMUnavailable(error)
+            return {"answers": [None] * n, "prompts_sent": 0, "sent_unknown": True,
+                    "error": f"navigateur bloqué : aucune fin après {max_s} s, sous-processus arrêté"}
         if proc.stdout:
             print(proc.stdout, end="")
         if not dst.exists():
-            error = f"Le sous-processus navigateur a échoué : {proc.stderr[-500:]}"
-            log_prompts(document, site, len(prompts), 0, error + " (prompts envoyés inconnus)")
-            raise BrowserLLMUnavailable(error)
-        result = json.loads(dst.read_text(encoding="utf-8"))
-    log_prompts(document, site, len(prompts), result.get("prompts_sent", 0), result.get("error"))
+            return {"answers": [None] * n, "prompts_sent": 0, "sent_unknown": True,
+                    "error": f"Le sous-processus navigateur a échoué : {proc.stderr[-500:]}"}
+        return json.loads(dst.read_text(encoding="utf-8"))
+
+
+def run_prompts(site, prompts, timeout_s=300, document="", allow_partial=False):
+    """Envoie les prompts et renvoie les réponses nettoyées (une par prompt).
+
+    ``site`` : « gemini » ou « gpt » (LLM dans le navigateur) ou « api:<modèle> » (API Gemini, voir api_llm.py).
+    Si le navigateur échoue pour des morceaux et qu'un repli API est configuré (``api_llm.set_fallback``) avec une
+    clé, ces morceaux sont renvoyés par l'API.
+
+    Le nombre de prompts réellement envoyés (réessais et repli compris) est consigné dans le log de l'exécution
+    (``logs/``, voir ``start_run_log``). Avec ``allow_partial``, un prompt en échec donne ``None`` au lieu
+    de faire échouer l'ensemble (sauf si tous échouent).
+    """
+    import api_llm
+
+    n = len(prompts)
+    if api_llm.is_api(site):
+        result = api_llm.run_batch(api_llm.model_of(site), prompts, timeout_s)
+    else:
+        result = _run_browser(site, prompts, timeout_s)
+        answers = list(result.get("answers") or []) + [None] * (n - len(result.get("answers") or []))
+        missing = [i for i, a in enumerate(answers) if a is None]
+        fb = api_llm.get_fallback()
+        if missing and fb and api_llm.get_api_key():
+            note = f"{len(missing)} prompt(s) sur {n} renvoyé(s) via {api_llm.spec(fb)} après échec du navigateur"
+            write_log(f"document={document} | repli API | {note} | cause : {str(result.get('error'))[:200]}")
+            fb_result = api_llm.run_batch(fb, [prompts[i] for i in missing], timeout_s)
+            for i, a in zip(missing, fb_result["answers"]):
+                answers[i] = a
+            result = {"answers": answers,
+                      "prompts_sent": result.get("prompts_sent", 0) + fb_result["prompts_sent"],
+                      "error": fb_result.get("error") if any(a is None for a in answers) else None}
+            site = f"{site}+{api_llm.spec(fb)}"
+            if result["error"] is None:
+                del result["error"]
+    error = result.get("error")
+    if result.get("sent_unknown"):
+        error = f"{error} (prompts envoyés inconnus)"
+    log_prompts(document, site, n, result.get("prompts_sent", 0), error)
     answers = result.get("answers") or []
     if "error" in result and not (allow_partial and any(a is not None for a in answers)):
         raise BrowserLLMUnavailable(result["error"])

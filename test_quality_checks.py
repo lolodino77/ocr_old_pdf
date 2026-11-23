@@ -151,12 +151,123 @@ def test_failed_chunk_is_split_and_resent():
     assert parts[1].split() == chunks[1].split()  # les deux moitiés recollées redonnent tout le morceau
 
 
+def test_chunk_omission_is_detected_even_if_the_text_repeats_later():
+    # Le verset est cité deux fois dans l'original ; le LLM omet le début (titre + première citation) : le passage
+    # omis ne doit pas être pris pour un passage « déplacé » sous prétexte que le verset réapparaît plus loin.
+    verse = "N'ayez point de peur car voici je vous annonce une grande joie qui sera à tout le peuple. "
+    title = "Sermon dix-neuvième pour le jour de Noël prononcé un mercredi vingt-cinq décembre mille six cent trente. "
+    body = "Nous célébrâmes dimanche dernier la mort du Seigneur Jésus aujourd'hui nous solennisons sa naissance. " * 3
+    source = title + verse + body + "Et l'ange leur dit encore : " + verse + body
+    answer = body + "Et l'ange leur dit encore : " + verse + body
+    assert check_chunk(source, answer)["missing"], "omission du début non détectée"
+
+
+def test_chunk_moved_passage_is_not_an_omission():
+    a = "Premier passage qui parle de la grâce et de la foi des fidèles assemblés dans le temple ce jour-là. " * 2
+    b = "Second passage qui décrit la charité des Philippiens envers l'apôtre prisonnier à Rome sous Néron. " * 2
+    c = "Troisième passage sur la joie de saint Paul qui se réjouit au Seigneur de leur soin pour lui. " * 2
+    assert check_chunk(a + b + c, a + c + b)["missing"] == []
+
+
 def test_extract_answer_drops_interface_labels():
     from browser_llm import extract_answer
 
     raw = "Extrait de code\n\nVoici maintenant quel sera votre sort.\n###FIN###"
     assert extract_answer(raw) == "Voici maintenant quel sera votre sort."
     assert extract_answer("```text\nUn texte.\n```\n###FIN###") == "Un texte."
+
+
+# --- Mode API sans clé et échec du navigateur sans repli (aucun appel réseau, aucune clé) -----------------
+
+class _NoKey:
+    """Isole le test : pas de clé (ni variable d'environnement, ni vrai .env), log dans un fichier temporaire."""
+
+    def __enter__(self):
+        import os
+        import tempfile
+        from pathlib import Path
+
+        import api_llm
+        import browser_llm
+
+        self.mods = (api_llm, browser_llm)
+        self.saved = (browser_llm._run_log, browser_llm._run_total, api_llm._api_key, api_llm._fallback_model,
+                      dict(os.environ), api_llm.ENV_FILE)
+        self.tmp = tempfile.TemporaryDirectory()
+        browser_llm._run_log, browser_llm._run_total = Path(self.tmp.name) / "run.log", 0
+        api_llm.ENV_FILE = Path(self.tmp.name) / "absent.env"  # jamais le vrai .env de l'utilisateur
+        for var in api_llm.KEY_VARS:
+            os.environ.pop(var, None)
+        api_llm.set_api_key(None)
+        api_llm.set_fallback(None)
+        return self
+
+    def log(self):
+        return self.mods[1]._run_log.read_text(encoding="utf-8")
+
+    def __exit__(self, *exc):
+        import os
+
+        api_llm, browser_llm = self.mods
+        (browser_llm._run_log, browser_llm._run_total, api_llm._api_key, api_llm._fallback_model,
+         env, api_llm.ENV_FILE) = self.saved
+        os.environ.clear()
+        os.environ.update(env)
+        self.tmp.cleanup()
+
+
+def test_api_mode_without_key_explains_how_to_set_it():
+    from browser_llm import BrowserLLMUnavailable, run_prompts
+
+    with _NoKey() as ctx:
+        try:
+            run_prompts("api:gemini-2.5-flash", ["p1"], document="doc")
+            raise AssertionError("une erreur était attendue")
+        except BrowserLLMUnavailable as exc:
+            assert "GEMINI_API_KEY" in str(exc)
+        assert "prompts_envoyes=0" in ctx.log()  # rien n'a été envoyé
+
+
+def test_browser_failure_without_fallback_still_raises():
+    import browser_llm
+
+    with _NoKey():
+        original = browser_llm._run_browser
+        browser_llm._run_browser = lambda site, prompts, timeout_s: {
+            "answers": [None], "prompts_sent": 1, "error": "refus du modèle"}
+        try:
+            try:
+                browser_llm.run_prompts("gemini", ["p1"], document="doc")
+                raise AssertionError("une erreur était attendue")
+            except browser_llm.BrowserLLMUnavailable:
+                pass
+        finally:
+            browser_llm._run_browser = original
+
+
+def test_stale_exports_are_regenerated():
+    # Un Word (ou PDF, ou Markdown) plus ancien que sa source est refait : sinon il montre l'ancien texte.
+    import os
+    import tempfile
+
+    from convert_modernized_txt_to_word import check_if_modernized_txt_already_exported_to_word as word_done
+    from convert_modernized_word_to_pdf import check_if_modernized_txt_already_exported_to_pdf as pdf_done
+
+    with tempfile.TemporaryDirectory() as tmp:
+        def make(name, age):  # age en secondes avant maintenant
+            path = os.path.join(tmp, name)
+            open(path, "w").close()
+            os.utime(path, (os.path.getmtime(path) - age,) * 2)
+
+        make("Doc_modernized_cleaned_text.docx", 100)
+        make("Doc_modernized_cleaned_text.txt", 0)  # texte relancé après l'export Word
+        assert not word_done("Doc", tmp)
+        make("Doc_modernized_cleaned_text.docx", 0)
+        assert word_done("Doc", tmp)
+        make("Doc_modernized_cleaned_text.pdf", 100)  # PDF plus ancien que le Word
+        assert not pdf_done("Doc", tmp)
+        make("Doc_modernized_cleaned_text.pdf", -10)
+        assert pdf_done("Doc", tmp)
 
 
 def test_residual_archaic():

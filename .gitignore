@@ -150,6 +150,7 @@ celerybeat.pid
 # Environments
 .env
 .envrc
+connexions.json
 .venv
 env/
 venv/
@@ -224,3 +225,12 @@ logs/
 
 # PDF de test copiés depuis dvarim.fr et leurs sorties
 tests_dvarim/
+
+# Version portable : paquets fabriqués et fichiers créés par le programme quand il tourne
+dist/
+instance.json
+modernisateur*.log
+preparation*.log
+runtime/
+browser_profile/
+!packaging/**/LISEZ-MOI.txt

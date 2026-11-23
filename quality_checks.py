@@ -71,12 +71,17 @@ def check_chunk(source, answer, min_words=20):
     a = [w for _, _, w in src]
     sm = difflib.SequenceMatcher(None, a, ans, autojunk=False)
     matched = sum(block.size for block in sm.get_matching_blocks())
+    opcodes = sm.get_opcodes()
+    # Mots de la réponse qui ne correspondent à rien dans l'OCR : un passage déplacé par le LLM s'y retrouve.
+    unmatched = [w for tag, _i1, _i2, j1, j2 in opcodes if tag in ("insert", "replace") for w in ans[j1:j2]]
     missing = []
-    for tag, i1, i2, j1, j2 in sm.get_opcodes():
+    for tag, i1, i2, j1, j2 in opcodes:
         if tag in ("delete", "replace") and i2 - i1 >= min_words and (j2 - j1) < 0.3 * (i2 - i1):
             # Passage déplacé par le LLM (lignes de l'OCR remises dans l'ordre) : présent ailleurs, pas omis.
-            # Seuls les groupes d'au moins 2 mots comptent (des mots isolés communs se retrouvent partout).
-            moved = difflib.SequenceMatcher(None, a[i1:i2], ans, autojunk=False)
+            # Cherché seulement dans les mots de la réponse restés sans correspondance : un passage omis dont le
+            # texte se répète plus loin dans l'original (verset cité deux fois) n'est pas pris pour un passage
+            # déplacé (constaté). Seuls les groupes d'au moins 2 mots comptent.
+            moved = difflib.SequenceMatcher(None, a[i1:i2], unmatched, autojunk=False)
             if sum(b.size for b in moved.get_matching_blocks() if b.size >= 2) >= 0.3 * (i2 - i1):
                 continue
             span = source[src[i1][0]:src[i2 - 1][1]]

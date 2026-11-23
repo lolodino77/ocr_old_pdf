@@ -16,7 +16,11 @@ google-api-core==2.27.0
 google-api-python-client==2.185.0
 google-auth==2.41.1
 google-auth-httplib2==0.2.0
+google-genai==1.46.0
 playwright==1.64.1
+fpdf2==2.9.0
+pypdfium2==5.15.2
+truststore==0.10.5
 googleapis-common-protos==1.71.0
 grpcio==1.76.0
 grpcio-status==1.71.2
