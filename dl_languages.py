@@ -13,6 +13,7 @@ def setup_tesseract_langs():
     system_paths = [
         Path("/usr/share/tesseract-ocr/5/tessdata"),
         Path("/usr/share/tessdata"),
+        Path("C:/Program Files/Tesseract-OCR/tessdata"),
     ]
 
     # --- 3) Copier tous les fichiers système dans le dossier local ---
@@ -29,6 +30,10 @@ def setup_tesseract_langs():
 
     # --- 4) Télécharger les langues manquantes ---
     langs = {
+        "fra": "https://github.com/tesseract-ocr/tessdata_best/raw/main/fra.traineddata",
+        "eng": "https://github.com/tesseract-ocr/tessdata_best/raw/main/eng.traineddata",
+        "spa": "https://github.com/tesseract-ocr/tessdata_best/raw/main/spa.traineddata",
+        "deu": "https://github.com/tesseract-ocr/tessdata_best/raw/main/deu.traineddata",
         "pol": "https://github.com/tesseract-ocr/tessdata_best/raw/main/pol.traineddata",
         "lit": "https://github.com/tesseract-ocr/tessdata_best/raw/main/lit.traineddata",
         "dan": "https://github.com/tesseract-ocr/tessdata_best/raw/main/dan.traineddata",

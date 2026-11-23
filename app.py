@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import List
 import base64
 import dl_languages
+import browser_llm
+from system_paths import find_poppler_path, find_tesseract_cmd
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import pytesseract
@@ -72,9 +74,15 @@ st.markdown(
 
 ### Définition des chemins de Tesseract poppler (PDF => PNG) et (OCR PNG => texte) 
 # --- Chemins pour Linux / Streamlit Cloud / Codespaces ---
-st.session_state["poppler_path"] = "/usr/bin" #"./_internal/poppler-23.11.0/Library/bin"
-st.session_state["tesseract_path"] = "/usr/bin/tesseract" #"./_internal/Tesseract/tesseract.exe"
-pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract" #"./_internal/Tesseract/tesseract.exe"
+st.session_state["poppler_path"] = find_poppler_path()
+st.session_state["tesseract_path"] = find_tesseract_cmd()
+pytesseract.pytesseract.tesseract_cmd = st.session_state["tesseract_path"]
+if st.session_state["poppler_path"] is None:
+    st.error("❌ Poppler introuvable (pdftoppm). Installez-le (Windows : `winget install oschwartz10612.Poppler`) "
+             "puis relancez l'application.")
+if not shutil.which(st.session_state["tesseract_path"]) and not Path(st.session_state["tesseract_path"]).exists():
+    st.error("❌ Tesseract introuvable. Installez-le (Windows : `winget install UB-Mannheim.TesseractOCR`) "
+             "puis relancez l'application.")
 
 # Chemin vers les fichiers de langue Tesseract
 # os.environ["TESSDATA_PREFIX"] = "/usr/share/tesseract-ocr/5/tessdata/"
@@ -89,8 +97,7 @@ dl_languages.setup_tesseract_langs()
 st.success("✅ Langues Tesseract prêtes à l'emploi !")
 
 st.write(f"Tesseract path : {pytesseract.pytesseract.tesseract_cmd}")
-st.write(f'Tesseract path : {st.session_state["poppler_path"]}')
-st.write(f'Poppler path   : {st.session_state["tesseract_path"]}')
+st.write(f'Poppler path   : {st.session_state["poppler_path"]}')
 
 # --- Upload ---
 uploaded_files = st.file_uploader(
@@ -175,18 +182,12 @@ st.write(f"tesseract_lang = {tesseract_lang}, language = {language}")
 
 # --- CONFIGURATION DU LLM ---
 # --- LISTE DÉROULANTE : Choisir le modèle LLM qu'on veut ---
-LLM_model_name = st.selectbox(
-    "🖥️ Choix du modèle LLM",
-    [
-        "gemini-2.5-flash",
-        "gemini-2.5-pro",
-        "gemini-2.0-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-3-flash-preview",
-        "gemini-3-pro-preview"
-    ],
-    index=0
-)
+# Le LLM est utilisé via le navigateur (Playwright, profil persistant) : pas de clé API.
+# Première utilisation : python browser_llm.py login  (connexion manuelle à Gemini / ChatGPT)
+LLM_site_labels = {"Gemini (gemini.google.com)": "gemini", "ChatGPT (chatgpt.com)": "gpt"}
+LLM_site_label = st.selectbox("🖥️ Choix du LLM (piloté dans le navigateur)", list(LLM_site_labels), index=0)
+LLM_model_name = LLM_site_labels[LLM_site_label]
+st.caption("Une fenêtre Chrome s'ouvre pendant l'étape 3 : ne la fermez pas et traitez un éventuel captcha.")
 
 # Bouton de lancement
 start = st.button("🚀 Démarrer la modernisation")
@@ -208,6 +209,8 @@ if start:
     if not document_list:
         st.error("Aucun fichier à traiter : téléversez d'abord des PDF.")
     else:
+        run_log = browser_llm.start_run_log()
+        st.caption(f"Log de l'exécution (prompts envoyés) : {run_log}")
         generated_docx = []
         generated_pdf = []
         generated_markdown = []

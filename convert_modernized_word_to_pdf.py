@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -41,8 +42,12 @@ def convert_docx_to_pdf_with_libreoffice(docx_path, output_dir=None):
         output_dir = os.path.dirname(docx_path) or "."
 
     # Commande LibreOffice headless
+    soffice = shutil.which("soffice") or shutil.which("libreoffice")
+    if soffice is None and os.name == "nt":
+        win_path = r"C:\Program Files\LibreOffice\program\soffice.exe"
+        soffice = win_path if os.path.exists(win_path) else None
     subprocess.run([
-        "soffice",
+        soffice or "soffice",
         "--headless",
         "--convert-to", "pdf",
         "--outdir", output_dir,
