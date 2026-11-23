@@ -1,0 +1,58 @@
+MODERNISATEUR DE LIVRES ANCIENS - VERSION PORTABLE POUR LINUX
+==============================================================
+
+Le programme lit le texte de vieux livres en PDF (OCR), le modernise (orthographe actuelle) avec Gemini,
+et vous rend un document Word, PDF et Markdown.
+
+Il vous faut : une distribution de bureau récente (Ubuntu, Debian, Mint, Fedora, openSUSE, Arch, Manjaro…),
+un PC 64 bits (Intel, AMD ou ARM), une connexion Internet, et environ 2 Go de place libre.
+Rien ne s'installe ailleurs sur l'ordinateur, sauf l'entrée du menu des applications : tout reste dans le
+dossier que vous allez extraire. Aucun mot de passe d'administrateur n'est demandé.
+
+PREMIÈRE FOIS
+-------------
+1. Clic droit sur le fichier .zip reçu, puis « Extraire ici » (ou dans un terminal :
+   unzip ModernisateurLivresAnciens-Linux.zip). Évitez une clé USB ou une partition Windows.
+2. Dans le dossier extrait, lancez « ouvrir-le-modernisateur.sh » :
+   - double-clic ; si rien ne se passe (GNOME, Ubuntu), clic droit > « Exécuter comme un programme » ;
+   - ou, dans un terminal ouvert dans ce dossier : sh ouvrir-le-modernisateur.sh
+3. Une fenêtre de terminal prépare le programme (Python, Tesseract, langues, navigateur...). Comptez 5 à
+   10 minutes, une seule fois. Ne la fermez pas. À la fin, le programme s'ouvre dans votre navigateur.
+
+ENSUITE
+-------
+- Ouvrez « Modernisateur de livres anciens » depuis le menu des applications (ou relancez
+  « ouvrir-le-modernisateur.sh »).
+- Le programme s'ouvre dans votre navigateur : déposez vos PDF, choisissez la langue, puis cliquez sur
+  « Démarrer la modernisation ». Les documents produits se téléchargent depuis la page.
+- Pour le fermer : bouton « Quitter le programme », dans la colonne de gauche de la page.
+
+DEUX FAÇONS D'UTILISER GEMINI
+-----------------------------
+- « Navigateur (sans clé API) » : rien à configurer. Une fenêtre de navigateur s'ouvre pendant la
+  modernisation : ne la fermez pas. (Google Chrome est utilisé s'il est installé.)
+- « API Gemini (clé requise) » : créez une clé gratuite sur https://aistudio.google.com/apikey et
+  collez-la dans le champ prévu sur la page. Pour ne plus avoir à la saisir : copiez le fichier
+  programme/.env.example en programme/.env, et remplacez « votre_cle_ici » par votre clé.
+
+DÉPLACER LE DOSSIER
+-------------------
+Possible à tout moment (programme fermé). Ensuite, relancez « ouvrir-le-modernisateur.sh » : il se répare
+tout seul en une ou deux minutes, et l'entrée du menu est mise à jour.
+
+METTRE À JOUR
+-------------
+Fermez le programme, puis extrayez le nouveau .zip AU MÊME ENDROIT que l'ancien en remplaçant les fichiers
+(dans un terminal : unzip -o ModernisateurLivresAnciens-Linux.zip). Relancez ensuite
+« ouvrir-le-modernisateur.sh ». Vos documents, votre clé API et vos réglages sont conservés.
+
+DÉSINSTALLER
+------------
+Fermez le programme, puis dans un terminal : sh ouvrir-le-modernisateur.sh --desinstaller
+(retire l'entrée du menu), puis supprimez le dossier.
+Attention : les PDF déposés et les documents produits, enregistrés dans ce dossier, sont supprimés avec lui.
+
+EN CAS DE PROBLÈME
+------------------
+- La préparation s'arrête : lisez le message, puis relancez (elle reprend sans rien perdre).
+- Le programme ne s'ouvre pas : le détail est dans le fichier programme/modernisateur.log.
