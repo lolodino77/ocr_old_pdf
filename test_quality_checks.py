@@ -270,6 +270,45 @@ def test_stale_exports_are_regenerated():
         assert pdf_done("Doc", tmp)
 
 
+def test_recette_data_is_saved_with_exact_positions():
+    # Modernisation complète avec un faux LLM (renvoie le texte tel quel) : le fichier de recette contient les
+    # positions exactes de chaque morceau dans l'OCR et dans le texte final, et chaque envoi.
+    import json
+    import os
+    import re
+    import tempfile
+
+    import ocr_text_to_modernized_text as m
+
+    def fake_run_prompts(site, prompts, timeout_s=300, document="", allow_partial=False):
+        return [re.search(r"\[TEXTE À RÉÉCRIRE\]\n(.*?)\n\[FIN DU TEXTE À RÉÉCRIRE\]", p, re.S).group(1) for p in prompts]
+
+    ocr = (SENTENCE * 40 + "\n\n") * 4
+    saved = (m.run_prompts, m.write_log, m.CHUNK_MAX_CHARS, os.getcwd())
+    with tempfile.TemporaryDirectory() as tmp:
+        os.chdir(tmp)
+        m.run_prompts, m.write_log, m.CHUNK_MAX_CHARS = fake_run_prompts, lambda message: None, 1500
+        try:
+            open("Doc_ocr_text.txt", "w", encoding="utf-8").write(ocr)
+            import contextlib
+            import io
+
+            with contextlib.redirect_stdout(io.StringIO()):  # affichages avec emoji : console cp1252 des tests
+                final = m.modernize_and_clean_ocr_text("Doc", "gemini", "français")
+            data = json.load(open("Doc_recette.json", encoding="utf-8"))
+        finally:
+            m.run_prompts, m.write_log, m.CHUNK_MAX_CHARS = saved[:3]
+            os.chdir(saved[3])
+    morceaux = data["morceaux"]
+    assert len(morceaux) > 1 and data["taille_max_morceau"] == 1500
+    assert "".join(ocr[x["ocr_debut"]:x["ocr_fin"]] for x in morceaux) == ocr
+    for x in morceaux:
+        assert final[x["final_debut"]:x["final_debut"] + len(x["reponse_finale"].strip())] == x["reponse_finale"].strip()
+        assert x["envois"][0]["type"] == "premier envoi" and x["envoi_garde"] == 0
+        assert "[TEXTE À RÉÉCRIRE]" in x["envois"][0]["prompt"]
+    assert data["consignes"] and data["texte_final"]["caracteres"] == len(final)
+
+
 def test_residual_archaic():
     assert residual_archaic("Il estoit jusques à moy, et il croit qu'il doit.") == {"estoit": 1, "jusques": 1, "moy": 1}
 

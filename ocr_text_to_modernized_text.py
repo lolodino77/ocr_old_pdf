@@ -1,13 +1,15 @@
 
 from browser_llm import (
-    END_MARKER, SITES, BrowserLLMUnavailable, join_chunks, run_prompts, split_in_chunks, write_log,
+    END_MARKER, SITES, BrowserLLMUnavailable, current_log, join_chunks, run_prompts, split_in_chunks, write_log,
 )
 import api_llm
 import progress
 from quality_checks import AUTO_FIXED, check_chunk, check_junctions, residual_archaic
+from recette_data import RecetteData
 import os
 
-import os
+CHUNK_MAX_CHARS = 6000  # taille maximale d'un morceau envoyé au LLM (caractères du texte OCR)
+
 
 def check_if_already_modernized(document_name, directory='.'):
     """
@@ -66,7 +68,7 @@ def _chunk_problems(chunks, parts):
     return problems, junctions
 
 
-def fill_failed_chunks(document_name, site, task, chunks, parts, timeout_s):
+def fill_failed_chunks(document_name, site, task, chunks, parts, timeout_s, record=None):
     """Morceaux sans réponse (refus du modèle, échec) : redécoupés en deux moitiés et renvoyés, un texte
     plus court passant souvent le filtre. Lève BrowserLLMUnavailable si une moitié échoue encore."""
     parts = list(parts)
@@ -79,6 +81,9 @@ def fill_failed_chunks(document_name, site, task, chunks, parts, timeout_s):
         write_log(f"document={document_name} | morceau {i + 1} sans réponse : renvoi en {len(halves)} parties")
         answers = run_prompts(site, prompts, timeout_s, document=f"{document_name} (morceau {i + 1} redécoupé)")
         parts[i] = join_chunks(halves, answers)
+        if record is not None:
+            record.attempt(i, "redécoupe après refus", "\n\n===== MOITIÉ SUIVANTE =====\n\n".join(prompts),
+                           parts[i], motif="aucune réponse au premier envoi (refus ou échec)", garde=True)
     return parts
 
 
@@ -88,7 +93,7 @@ def _score(chunk, part):
     return sum(len(m.split()) for m in r["missing"]) + 20 * len(r["added"])
 
 
-def check_and_retry(document_name, site, task, chunks, parts, timeout_s, max_rounds=1):
+def check_and_retry(document_name, site, task, chunks, parts, timeout_s, max_rounds=1, record=None):
     """Contrôle chaque morceau et chaque jointure ; renvoie au LLM les morceaux fautifs (avec le problème
     constaté) et garde la meilleure réponse. Tout est consigné dans le log de l'exécution (logs/)."""
     parts = list(parts)
@@ -120,8 +125,11 @@ def check_and_retry(document_name, site, task, chunks, parts, timeout_s, max_rou
         except BrowserLLMUnavailable as exc:
             write_log(f"document={document_name} | renvoi impossible : {exc}")
             break
-        for i, answer in zip(redo, answers):
-            if answer is not None and _score(chunks[i], answer) <= _score(chunks[i], parts[i]):
+        for i, prompt, answer in zip(redo, extra, answers):
+            better = answer is not None and _score(chunks[i], answer) <= _score(chunks[i], parts[i])
+            if record is not None:
+                record.attempt(i, "renvoi après contrôle qualité", prompt, answer, motif=problems[i], garde=better)
+            if better:
                 parts[i] = answer
     write_log(f"document={document_name} | bilan qualité | problèmes restants={sum(map(len, problems.values()))}")
     return parts
@@ -181,24 +189,32 @@ Format de réponse STRICT : uniquement le texte réécrit, sans explication ni c
     with open(f"{document_name}_ocr_text.txt", "r", encoding="utf-8") as fichier:
         ocr_text = fichier.read()
 
-    chunks = split_in_chunks(ocr_text)
+    chunks = split_in_chunks(ocr_text, max_chars=CHUNK_MAX_CHARS)
     prompts = [build_chunk_prompt(task, chunks, i) for i in range(len(chunks))]
 
     # Sauvegarde des prompts
     with open(f"{document_name}_modernization_prompt.txt", 'w', encoding='utf-8') as f_prompt:
         f_prompt.write(("\n\n" + "=" * 40 + "\n\n").join(prompts))
 
+    # Données de recette : tout ce qu'il faut pour vérifier le travail après coup (<document>_recette.json)
+    record = RecetteData(document_name, site, language, task, chunks, ocr_text, max_chars=CHUNK_MAX_CHARS)
     progress.set_stage("llm")
     progress.report(0, len(prompts), f"{len(prompts)} morceau(x) à moderniser")
     parts = run_prompts(site, prompts, timeout_s, document=document_name, allow_partial=True)
+    for i, (prompt, part) in enumerate(zip(prompts, parts)):
+        record.attempt(i, "premier envoi", prompt, part, garde=part is not None)
     progress.set_stage("llm_fix")  # morceaux refusés ou fautifs renvoyés
     progress.report(0, 1, "contrôle qualité")
-    parts = fill_failed_chunks(document_name, site, task, chunks, parts, timeout_s)
-    parts = check_and_retry(document_name, site, task, chunks, parts, timeout_s)
+    parts = fill_failed_chunks(document_name, site, task, chunks, parts, timeout_s, record=record)
+    parts = check_and_retry(document_name, site, task, chunks, parts, timeout_s, record=record)
     progress.report(1, 1, "contrôle qualité terminé")
-    # Filet de sécurité : le s long ne doit jamais apparaître dans le texte modernisé
-    modernized_cleaned_text = join_chunks(chunks, parts).replace("ſ", "s")
+    # Filet de sécurité : le s long ne doit jamais apparaître dans le texte modernisé (même longueur : les
+    # positions des morceaux dans le texte final restent exactes)
+    starts = []
+    modernized_cleaned_text = join_chunks(chunks, parts, starts=starts).replace("ſ", "s")
     log_final_quality(document_name, modernized_cleaned_text)
+    record.finish(chunks, parts, modernized_cleaned_text, starts, check_junctions(chunks, parts), log_path=current_log())
+    print(f"Données de recette enregistrées : {record.save()}")
 
     # Écriture du texte nettoyé
     with open(f"{document_name}_modernized_cleaned_text.txt", 'w', encoding='utf-8') as f:

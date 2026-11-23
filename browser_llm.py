@@ -297,13 +297,19 @@ def split_in_chunks(text, max_chars=6000):
     return chunks
 
 
-def join_chunks(chunks, answers):
+def join_chunks(chunks, answers, starts=None):
     """Recolle les réponses des blocs.
 
     Saut de paragraphe seulement si le bloc d'origine finissait par une fin de phrase suivie d'une ligne
     vide ET que la réponse finit par une ponctuation finale ; sinon la phrase continue (espace).
+
+    ``starts`` (liste, facultatif) reçoit la position de début de chaque réponse dans le texte recollé : les
+    retouches d'une jointure ne modifient que la fin du texte déjà recollé, ces positions restent donc exactes
+    (utilisé pour la recette, voir recette_modernisation.py).
     """
     text = ""
+    if starts is not None:
+        starts.clear()
     for i, answer in enumerate(answers):
         answer = answer.strip()
         if i:
@@ -322,6 +328,8 @@ def join_chunks(chunks, answers):
                 # Point ajouté par le LLM à une phrase que la découpe a coupée : la phrase continue
                 text, paragraph = text[:-1], False
             text += "\n\n" if paragraph else " "
+        if starts is not None:
+            starts.append(len(text))
         text += answer
     return text
 
@@ -355,6 +363,11 @@ def start_run_log():
         _run_log = LOG_DIR / f"run_{stamp}_{n}.log"
     _run_total = 0
     write_log("Début de l'exécution")
+    return _run_log
+
+
+def current_log():
+    """Fichier log de l'exécution en cours (None si aucune n'a commencé)."""
     return _run_log
 
 

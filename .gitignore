@@ -151,6 +151,8 @@ celerybeat.pid
 .env
 .envrc
 connexions.json
+# Données de recette enregistrées à chaque modernisation (un fichier par document)
+*_recette.json
 .venv
 env/
 venv/

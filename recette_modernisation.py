@@ -127,18 +127,50 @@ def esc(text):
     return html.escape(text)
 
 
+def history(morceaux, i):
+    """Envois au LLM d'un morceau (premier envoi, redécoupe, renvois), si les données de recette existent."""
+    if not morceaux:
+        return ""
+    m, rows = morceaux[i], []
+    for n, e in enumerate(m["envois"]):
+        kept = " · <b>gardé</b>" if n == m.get("envoi_garde") else ""
+        motif = e.get("motif")
+        motif = "<br>".join(esc(x) for x in motif) if isinstance(motif, list) else esc(motif or "")
+        rows.append(f'<div class="env"><b>{n + 1}. {esc(e["type"])}</b>{kept}'
+                    + (f'<div class="note">Motif : {motif}</div>' if motif else "")
+                    + f'<details><summary>Prompt envoyé</summary><div class="box mono">{esc(e["prompt"])}</div></details>'
+                    + f'<details><summary>Réponse du LLM</summary><div class="box serif">'
+                    + f'{esc(e["reponse"]) if e["reponse"] is not None else "(aucune réponse)"}</div></details></div>')
+    return f'<details><summary>Envois au LLM ({len(m["envois"])})</summary>{"".join(rows)}</details>'
+
+
 def main(doc):
     ocr = (ROOT / f"{doc}_ocr_text.txt").read_text(encoding="utf-8")
     final = (ROOT / f"{doc}_modernized_cleaned_text.txt").read_text(encoding="utf-8")
     page_files = sorted((ROOT / "pages_textes" / doc).glob("*.txt"))
     ocr_pages = [f.read_text(encoding="utf-8") for f in page_files]
     images = {f.stem: f for f in (ROOT / "pages_images" / doc).glob("*.png")}
-    chunks = split_in_chunks(ocr)
-    assert "".join(chunks) == ocr
     starts = page_index(ocr_pages)
-    cuts = locate_cuts(ocr, final, chunks)
-    bounds = [0] + cuts + [len(final)]
-    parts = [final[bounds[i]:bounds[i + 1]] for i in range(len(chunks))]
+    data_path = ROOT / f"{doc}_recette.json"
+    data = json.loads(data_path.read_text(encoding="utf-8")) if data_path.exists() else None
+    if data and data.get("texte_final", {}).get("caracteres") == len(final):
+        # Données enregistrées pendant la modernisation : morceaux, coupures et réponses exacts
+        morceaux = data["morceaux"]
+        chunks = [ocr[m["ocr_debut"]:m["ocr_fin"]] for m in morceaux]
+        cuts = [m["final_debut"] for m in morceaux[1:]]
+        parts = [m["reponse_finale"] for m in morceaux]
+        source = f"positions exactes enregistrées pendant la modernisation ({data_path.name})"
+    else:
+        # Document traité avant l'enregistrement des données de recette : morceaux recalculés, coupures
+        # retrouvées par alignement mot à mot (à un mot près)
+        morceaux = None
+        chunks = split_in_chunks(ocr)
+        assert "".join(chunks) == ocr
+        cuts = locate_cuts(ocr, final, chunks)
+        bounds = [0] + cuts + [len(final)]
+        parts = [final[bounds[i]:bounds[i + 1]] for i in range(len(chunks))]
+        source = "morceaux recalculés et coupures retrouvées par alignement (données de recette absentes)"
+    assert "".join(chunks) == ocr
     log_path, log = last_log(doc)
     sent = sum(int(m) for m in re.findall(rf"document={re.escape(doc)}[^|]*\| site=[^|]*\| morceaux=\d+ \| prompts_envoyes=(\d+)", log))
     flagged = {int(m) for m in re.findall(r"jointure (\d+)/\d+ :", log.split("contrôle après renvoi")[-1])}
@@ -181,10 +213,12 @@ def main(doc):
   <div class="pair">
     <div class="chunk end"><div class="ch-h"><b>Morceau {k}</b><span>{len(chunks[k - 1])} caractères envoyés</span></div>
       <details><summary>Texte OCR envoyé</summary><div class="box mono">{esc(chunks[k - 1])}</div></details>
-      <details><summary>Texte modernisé de ce morceau</summary><div class="box serif">{esc(parts[k - 1])}</div></details></div>
+      <details><summary>Texte modernisé de ce morceau</summary><div class="box serif">{esc(parts[k - 1])}</div></details>
+      {history(morceaux, k - 1)}</div>
     <div class="chunk start"><div class="ch-h"><b>Morceau {k + 1}</b><span>{len(chunks[k])} caractères envoyés</span></div>
       <details><summary>Texte OCR envoyé</summary><div class="box mono">{esc(chunks[k])}</div></details>
-      <details><summary>Texte modernisé de ce morceau</summary><div class="box serif">{esc(parts[k])}</div></details></div>
+      <details><summary>Texte modernisé de ce morceau</summary><div class="box serif">{esc(parts[k])}</div></details>
+      {history(morceaux, k)}</div>
   </div>
 </article>""")
 
@@ -232,6 +266,7 @@ main {{ padding:24px 32px 80px; max-width:1500px; margin:0 auto }} h1 {{ font-si
 .scan figcaption, .note {{ font-size:12px; color:var(--muted); margin-top:6px }}
 .verdict {{ font-size:14px; padding:8px 12px; border-radius:8px; margin:0 0 6px }}
 .verdict.ok {{ background:var(--ok-bg) }} .verdict.warn {{ background:var(--warn-bg) }} .verdict.err {{ background:var(--err-bg) }}
+.env {{ border-left:3px solid var(--line); padding:4px 0 4px 10px; margin:8px 0 }}
 .texts {{ padding:12px 14px }} .block {{ margin:0 0 10px }}
 .lbl {{ font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:4px }}
 .block p {{ margin:0; padding:10px 12px; border-radius:8px; background:var(--bg); white-space:pre-wrap; overflow-wrap:anywhere }}
@@ -251,7 +286,7 @@ body.only-pb .card.ok {{ display:none }}
 </style></head>
 <body><main>
 <h1>Recette de la modernisation</h1>
-<p class="meta">{esc(doc)} · {len(ocr_pages)} pages · {len(chunks)} morceaux · {len(cuts)} coupures{f' · journal {esc(log_path.name)}' if log_path else ''}</p>
+<p class="meta">{esc(doc)} · {len(ocr_pages)} pages · {len(chunks)} morceaux · {len(cuts)} coupures{f' · journal {esc(log_path.name)}' if log_path else ''} · {esc(source)}</p>
 <div class="summary">
   <div class="stat"><div class="v">{len(chunks)}</div><div class="k">morceaux (taille {min(sizes)} à {max(sizes)} caractères, moyenne {sum(sizes) // len(sizes)})</div></div>
   <div class="stat"><div class="v">{sent}</div><div class="k">prompts envoyés au LLM (renvois compris)</div></div>
