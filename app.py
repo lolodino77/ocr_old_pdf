@@ -9,6 +9,7 @@ import dl_languages
 import browser_llm
 import api_llm
 import site_login
+import progress
 from system_paths import find_poppler_path, find_tesseract_cmd
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -286,9 +287,73 @@ api_llm.set_fallback(api_fallback_model if use_api_fallback else None)
 # Bouton de lancement
 start = st.button("🚀 Démarrer la modernisation")
 
+class PipelineProgressBar:
+    """Barre de progression Streamlit de tout le traitement (même principe que LLMProgressBar de cv-builder et
+    cv-scorer) : pourcentage global, étape en cours, détail (page, morceau), temps écoulé et restant estimé.
+
+    Chaque document occupe une part égale de la barre ; dans un document, chaque étape a un poids fixe, à peu
+    près proportionnel à sa durée habituelle (le LLM est le plus long). Les signaux viennent du module progress
+    (pages converties, pages OCRisées, morceaux envoyés au LLM). La barre n'avance jamais à reculons.
+    """
+
+    STAGES = {  # étape : (début %, fin %, libellé) dans un document
+        "pdf": (0, 8, "🖼️ Conversion des pages en images"),
+        "ocr": (8, 40, "🔍 Reconnaissance du texte (OCR)"),
+        "llm": (40, 92, "✍️ Modernisation par le LLM"),
+        "llm_fix": (92, 96, "🩺 Contrôle qualité et renvois"),
+        "export": (96, 100, "📄 Exports Word, PDF et Markdown"),
+    }
+
+    def __init__(self, slot, n_documents):
+        import time
+
+        self._time = time.monotonic
+        self.started = self._time()
+        self.n = max(1, n_documents)
+        self.doc_index, self.doc_name = 0, ""
+        self.pct = 0.0
+        # Point de départ de l'estimation du temps restant : le premier vrai travail (conversion, OCR, LLM). Les
+        # documents déjà modernisés sont sautés en une seconde : les compter ferait croire à un traitement très
+        # rapide (constaté : « reste ~5 s » alors qu'il restait 40 s de LLM).
+        self._ref = None
+        self._bar = slot.progress(0, text="⏳ Démarrage du traitement ...")
+
+    def start_document(self, index, name):
+        self.doc_index, self.doc_name = index - 1, name
+        self.update("pdf", 0, 1, "")
+
+    @staticmethod
+    def _duration(seconds):
+        seconds = int(seconds)
+        return f"{seconds // 60} min {seconds % 60:02d} s" if seconds >= 60 else f"{seconds} s"
+
+    def update(self, stage, done, total, detail=""):
+        start, end, label = self.STAGES[stage]
+        fraction = min(1.0, done / total) if total else 0.0
+        in_doc = start + (end - start) * fraction
+        now = self._time()
+        if self._ref is None and stage in ("pdf", "ocr", "llm") and detail:
+            self._ref = (now, self.pct)
+        pct = max(self.pct, 100 * (self.doc_index + in_doc / 100) / self.n)
+        self.pct = min(pct, 99.0 if pct < 100 else 100.0)
+        elapsed = now - self.started
+        timing = f"écoulé {self._duration(elapsed)}"
+        if self._ref and self.pct < 100:
+            worked, done_pct = now - self._ref[0], self.pct - self._ref[1]
+            if worked >= 10 and done_pct >= 3:
+                timing += f" · reste ~{self._duration(worked * (100 - self.pct) / done_pct)}"
+        doc = f"{self.doc_name} ({self.doc_index + 1}/{self.n})" if self.n > 1 else self.doc_name
+        text = f"{label} — {doc} : ~{int(self.pct)} %" + (f" ({detail})" if detail else "") + f" · {timing}"
+        self._bar.progress(int(self.pct), text=text)
+
+    def finish(self, message):
+        self.pct = 100.0
+        self._bar.progress(100, text=f"{message} · durée totale {self._duration(self._time() - self.started)}")
+
+
 # Zone d'affichage de logs et progression
 log_box = st.empty()
-progress_bar = st.progress(0)
+progress_slot = st.empty()
 
 # if "open_word" not in st.session_state:
 #     st.session_state.open_word = False
@@ -314,9 +379,12 @@ if start:
         generated_pdf = []
         generated_markdown = []
         total = len(document_list)
+        bar = PipelineProgressBar(progress_slot, total)
+        progress.set_callback(bar.update)
         for idx, doc_name in enumerate(document_list, start=1):
             # doc_name est le nom sans extension du document à convertir
             try:
+                bar.start_document(idx, doc_name)
                 log_box.markdown(f"### 🛠️ Traitement : **{doc_name}**  ({idx}/{total})")
                 # verification si déjà modernisé
                 already_mod = check_if_already_modernized(doc_name, directory='.')
@@ -337,11 +405,14 @@ if start:
                     # Copie dans le cwd si ta fonction pdf_to_png attend le fichier là-bas :
                     shutil.copy2(src_pdf_path, ROOT_DIR / (doc_name + ".pdf"))
                     poppler_path = st.session_state.poppler_path
+                    progress.set_stage("pdf")
                     pages = pdf_to_png(doc_name, poppler_path, output_dir=str(PAGES_IMAGES_DIR), dpi=300)
                     log_box.info(f"✅ Conversion terminée : {len(pages)} images générées.")
 
                     # --- Étape 2 : OCR PNG -> texte ---
                     log_box.info("Étape 2/4 — OCR des images en cours ...")
+                    progress.set_stage("ocr")
+                    progress.report(0, 1, "démarrage de Tesseract")
                     texte_total = png_to_txt(doc_name, input_dir=str(PAGES_IMAGES_DIR), 
                                             output_dir=str(PAGES_TEXTS_DIR), 
                                             lang=tesseract_lang)
@@ -355,6 +426,8 @@ if start:
                     log_box.info("✅ Modernisation effectuée.")
 
                 # --- Étape 4 : Export en Word ---
+                progress.set_stage("export")
+                progress.report(0, 3, "Word")
                 already_exported_in_word = check_if_modernized_txt_already_exported_to_word(doc_name, directory='.')
                 if already_exported_in_word:
                     log_box.info("Étape 4/4 — Fichier Word déjà exporté. Aucun nouvel export.")
@@ -374,6 +447,7 @@ if start:
                     log_box.info(f"✅ Export Word généré : {modernized_word_filename}")
 
                 # --- Étape 5 : Export en PDF ---
+                progress.report(1, 3, "PDF")
                 already_exported_in_pdf = check_if_modernized_txt_already_exported_to_pdf(doc_name, directory='.')
                 if already_exported_in_pdf:
                     log_box.info("Étape 5/5 — Fichier PDF déjà exporté. Aucun nouvel export.")
@@ -391,6 +465,7 @@ if start:
                     log_box.info(f"✅ Export PDF généré : {modernized_pdf_filename}")
 
                 # --- Étape 6 : Export en Markdown ---
+                progress.report(2, 3, "Markdown")
                 already_exported_in_markdown = check_if_modernized_txt_already_exported_to_markdown(doc_name, directory='.')
                 if already_exported_in_markdown:
                     log_box.info("Étape 6/6 — Fichier Markdown déjà exporté. Aucun nouvel export.")
@@ -408,7 +483,7 @@ if start:
                     log_box.info(f"✅ Export Markdown généré : {modernized_markdown_filename}")
 
                 # update progress
-                progress_bar.progress(idx / total)
+                progress.report(3, 3, "terminé")
                 
                 # generated_docx = ["caca"]
                 st.session_state["generated_docx"] = generated_docx
@@ -425,7 +500,9 @@ if start:
                 log_box.error(f"❌ Erreur sur {doc_name} : {e}")
 
         # Fin de boucle
-        progress_bar.progress(1.0)
+        progress.set_callback(None)
+        progress.set_stage(None)
+        bar.finish("✅ Traitement terminé")
         st.success("🎉 Traitement terminé pour tous les documents (voir détails ci-dessous).")
 
 if "generated_docx" in st.session_state and "generated_pdf" in st.session_state and "generated_markdown" in st.session_state:

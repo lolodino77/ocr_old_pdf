@@ -18,6 +18,8 @@ import re
 import time
 from pathlib import Path
 
+import progress
+
 API_PREFIX = "api:"
 API_MODELS = [
     "gemini-2.5-flash",
@@ -178,6 +180,21 @@ def ask(model, prompt, api_key, timeout_s=300, waits=(10, 30, 60), counter=None)
             time.sleep(wait)
 
 
+def _ask_with_progress(i, n, model, prompt, api_key, timeout_s, counter):
+    """``ask`` dans un fil séparé ; le fil appelant signale l'attente chaque seconde (progress.chunk_waiting),
+    pour que la barre de l'interface avance et que le temps écoulé reste à jour pendant la réponse."""
+    from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
+
+    started = time.monotonic()
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        future = pool.submit(ask, model, prompt, api_key, timeout_s, counter=counter)
+        while True:
+            try:
+                return future.result(timeout=1)
+            except FutureTimeout:
+                progress.chunk_waiting(i, n, time.monotonic() - started)
+
+
 def run_batch(model, prompts, timeout_s=300, api_key=None):
     """Envoie les prompts un par un. Retourne ``{"answers": [...], "prompts_sent": n, "error": "..."}``.
 
@@ -197,8 +214,9 @@ def run_batch(model, prompts, timeout_s=300, api_key=None):
             errors[i] = "non envoyé (échecs précédents)"
             continue
         print(f"Modernisation du morceau {i}/{n} via {API_PREFIX}{model} ...", flush=True)
+        progress.report(i - 1, n, f"morceau {i}/{n} envoyé")
         try:
-            answers.append(ask(model, prompt, api_key, timeout_s, counter=counter))
+            answers.append(_ask_with_progress(i, n, model, prompt, api_key, timeout_s, counter))
         except RuntimeError as exc:
             answers.append(None)
             errors[i] = str(exc)
@@ -206,6 +224,7 @@ def run_batch(model, prompts, timeout_s=300, api_key=None):
                 answers.extend([None] * (n - i))
                 errors.update({k: "non envoyé (erreur définitive)" for k in range(i + 1, n + 1)})
                 break
+        progress.report(i, n, f"morceau {i}/{n} reçu")
     out = {"answers": answers, "prompts_sent": len(counter)}
     if errors:
         out["error"] = f"morceau(x) {', '.join(map(str, errors))} en échec : {next(iter(errors.values()))}"

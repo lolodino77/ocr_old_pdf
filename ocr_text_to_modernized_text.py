@@ -3,6 +3,7 @@ from browser_llm import (
     END_MARKER, SITES, BrowserLLMUnavailable, join_chunks, run_prompts, split_in_chunks, write_log,
 )
 import api_llm
+import progress
 from quality_checks import AUTO_FIXED, check_chunk, check_junctions, residual_archaic
 import os
 
@@ -187,9 +188,14 @@ Format de réponse STRICT : uniquement le texte réécrit, sans explication ni c
     with open(f"{document_name}_modernization_prompt.txt", 'w', encoding='utf-8') as f_prompt:
         f_prompt.write(("\n\n" + "=" * 40 + "\n\n").join(prompts))
 
+    progress.set_stage("llm")
+    progress.report(0, len(prompts), f"{len(prompts)} morceau(x) à moderniser")
     parts = run_prompts(site, prompts, timeout_s, document=document_name, allow_partial=True)
+    progress.set_stage("llm_fix")  # morceaux refusés ou fautifs renvoyés
+    progress.report(0, 1, "contrôle qualité")
     parts = fill_failed_chunks(document_name, site, task, chunks, parts, timeout_s)
     parts = check_and_retry(document_name, site, task, chunks, parts, timeout_s)
+    progress.report(1, 1, "contrôle qualité terminé")
     # Filet de sécurité : le s long ne doit jamais apparaître dans le texte modernisé
     modernized_cleaned_text = join_chunks(chunks, parts).replace("ſ", "s")
     log_final_quality(document_name, modernized_cleaned_text)

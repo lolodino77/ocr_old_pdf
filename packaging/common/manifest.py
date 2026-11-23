@@ -29,7 +29,7 @@ APP_ITEMS = [
     "convert_modernized_txt_to_word.py", "convert_modernized_word_to_pdf.py", "convert_modernized_txt_to_markdown.py",
     "dl_languages.py", "system_paths.py", "run_batch.py",
     # LLM (navigateur ou API) et contrôles qualité
-    "browser_llm.py", "api_llm.py", "site_login.py", "quality_checks.py",
+    "browser_llm.py", "api_llm.py", "site_login.py", "progress.py", "quality_checks.py",
     # dépendances, modèle de clé API, préparation (première ouverture, réparation)
     "requirements.txt", ".env.example", "packaging",
 ]

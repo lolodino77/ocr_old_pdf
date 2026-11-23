@@ -17,6 +17,8 @@ import sys
 import time
 from pathlib import Path
 
+import progress
+
 from quality_checks import overlap_words, words
 
 END_MARKER = "###FIN###"
@@ -391,20 +393,66 @@ def _run_browser(site, prompts, timeout_s):
         # Durée maximale : chaque prompt peut épuiser son délai et ses nouveaux essais. Au-delà, le navigateur
         # est considéré comme bloqué (constaté : sous-processus figé plus d'une heure) et il est arrêté.
         max_s = n * 3 * (timeout_s + 100) + 120
-        try:
-            proc = subprocess.run(
-                [sys.executable, str(Path(__file__).resolve()), "batch", site, str(src), str(dst), str(timeout_s)],
-                capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=max_s,
-            )
-        except subprocess.TimeoutExpired:
+        output = _stream_subprocess(
+            [sys.executable, str(Path(__file__).resolve()), "batch", site, str(src), str(dst), str(timeout_s)], max_s)
+        if output is None:
             return {"answers": [None] * n, "prompts_sent": 0, "sent_unknown": True,
                     "error": f"navigateur bloqué : aucune fin après {max_s} s, sous-processus arrêté"}
-        if proc.stdout:
-            print(proc.stdout, end="")
         if not dst.exists():
             return {"answers": [None] * n, "prompts_sent": 0, "sent_unknown": True,
-                    "error": f"Le sous-processus navigateur a échoué : {proc.stderr[-500:]}"}
+                    "error": f"Le sous-processus navigateur a échoué : {output[-500:]}"}
+        progress.report(n, n, f"{n} morceau(x) traité(s)")
         return json.loads(dst.read_text(encoding="utf-8"))
+
+
+_CHUNK_LINE_RE = re.compile(r"morceau (\d+)/(\d+)")
+
+
+def _stream_subprocess(cmd, max_s):
+    """Lance ``cmd`` et lit sa sortie AU FUR ET À MESURE pour signaler l'avancement (« Modernisation du morceau
+    i/n ») ; retourne toute la sortie, ou None si le délai ``max_s`` est dépassé (sous-processus arrêté).
+
+    La lecture se fait dans un fil séparé, l'avancement est signalé depuis le fil appelant : Streamlit n'accepte
+    les mises à jour de la page que depuis le fil de la page."""
+    import queue
+    import subprocess
+    import threading
+    import time
+
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8",
+                            errors="replace", env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+    lines = queue.Queue()
+
+    def read():
+        for text in proc.stdout:
+            lines.put(text)
+        lines.put(None)  # fin de la sortie
+
+    threading.Thread(target=read, daemon=True).start()
+    output, deadline = [], time.monotonic() + max_s
+    current = None  # (morceau en cours, nombre de morceaux, début de l'attente)
+    while True:
+        try:
+            line = lines.get(timeout=1)
+        except queue.Empty:
+            if time.monotonic() > deadline:
+                proc.kill()
+                proc.wait()
+                return None
+            if current:
+                progress.chunk_waiting(current[0], current[1], time.monotonic() - current[2])
+            continue
+        if line is None:
+            break
+        output.append(line)
+        print(line, end="")
+        m = _CHUNK_LINE_RE.search(line)
+        if m:
+            i, total = int(m.group(1)), int(m.group(2))
+            progress.report(i - 1, total, f"morceau {i}/{total} envoyé")
+            current = (i, total, time.monotonic())
+    proc.wait()
+    return "".join(output)
 
 
 def run_prompts(site, prompts, timeout_s=300, document="", allow_partial=False):

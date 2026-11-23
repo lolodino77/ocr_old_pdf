@@ -2,6 +2,8 @@ from pdf2image import convert_from_path
 import os
 import shutil
 
+import progress
+
 
 def _pdf_to_png_pdfium(pdf_path, save_path, dpi):
     """Même résultat que pdf2image (page0001-01.png, page0001-02.png…), avec pypdfium2 au lieu de Poppler."""
@@ -17,6 +19,7 @@ def _pdf_to_png_pdfium(pdf_path, save_path, dpi):
             path = os.path.join(save_path, f"page0001-{i + 1:0{width}d}.png")
             image.save(path)
             paths.append(path)
+            progress.report(i + 1, n, f"page {i + 1}/{n}")
     finally:
         pdf.close()
     print(f"✅ {len(paths)} pages converties (pypdfium2) et enregistrées dans '{save_path}'")
