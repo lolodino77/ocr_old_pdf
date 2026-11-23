@@ -14,10 +14,16 @@ def _pdf_to_png_pdfium(pdf_path, save_path, dpi):
         n = len(pdf)
         width = len(str(n))
         paths = []
+        progress.report(0, n, f"{n} pages à convertir")
         for i in range(n):
-            image = pdf[i].render(scale=dpi / 72).to_pil()
+            page = pdf[i]
+            try:
+                image = page.render(scale=dpi / 72).to_pil()
+            finally:
+                page.close()
             path = os.path.join(save_path, f"page0001-{i + 1:0{width}d}.png")
             image.save(path)
+            image.close()
             paths.append(path)
             progress.report(i + 1, n, f"page {i + 1}/{n}")
     finally:
@@ -59,9 +65,16 @@ def pdf_to_png(document_name, poppler_path, output_dir="pages_images", dpi=300):
     document_name = document_name if document_name.lower().endswith('.pdf') else document_name + '.pdf'
     print("Conversion de", document_name, "en images PNG...")
     
-    # Sans Poppler (version portable du programme) : rendu des pages par pypdfium2, installé avec pip
-    if os.environ.get("OCR_PORTABLE") or (not poppler_path and not shutil.which("pdftoppm")):
+    # pypdfium2 d'abord, partout : page par page (avancement affiché dans l'interface, mémoire constante) et bien
+    # plus rapide que Poppler (constaté sur un PDF de 473 pages : 0,2 s par page contre 4 s, soit 31 min sans
+    # aucun avancement visible avec Poppler, qui convertit tout d'un bloc). Poppler reste en secours.
+    try:
         return _pdf_to_png_pdfium(document_name, save_path, dpi)
+    except Exception as exc:  # noqa: BLE001 - PDF que pypdfium2 ne sait pas lire : on essaie Poppler
+        if os.environ.get("OCR_PORTABLE") or (not poppler_path and not shutil.which("pdftoppm")):
+            raise
+        print(f"pypdfium2 n'a pas pu convertir le PDF ({exc}) : essai avec Poppler")
+        progress.report(0, 1, "conversion avec Poppler, sans avancement détaillé")
 
     # poppler_path = "./poppler-23.11.0/Library/bin"
     pages = convert_from_path(

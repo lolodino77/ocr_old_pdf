@@ -226,6 +226,9 @@ logs/
 # PDF de test copiés depuis dvarim.fr et leurs sorties
 tests_dvarim/
 
+# Fichiers markdown
+*.md
+
 # Version portable : paquets fabriqués et fichiers créés par le programme quand il tourne
 dist/
 instance.json
