@@ -20,6 +20,13 @@ PREMIÈRE FOIS
    - macOS plus ancien : clic droit (ou Ctrl + clic) sur le fichier > « Ouvrir », puis « Ouvrir ».
    Autre possibilité, sans avertissement : ouvrez le Terminal, tapez « sh » suivi d'un espace, glissez le
    fichier « Ouvrir le Modernisateur » dans la fenêtre du Terminal, puis appuyez sur Entrée.
+   Si macOS dit que le fichier est « endommagé » et ne propose que « Placer dans la corbeille » (fréquent quand
+   le .zip a été reçu par Telegram, WhatsApp ou une messagerie) : il n'est PAS endommagé, macOS le bloque
+   seulement. Cliquez sur « Annuler », ouvrez le Terminal (Launchpad > Autre > Terminal), puis tapez
+   « xattr -cr » suivi d'un espace, glissez le dossier « ModernisateurLivresAnciens-Mac » dans la fenêtre,
+   appuyez sur Entrée ; ensuite, tapez « sh » suivi d'un espace, glissez le fichier « Ouvrir le Modernisateur »
+   dans la fenêtre, appuyez sur Entrée. Pour éviter ce blocage, téléchargez plutôt le .zip depuis un lien
+   (Google Drive, WeTransfer...) ou par e-mail.
 3. Une fenêtre de Terminal prépare le programme (Python, Tesseract, langues, navigateur...). Comptez 5 à
    10 minutes, une seule fois. Ne la fermez pas. À la fin, le programme s'ouvre dans votre navigateur.
 
