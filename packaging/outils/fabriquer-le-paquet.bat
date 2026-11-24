@@ -25,8 +25,14 @@ set "ENVNAME=ocr_old_pdf"
 for %%D in ("%USERPROFILE%\anaconda3" "%USERPROFILE%\miniconda3" "%USERPROFILE%\miniforge3" "%LOCALAPPDATA%\anaconda3" "%LOCALAPPDATA%\miniconda3" "%ProgramData%\anaconda3" "%ProgramData%\miniconda3") do (
   if not defined PY if exist "%%~D\envs\%ENVNAME%\python.exe" set "PY=%%~D\envs\%ENVNAME%\python.exe"
 )
+rem Sinon : n'importe quel Python 3.10 ou plus recent du PC (le script de fabrication n'utilise que la bibliotheque standard)
+if not defined PY for /f "delims=" %%P in ('py -3 -c "import sys; sys.exit(sys.version_info < (3, 10)); print(sys.executable)" 2^>nul') do set "PY=%%P"
+if not defined PY for /f "delims=" %%P in ('python -c "import sys; sys.exit(sys.version_info < (3, 10)); print(sys.executable)" 2^>nul') do set "PY=%%P"
+if not defined PY for /d %%E in ("%USERPROFILE%\anaconda3\envs\*" "%USERPROFILE%\miniconda3\envs\*" "%USERPROFILE%\miniforge3\envs\*") do (
+  if not defined PY if exist "%%~E\python.exe" "%%~E\python.exe" -c "import sys; sys.exit(sys.version_info < (3, 10))" 2>nul && set "PY=%%~E\python.exe"
+)
 if not defined PY (
-  echo  Python introuvable : creez d'abord l'environnement conda %ENVNAME% ^(voir README.md^).
+  echo  Python 3.10 ou plus recent introuvable : installez-le ^(ou creez l'environnement conda %ENVNAME%, voir README.md^).
   goto :echec
 )
 
