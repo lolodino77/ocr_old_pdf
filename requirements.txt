@@ -1,3 +1,6 @@
+# Mac de plus de 3 ans (macOS 12 ou plus ancien : Darwin < 22, ex. macOS 10.14 Mojave = Darwin 18) : les versions
+# récentes de pypdfium2, pyarrow et grpcio n'y existent pas toutes faites (il faudrait les compiler, ce qui échoue) ;
+# on y prend les dernières qui existent pour macOS 10.14 (pyarrow 14 impose numpy 1.x).
 altair==5.5.0
 altgraph==0.17.4
 annotated-types==0.7.0
@@ -17,13 +20,19 @@ google-api-python-client==2.185.0
 google-auth==2.41.1
 google-auth-httplib2==0.2.0
 google-genai==1.46.0
-playwright==1.64.1
+playwright==1.64.1; sys_platform != "darwin" or platform_release >= "20"
+# macOS 10.15 ou plus ancien (Darwin < 20) : greenlet récent n'y existe pas tout fait ; playwright 1.40 prend
+# greenlet 3.0.1 (de toute façon, le navigateur de Playwright ne démarre pas sur ces macOS : mode API Gemini)
+playwright==1.40.0; sys_platform == "darwin" and platform_release < "20"
 fpdf2==2.9.0
-pypdfium2==5.15.2
+pypdfium2==5.15.2; sys_platform != "darwin" or platform_release >= "22"
+pypdfium2==4.30.1; sys_platform == "darwin" and platform_release < "22"
 truststore==0.10.5
 googleapis-common-protos==1.71.0
-grpcio==1.76.0
-grpcio-status==1.71.2
+grpcio==1.76.0; sys_platform != "darwin" or platform_release >= "22"
+grpcio==1.71.0; sys_platform == "darwin" and platform_release < "22"
+grpcio-status==1.71.2; sys_platform != "darwin" or platform_release >= "22"
+grpcio-status==1.71.0; sys_platform == "darwin" and platform_release < "22"
 h11==0.16.0
 httpcore==1.0.9
 httplib2==0.31.0
@@ -35,7 +44,8 @@ jsonschema-specifications==2025.9.1
 lxml==6.0.2
 MarkupSafe==3.0.3
 narwhals==2.9.0
-numpy==2.3.4
+numpy==2.3.4; sys_platform != "darwin" or platform_release >= "22"
+numpy==1.26.4; sys_platform == "darwin" and platform_release < "22"
 packaging==25.0
 pandas==2.3.3
 pdf2image==1.17.0
@@ -43,7 +53,8 @@ pefile==2023.2.7
 pillow==11.3.0
 proto-plus==1.26.1
 protobuf==5.29.5
-pyarrow==21.0.0
+pyarrow==21.0.0; sys_platform != "darwin" or platform_release >= "22"
+pyarrow==14.0.2; sys_platform == "darwin" and platform_release < "22"
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
 pydantic==2.12.3

@@ -160,6 +160,13 @@ réinstallées ; Tesseract et les langues déjà là sont gardés).
   poser problème : la préparation le signale.
 - Sans LibreOffice, le PDF produit est une mise en page simple du texte (le Word reste le document de référence).
 - Supprimer le dossier supprime aussi les documents de l'utilisateur.
+- **Vieux Mac (macOS 10.14 Mojave à 12)** : les versions récentes de pypdfium2, pyarrow, numpy, grpcio n'y existent
+  pas toutes faites (uv tenterait de les compiler, et échouerait) : `requirements.txt` y installe des versions plus
+  anciennes (marqueurs `platform_release`, version du noyau Darwin : 18 = macOS 10.14, 22 = macOS 13), et Playwright
+  1.40 avant macOS 11 (greenlet récent exige macOS 11). Avant macOS 11, le navigateur de Playwright ne démarre pas
+  (Node.js, Chromium) : la préparation ne le télécharge pas (`System.browser_unavailable`) et l'application propose
+  le mode « API Gemini » par défaut. Vérifié en résolvant les dépendances pour macOS 10.14 Intel (paquets tout faits
+  uniquement), pas sur un vrai Mac.
 - **Linux et Mac n'ont pas encore été essayés en réel** : les lanceurs et les classes `System` sont repris de
   `auto-wordpress-translator` (essayé sous Linux dans des conteneurs), mais l'installation de Tesseract par micromamba
   et le lancement de Streamlit n'ont été vérifiés que sous Windows.

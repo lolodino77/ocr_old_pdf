@@ -71,6 +71,44 @@ class Systems(unittest.TestCase):
         self.assertFalse(load("windows").NEEDS_BROWSER_DOWNLOAD)  # Edge est toujours là
         self.assertTrue(load("linux").NEEDS_BROWSER_DOWNLOAD and load("macos").NEEDS_BROWSER_DOWNLOAD)
 
+    def test_old_mac_skips_the_browser(self):
+        """macOS 10.14 (Mojave) : le navigateur de Playwright ne démarre pas, son téléchargement est sauté avec un
+        avertissement qui mène au mode API ; macOS 11 et plus : téléchargé normalement."""
+        from unittest import mock
+
+        mac = load("macos")
+        module = sys.modules[type(mac).__module__]
+        for version, skipped in (("10.14.6", True), ("10.15.7", True), ("11.7.10", False), ("14.5", False), ("", False)):
+            with mock.patch.object(module.platform, "mac_ver", return_value=(version, ("", "", ""), "")):
+                reason = mac.browser_unavailable()
+            self.assertEqual(bool(reason), skipped, version)
+            if skipped:
+                self.assertIn("API Gemini", reason)
+        self.assertIsNone(load("linux").browser_unavailable())
+
+    def test_old_mac_requirements(self):
+        """requirements.txt : sur macOS < 13 (Darwin < 22), versions qui existent toutes faites pour macOS 10.14."""
+        from packaging.requirements import Requirement
+
+        def chosen(release, machine="x86_64", platform="darwin"):
+            env = {"sys_platform": platform, "platform_release": release, "platform_machine": machine}
+            pins = {}
+            for line in (ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines():
+                if line.strip() and not line.startswith("#"):
+                    r = Requirement(line)
+                    if r.marker is None or r.marker.evaluate(env):
+                        self.assertNotIn(r.name, pins, f"{r.name} en double pour {platform} {release}")
+                        pins[r.name] = str(r.specifier)
+            return pins
+
+        mojave, ventura, windows = chosen("18.7.0"), chosen("22.6.0", "arm64"), chosen("10", "AMD64", "win32")
+        self.assertEqual([mojave[n] for n in ("pypdfium2", "pyarrow", "numpy", "playwright")],
+                         ["==4.30.1", "==14.0.2", "==1.26.4", "==1.40.0"])
+        self.assertEqual(chosen("20.6.0")["playwright"], "==1.64.1")
+        for pins in (ventura, windows):
+            self.assertEqual([pins[n] for n in ("pypdfium2", "pyarrow", "numpy", "playwright")],
+                             ["==5.15.2", "==21.0.0", "==2.3.4", "==1.64.1"])
+
 
 class Packages(unittest.TestCase):
     """Contenu des paquets, fabriqués à partir de tous les fichiers du programme présents sur le disque."""

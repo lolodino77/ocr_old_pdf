@@ -70,6 +70,12 @@ class System:
     def remove_tree(self, path: Path) -> None:
         shutil.rmtree(path)
 
+    def browser_unavailable(self) -> str | None:
+        """Raison pour laquelle le navigateur de Playwright ne peut pas fonctionner sur cet ordinateur (système trop
+        ancien) : son téléchargement est alors sauté, avec cet avertissement, et le mode « API Gemini » reste
+        utilisable. None (cas normal) : le navigateur est téléchargé."""
+        return None
+
     def check_before_browser(self, root: Path, python: Path) -> None:
         """Vérifications propres au système avant le téléchargement du navigateur. Lève PrepareError si l'outil de
         téléchargement ne peut pas fonctionner."""

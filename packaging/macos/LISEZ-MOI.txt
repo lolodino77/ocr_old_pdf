@@ -4,8 +4,9 @@ MODERNISATEUR DE LIVRES ANCIENS - VERSION PORTABLE POUR MAC
 Le programme lit le texte de vieux livres en PDF (OCR), le modernise (orthographe actuelle) avec Gemini,
 et vous rend un document Word, PDF et Markdown.
 
-Il vous faut : un Mac récent (Apple M1, M2… ou Intel), une connexion Internet, et environ 2 Go de place
-libre. Rien ne s'installe ailleurs sur le Mac : tout reste dans le dossier que vous allez extraire.
+Il vous faut : un Mac avec macOS 10.14 (Mojave) ou plus récent (Apple M1, M2… ou Intel), une connexion
+Internet, et environ 2 Go de place libre. Sur macOS 10.14 et 10.15, seul le mode « API Gemini » marche
+(voir plus bas) : le mode « navigateur » demande macOS 11 ou plus récent. Rien ne s'installe ailleurs sur le Mac : tout reste dans le dossier que vous allez extraire.
 Aucun mot de passe d'administrateur n'est demandé.
 
 PREMIÈRE FOIS
@@ -34,6 +35,7 @@ DEUX FAÇONS D'UTILISER GEMINI
 -----------------------------
 - « Navigateur (sans clé API) » : rien à configurer. Une fenêtre de navigateur s'ouvre pendant la
   modernisation : ne la fermez pas. (Google Chrome est utilisé s'il est installé.)
+  Il demande macOS 11 ou plus récent.
 - « API Gemini (clé requise) » : créez une clé gratuite sur https://aistudio.google.com/apikey et
   collez-la dans le champ prévu sur la page. Pour ne plus avoir à la saisir : copiez le fichier
   programme/.env.example en programme/.env, et remplacez « votre_cle_ici » par votre clé.

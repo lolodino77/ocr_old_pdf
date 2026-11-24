@@ -300,8 +300,12 @@ def main() -> int:
 
         if system.NEEDS_BROWSER_DOWNLOAD:
             step(next(n), total, steps[4])
-            system.check_before_browser(root, python)
-            install_browser(python, root)
+            reason = system.browser_unavailable()
+            if reason:  # système trop ancien pour le navigateur : le mode « API Gemini » reste utilisable
+                print(f"\n  ATTENTION : {reason}")
+            else:
+                system.check_before_browser(root, python)
+                install_browser(python, root)
 
         step(next(n), total, "Vérification du programme")
         check_program(python, root)

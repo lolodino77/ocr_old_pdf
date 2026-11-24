@@ -1,9 +1,11 @@
 """Mac : tout ce qui est propre au Mac dans la version portable (voir packaging/common/system_base.py).
 
-Visé : macOS récent, Mac Apple (M1, M2…) ou Intel. Le lanceur « Ouvrir le Modernisateur.command » s'ouvre dans le
+Visé : macOS 10.14 (Mojave) ou plus récent, Mac Apple (M1, M2…) ou Intel. Avant macOS 11, le navigateur de
+Playwright ne démarre pas (Node.js et Chromium exigent un macOS plus récent) : seul le mode « API Gemini » marche. Le lanceur « Ouvrir le Modernisateur.command » s'ouvre dans le
 Terminal d'un double-clic ; après la préparation, une petite application « Modernisateur de livres anciens.app »,
 fabriquée sur le Mac lui-même dans le dossier, ouvre le programme sans fenêtre de Terminal."""
 import os
+import platform
 import plistlib
 import re
 import shutil
@@ -111,6 +113,19 @@ def make_icns(png: Path, icns: Path) -> bool:
                               capture_output=True).returncode == 0
 
 
+def macos_version() -> tuple[int, ...]:
+    """Version de macOS, ex. (10, 14, 6) ; () si inconnue."""
+    try:
+        return tuple(int(x) for x in platform.mac_ver()[0].split(".") if x.isdigit())
+    except ValueError:
+        return ()
+
+
+# Le navigateur de Playwright (Node.js qui le pilote, Chromium) exige macOS 11 ou plus récent ; Google Chrome n'est
+# plus mis à jour non plus sur les macOS plus anciens (dernière version : 116 sur 10.13 et 10.14).
+BROWSER_MIN_MACOS = (11, 0)
+
+
 def chromium_binary(root: Path) -> Path | None:
     found = sorted((root / "runtime" / "browsers").glob("chromium-*/chrome-mac*/*.app/Contents/MacOS/*"))
     return found[-1] if found else None
@@ -181,6 +196,15 @@ class MacOS(System):
             warnings.append("Ce disque interdit de lancer des programmes : déplacez le dossier dans votre dossier "
                             "personnel.")
         return warnings
+
+    def browser_unavailable(self) -> str | None:
+        version = macos_version()
+        if not version or version >= BROWSER_MIN_MACOS:
+            return None
+        shown = ".".join(map(str, version))
+        return (f"macOS {shown} est trop ancien pour le mode « navigateur » du LLM (il faut macOS 11 ou plus récent) : "
+                "le navigateur n'est pas téléchargé. Utilisez le mode « API Gemini » : créez une clé gratuite sur "
+                "https://aistudio.google.com/apikey et collez-la dans la page du programme.")
 
     def check_system(self, root: Path, python: Path) -> list[str]:
         """Le navigateur téléchargé (Chromium) doit démarrer sur cette version de macOS ; Google Chrome, s'il est

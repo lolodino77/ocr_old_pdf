@@ -248,7 +248,17 @@ def _login_panel(selected: str) -> None:
 #  - API : API Gemini (clé requise), sans navigateur, utilisable sur un serveur comme Streamlit Cloud.
 MODE_BROWSER = "🌐 Navigateur (sans clé API)"
 MODE_API = "🔑 API Gemini (clé requise)"
-llm_mode = st.radio("🖥️ Comment appeler le LLM ?", [MODE_BROWSER, MODE_API], horizontal=True)
+# macOS 10.14 et 10.15 : le navigateur piloté par Playwright ne démarre pas (Node.js et Chromium exigent macOS 11) ;
+# le mode API est alors proposé par défaut.
+import platform as _platform
+
+_mac = tuple(int(x) for x in _platform.mac_ver()[0].split(".")[:2] if x.isdigit()) if sys.platform == "darwin" else ()
+BROWSER_TOO_OLD = bool(_mac) and _mac < (11, 0)
+llm_mode = st.radio("🖥️ Comment appeler le LLM ?", [MODE_BROWSER, MODE_API], horizontal=True,
+                    index=1 if BROWSER_TOO_OLD else 0)
+if BROWSER_TOO_OLD and llm_mode == MODE_BROWSER:
+    st.warning(f"macOS {_platform.mac_ver()[0]} est trop ancien pour le mode navigateur (il faut macOS 11 ou plus "
+               "récent) : choisissez « API Gemini » (clé gratuite sur https://aistudio.google.com/apikey).")
 
 use_api_fallback, api_fallback_model = False, api_llm.DEFAULT_MODEL
 LLM_SITE_LABELS = {"Gemini (gemini.google.com)": "gemini", "ChatGPT (chatgpt.com)": "gpt"}
@@ -278,6 +288,7 @@ do_recette = st.checkbox(
 recette_site = None
 if do_recette:
     recette_mode = st.radio("🖥️ Comment appeler le LLM pour la vérification ?", [MODE_BROWSER, MODE_API],
+                            index=1 if BROWSER_TOO_OLD else 0,
                             horizontal=True, key="recette_mode")
     if recette_mode == MODE_BROWSER:
         recette_site_label = st.selectbox("Site pour la vérification", list(LLM_SITE_LABELS), index=0, key="recette_site")
