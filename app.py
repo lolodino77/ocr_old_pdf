@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import re
 import sys
 import shutil
 from pathlib import Path
@@ -10,6 +11,8 @@ import browser_llm
 import api_llm
 import site_login
 import progress
+import recette_llm
+import recette_modernisation
 from system_paths import find_poppler_path, find_tesseract_cmd
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -248,10 +251,10 @@ MODE_API = "🔑 API Gemini (clé requise)"
 llm_mode = st.radio("🖥️ Comment appeler le LLM ?", [MODE_BROWSER, MODE_API], horizontal=True)
 
 use_api_fallback, api_fallback_model = False, api_llm.DEFAULT_MODEL
+LLM_SITE_LABELS = {"Gemini (gemini.google.com)": "gemini", "ChatGPT (chatgpt.com)": "gpt"}
 if llm_mode == MODE_BROWSER:
-    LLM_site_labels = {"Gemini (gemini.google.com)": "gemini", "ChatGPT (chatgpt.com)": "gpt"}
-    LLM_site_label = st.selectbox("Site", list(LLM_site_labels), index=0)
-    LLM_model_name = LLM_site_labels[LLM_site_label]
+    LLM_site_label = st.selectbox("Site", list(LLM_SITE_LABELS), index=0)
+    LLM_model_name = LLM_SITE_LABELS[LLM_site_label]
     _login_panel(LLM_model_name)
     st.caption("Une fenêtre de navigateur s'ouvre pendant l'étape 3 : ne la fermez pas. Si vous ne vous êtes pas "
                "connecté ci-dessus, faites-le dans cette fenêtre (5 minutes pour le faire) et traitez un éventuel captcha. "
@@ -265,7 +268,31 @@ else:
     api_model = st.selectbox("Modèle Gemini", api_llm.API_MODELS, index=0)
     LLM_model_name = api_llm.spec(api_model)
 
-if llm_mode == MODE_API or use_api_fallback:
+# --- RECETTE FINALE : un LLM vérifie les coupures entre morceaux (mêmes deux modes que la modernisation) ---
+st.markdown("##### 🔎 Vérification finale")
+do_recette = st.checkbox(
+    "Faire vérifier le résultat par un LLM à la fin (vérification des coupures entre morceaux)", value=True,
+    help="Le programme repère chaque coupure entre deux morceaux envoyés au LLM et les omissions possibles ; un "
+         "LLM juge ensuite chacune (continue, ponctuation perdue, texte abîmé). Résultat : une page HTML de "
+         "vérification, avec pour chaque coupure l'extrait de la page scannée. Environ un prompt pour dix coupures.")
+recette_site = None
+if do_recette:
+    recette_mode = st.radio("🖥️ Comment appeler le LLM pour la vérification ?", [MODE_BROWSER, MODE_API],
+                            horizontal=True, key="recette_mode")
+    if recette_mode == MODE_BROWSER:
+        recette_site_label = st.selectbox("Site pour la vérification", list(LLM_SITE_LABELS), index=0, key="recette_site")
+        recette_site = LLM_SITE_LABELS[recette_site_label]
+        if llm_mode != MODE_BROWSER:
+            _login_panel(recette_site)
+        st.caption("Le LLM reçoit le texte des coupures (sans les images des pages).")
+    else:
+        recette_model = st.selectbox("Modèle Gemini pour la vérification", api_llm.API_MODELS, index=0, key="recette_model")
+        recette_site = api_llm.spec(recette_model)
+        st.caption("Le LLM reçoit le texte des coupures et l'extrait de la page scannée de chacune (notes de marge "
+                   "mêlées au texte par l'OCR).")
+recette_needs_key = bool(recette_site) and api_llm.is_api(recette_site)
+
+if llm_mode == MODE_API or use_api_fallback or recette_needs_key:
     typed_key = st.text_input(
         "Clé API Gemini", type="password", value="",
         help="Gardée en mémoire le temps de la session, jamais écrite sur le disque ni dans les logs. "
@@ -304,9 +331,20 @@ class PipelineProgressBar:
         "export": (96, 100, "📄 Exports Word, PDF et Markdown"),
     }
 
-    def __init__(self, slot, n_documents):
+    STAGES_WITH_RECETTE = {
+        "pdf": (0, 8, "🖼️ Conversion des pages en images"),
+        "ocr": (8, 38, "🔍 Reconnaissance du texte (OCR)"),
+        "llm": (38, 84, "✍️ Modernisation par le LLM"),
+        "llm_fix": (84, 88, "🩺 Contrôle qualité et renvois"),
+        "export": (88, 90, "📄 Exports Word, PDF et Markdown"),
+        "recette": (90, 100, "🔎 Vérification par le LLM"),
+    }
+
+    def __init__(self, slot, n_documents, with_recette=False):
         import time
 
+        if with_recette:
+            self.STAGES = self.STAGES_WITH_RECETTE
         self._time = time.monotonic
         self.started = self._time()
         self.n = max(1, n_documents)
@@ -370,7 +408,7 @@ if start:
     elif _login_window().is_open:
         st.error("La fenêtre de connexion est encore ouverte (même profil de navigateur) : cliquez sur "
                  "« C'est fait » dans l'encadré de connexion, puis relancez.")
-    elif (llm_mode == MODE_API or use_api_fallback) and not api_llm.get_api_key():
+    elif (llm_mode == MODE_API or use_api_fallback or recette_needs_key) and not api_llm.get_api_key():
         st.error("Clé API Gemini manquante : saisissez-la ou choisissez le mode navigateur sans secours API.")
     else:
         run_log = browser_llm.start_run_log()
@@ -379,7 +417,7 @@ if start:
         generated_pdf = []
         generated_markdown = []
         total = len(document_list)
-        bar = PipelineProgressBar(progress_slot, total)
+        bar = PipelineProgressBar(progress_slot, total, with_recette=do_recette)
         progress.set_callback(bar.update)
         for idx, doc_name in enumerate(document_list, start=1):
             # doc_name est le nom sans extension du document à convertir
@@ -484,6 +522,24 @@ if start:
 
                 # update progress
                 progress.report(3, 3, "terminé")
+
+                # --- Étape 7 : Recette par le LLM (vérification des coupures), refaite si le texte a changé ---
+                if do_recette:
+                    llm_notes = recette_modernisation.notes_path(doc_name, llm=True)
+                    final_txt = ROOT_DIR / f"{doc_name}_modernized_cleaned_text.txt"
+                    if llm_notes.exists() and llm_notes.stat().st_mtime >= final_txt.stat().st_mtime:
+                        log_box.info("Étape 7/7 — Vérification déjà faite pour ce texte. Page de vérification mise à jour.")
+                        recette_modernisation.main(doc_name)
+                    else:
+                        log_box.info(f"Étape 7/7 — Vérification par le LLM ({recette_site}) ...")
+                        try:
+                            summary = recette_llm.run(doc_name, recette_site)
+                            log_box.info(f"✅ Vérification : {summary['coupures']} coupure(s), {summary['err']} texte(s) abîmé(s), "
+                                         f"{summary['warn']} ponctuation(s) perdue(s), {summary['juges']}/{summary['elements']} "
+                                         "élément(s) jugé(s) par le LLM.")
+                        except Exception as exc:  # noqa: BLE001 - la recette ne doit pas faire échouer le traitement
+                            st.warning(f"Vérification impossible pour {doc_name} : {exc}. Le texte modernisé et ses exports "
+                                       "sont bien produits.")
                 
                 # generated_docx = ["caca"]
                 st.session_state["generated_docx"] = generated_docx
@@ -679,7 +735,14 @@ def show_result(doc_name: str) -> None:
     if not (images or ocr_text or modern_text):
         return
     st.markdown(f"### 🔍 Résultat : {doc_name}")
-    tabs = st.tabs(["📖 OCR page par page", "📝 Texte modernisé", "🔤 OCR brut complet"])
+    # La vérification, quand elle existe, s'affiche en premier : c'est le résultat à regarder à la fin du traitement
+    has_check = (ROOT_DIR / f"recette_{doc_name}.html").exists()
+    labels = ["📖 OCR page par page", "📝 Texte modernisé", "🔤 OCR brut complet"]
+    tabs = st.tabs((["🔎 Vérification"] if has_check else []) + labels)
+    if has_check:
+        with tabs[0]:
+            show_recette(doc_name)
+        tabs = tabs[1:]
     with tabs[0]:
         if not images:
             st.info("Les images des pages ne sont plus sur le disque.")
@@ -687,11 +750,16 @@ def show_result(doc_name: str) -> None:
             n = len(images)
             page = st.slider("Page", 1, n, 1, key=f"page_{doc_name}") if n > 1 else 1
             image_path = images[page - 1]
-            left, right = st.columns(2)
-            left.image(str(image_path), caption=f"Page {page}/{n} (image d'origine)", width="stretch")
             page_text = _read_text(PAGES_TEXTS_DIR / doc_name / (image_path.stem + ".txt"))
-            right.text_area("Texte reconnu par l'OCR (modifiable pour copier)", page_text or "(aucun texte reconnu)",
-                            height=700, key=f"ocr_{doc_name}_{page}")
+            finals = _final_pages(doc_name, _text_stamp(doc_name)) if modern_text else {}
+            cols = st.columns([1.2, 1, 1] if finals else [1, 1])
+            cols[0].image(str(image_path), caption=f"Page {page}/{n} (image d'origine)", width="stretch")
+            cols[1].text_area("Texte reconnu par l'OCR", page_text or "(aucun texte reconnu)",
+                              height=700, key=f"ocr_{doc_name}_{page}")
+            if finals:
+                cols[2].text_area("Texte modernisé de cette page", finals.get(image_path.stem) or "(rien)",
+                                  height=700, key=f"fin_{doc_name}_{page}",
+                                  help="Début et fin de page retrouvés par alignement des mots : à un mot près.")
     with tabs[1]:
         pdf_path = ROOT_DIR / f"{doc_name}_modernized_cleaned_text.pdf"
         pages = _pdf_pages(str(pdf_path), pdf_path.stat().st_mtime) if pdf_path.exists() else []
@@ -713,6 +781,251 @@ def show_result(doc_name: str) -> None:
             st.text_area("Texte OCR brut", ocr_text, height=700, key=f"rawocr_{doc_name}")
         else:
             st.info("Pas de texte OCR pour ce document.")
+
+
+def _text_stamp(doc_name: str) -> tuple:
+    """Dates des textes OCR et final : invalide les caches quand le document est retraité."""
+    return tuple(p.stat().st_mtime if p.exists() else 0 for p in
+                 (ROOT_DIR / f"{doc_name}_ocr_text.txt", ROOT_DIR / f"{doc_name}_modernized_cleaned_text.txt"))
+
+
+@st.cache_data(show_spinner="Découpage du texte modernisé par page ...")
+def _final_pages(doc_name: str, stamp: tuple) -> dict:
+    try:
+        return recette_modernisation.final_by_page(doc_name)
+    except Exception:  # noqa: BLE001 - affichage facultatif
+        return {}
+
+
+@st.cache_data(show_spinner="Préparation de la vérification ...")
+def _check_data(doc_name: str, stamp: tuple) -> dict:
+    c = recette_modernisation.collect(doc_name)
+    out = {k: c[k] for k in ("ocr", "final", "chunks", "parts", "coupures")}
+    out["omissions"] = recette_modernisation.omission_list(c["chunks"], c["parts"])
+    try:
+        out["pages"] = recette_modernisation.page_bounds(doc_name)
+    except Exception:  # noqa: BLE001 - textes des pages absents : relecture coupure par coupure seulement
+        out["pages"] = None
+    return out
+
+
+_MD_CHARS = {ord(ch): f"&#{ord(ch)};" for ch in "*_`$#[]~|\\\"'"}
+
+
+def _safe_html(text: str) -> str:
+    """Texte échappé pour du HTML affiché par st.markdown (en une passe : aucun caractère Markdown actif)."""
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").translate(_MD_CHARS)
+
+
+def _text_block(text: str, marks=(), mono: bool = False, height: int = 700) -> str:
+    """Texte complet dans un cadre défilant, avec un repère ‖ surligné à chaque position de ``marks`` (positions
+    dans ``text`` : les coupures). HTML sûr : aucun caractère interprété comme du Markdown."""
+    import html
+
+    def safe(t):
+        return _safe_html(t)
+
+    out, last = [], 0
+    for pos, label in sorted(marks):
+        out.append(safe(text[last:pos]))
+        out.append(f'<mark style="font-weight:700;padding:0 4px;margin:0 2px" title="{safe(label)}">‖ {safe(label)}'
+                   f'</mark>')
+        last = pos
+    out.append(safe(text[last:]))
+    font = "'Cascadia Code',Consolas,monospace;font-size:13px" if mono else "Georgia,serif;font-size:16px"
+    return (f'<div style="height:{height}px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;'
+            f'font-family:{font};line-height:1.55;padding:10px 12px;border-radius:8px;'
+            f'border:1px solid rgba(127,127,127,.3)">{"".join(out)}</div>')
+
+
+def _marked(before: str, after: str) -> str:
+    """Extrait avec la coupure ‖ surlignée, en HTML sûr (aucun caractère interprété comme du Markdown)."""
+    import html
+
+    def safe(t):
+        return _safe_html(re.sub(r"\s+", " ", t))
+    return (f'<div style="font-family:Georgia,serif;font-size:16px;line-height:1.55;padding:10px 12px;'
+            f'border-radius:8px;background:rgba(127,127,127,.08)">…{safe(before)}<mark style="font-weight:700;'
+            f'padding:0 4px;margin:0 3px">‖</mark>{safe(after)}…</div>')
+
+
+LEVEL_TEXT = {"ok": "✓ continu", "warn": "⚠ ponctuation perdue", "err": "✗ texte abîmé"}
+
+
+def _page_review(doc_name: str, data: dict, cuts: list, levels: dict) -> None:
+    """Relecture à la main, page par page : image scannée, texte OCR et texte modernisé de la même page, avec les
+    coupures entre morceaux repérées (‖) et leur verdict. Toutes les pages, qu'elles aient un problème ou non."""
+    pages = data.get("pages")
+    if not pages or not pages["stems"]:
+        st.info("Les textes des pages ne sont plus sur le disque : relecture coupure par coupure seulement.")
+        return
+    stems, n = pages["stems"], len(pages["stems"])
+    ocr, final = data["ocr"], data["final"]
+    key = f"vpage_{doc_name}"
+    if st.session_state.get(key, 0) not in range(1, n + 1):
+        st.session_state[key] = 1
+
+    def move(step):
+        st.session_state[key] = min(n, max(1, st.session_state[key] + step))
+
+    if n > 1:
+        c1, c2, c3 = st.columns([1, 6, 1], vertical_alignment="bottom")
+        c1.button("◀", on_click=move, args=(-1,), key=f"prev_{doc_name}", width="stretch")
+        with c2:
+            st.slider("Page à relire", 1, n, key=key)
+        c3.button("▶", on_click=move, args=(1,), key=f"next_{doc_name}", width="stretch")
+    p = st.session_state[key]
+    i, stem = p - 1, stems[p - 1]
+    o_lo, o_hi = pages["ocr_starts"][i], pages["ocr_starts"][i + 1]
+    f_lo, f_hi = pages["final_bounds"][i], pages["final_bounds"][i + 1]
+    on_page = [c for c in cuts if o_lo <= c["ocr_pos"] < o_hi]
+    for c in on_page:
+        level, explanation, source = levels[c["k"]]
+        {"err": st.error, "warn": st.warning, "ok": st.success}[level](
+            f"**Coupure {c['k']}/{c['k'] + 1} sur cette page — {LEVEL_TEXT[level]}** ({source}) : "
+            f"{explanation or 'sans explication'}")
+    if not on_page:
+        st.caption("Aucune coupure entre morceaux sur cette page : le LLM a reçu ce passage d'un seul tenant.")
+    ocr_marks = [(c["ocr_pos"] - o_lo, f"coupure {c['k']}/{c['k'] + 1}") for c in on_page]
+    fin_marks = [(min(max(c["final_pos"], f_lo), f_hi) - f_lo, f"coupure {c['k']}/{c['k'] + 1}") for c in on_page]
+    cols = st.columns([1.2, 1, 1])
+    image = PAGES_IMAGES_DIR / doc_name / f"{stem}.png"
+    with cols[0]:
+        st.markdown(f"**Page {p}/{n}** (image d'origine)")
+        if image.exists():
+            st.image(str(image), width="stretch")
+        else:
+            st.info("Image de la page indisponible.")
+    with cols[1]:
+        st.markdown("**Texte OCR** (envoyé au LLM)")
+        st.markdown(_text_block(ocr[o_lo:o_hi], ocr_marks, mono=True), unsafe_allow_html=True)
+    with cols[2]:
+        st.markdown("**Texte modernisé** (début et fin de page à un mot près)")
+        st.markdown(_text_block(final[f_lo:f_hi].rstrip(), fin_marks), unsafe_allow_html=True)
+
+
+def show_recette(doc_name: str) -> None:
+    """Vérification des coupures : chiffres clés, puis chaque coupure à l'écran (extrait de la page scannée,
+    texte OCR, texte final à la jointure, les deux morceaux), les omissions possibles et la page HTML."""
+    import base64
+    import json
+
+    page = ROOT_DIR / f"recette_{doc_name}.html"
+    if not page.exists():
+        return
+    notes_file = recette_modernisation.notes_path(doc_name)
+    notes_file = notes_file if notes_file.exists() else recette_modernisation.notes_path(doc_name, llm=True)
+    notes = {}
+    try:
+        notes = json.loads(notes_file.read_text(encoding="utf-8")) if notes_file.exists() else {}
+    except ValueError:
+        pass
+    judged = {k: v for k, v in notes.items() if not k.startswith("_") and isinstance(v, list) and len(v) >= 2}
+    by_llm = notes.get("_source") == "llm"
+    who = f"le LLM {notes.get('_modele', '')}" if by_llm else "la vérification manuelle"
+    try:
+        data = _check_data(doc_name, _text_stamp(doc_name))
+    except Exception as exc:  # noqa: BLE001
+        st.warning(f"Données de vérification illisibles ({exc}).")
+        return
+    ocr, final, chunks, parts = data["ocr"], data["final"], data["chunks"], data["parts"]
+
+    def level_of(info):
+        """(verdict, explication, source) : LLM ou manuel si jugé, sinon verdict automatique du programme."""
+        k = str(info["k"])
+        if k in judged and judged[k][0] in LEVEL_TEXT:
+            return judged[k][0], judged[k][1], who
+        if notes and not by_llm:  # vérification manuelle : une coupure non notée est continue
+            return "ok", "Vérifié : continu.", who
+        f = info["final_pos"]
+        level, label = recette_modernisation.verdict(final[max(0, f - 200):f], final[f:f + 200])
+        return level, label, "le contrôle automatique"
+
+    cuts = data["coupures"]
+    levels = {info["k"]: level_of(info) for info in cuts}
+    counts = [lv for lv, *_ in levels.values()]
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("✗ Texte abîmé", counts.count("err"))
+    col2.metric("⚠ Ponctuation perdue", counts.count("warn"))
+    col3.metric("✓ Coupures continues", counts.count("ok"))
+    col4.metric("Omissions possibles", len(data["omissions"]))
+    st.caption(f"{len(chunks)} morceau(x) envoyé(s) au LLM, donc {len(cuts)} coupure(s). Verdicts donnés par "
+               f"{who if notes else 'le contrôle automatique'}"
+               + (f" ({len([k for k in judged if k.isdigit()])}/{len(cuts)} coupures jugées)" if by_llm and cuts else "")
+               + ". À confirmer sur l'extrait de page.")
+
+    mode = st.radio("Relire", ["📄 Page par page (tout le texte)", "✂️ Coupure par coupure"], horizontal=True,
+                    key=f"mode_{doc_name}", label_visibility="collapsed")
+    if mode.startswith("📄"):
+        _page_review(doc_name, data, cuts, levels)
+    elif not cuts:
+        st.success("Le texte a été envoyé en un seul morceau : aucune coupure à vérifier.")
+    else:
+        to_check = [i["k"] for i in cuts if levels[i["k"]][0] != "ok"]
+        only = st.toggle(f"Seulement les coupures à revoir ({len(to_check)})", value=False,
+                         key=f"only_{doc_name}")
+        shown = [i for i in cuts if not only or i["k"] in to_check]
+        by_k = {i["k"]: i for i in cuts}
+
+        def label(k):
+            where = f" — page {by_k[k]['page']}" if by_k[k]["page"] else ""
+            return f"Coupure {k}/{k + 1}{where} — {LEVEL_TEXT[levels[k][0]]}"
+
+        if not shown:
+            st.success("Aucune coupure à revoir.")
+        else:
+            options = {label(i["k"]): i["k"] for i in shown}
+            k = options[st.selectbox(f"Coupure ({len(shown)} affichée(s))", list(options), key=f"cut_{doc_name}")]
+            info = by_k[k]
+            level, explanation, source = levels[k]
+            {"err": st.error, "warn": st.warning, "ok": st.success}[level](
+                f"**{LEVEL_TEXT[level]}** ({source}) : {explanation or 'sans explication'}")
+            left, right = st.columns([1, 1.15])
+            with left:
+                if info["image"]:
+                    b64 = recette_modernisation.crop(info["image"], info["ligne"], info["lignes"], width=900)
+                    if b64:
+                        st.image(base64.b64decode(b64), width="stretch",
+                                 caption=f"Page {info['page']}, autour de la ligne {info['ligne']} sur "
+                                         f"{info['lignes']} (zone approximative)")
+                    with st.expander(f"Page {info['page']} entière"):
+                        st.image(str(info["image"]), width="stretch")
+                else:
+                    st.info("Image de la page indisponible.")
+            with right:
+                o, f = info["ocr_pos"], info["final_pos"]
+                st.markdown("**Coupure dans le texte OCR** (ce qui a été envoyé au LLM)")
+                st.markdown(_marked(ocr[max(0, o - 300):o], ocr[o:o + 250]), unsafe_allow_html=True)
+                st.markdown("**Texte final à la jointure** (après modernisation et recollage)")
+                st.markdown(_marked(final[max(0, f - 320):f], final[f:f + 260]), unsafe_allow_html=True)
+            a, b = st.columns(2)
+            for col, i in ((a, k - 1), (b, k)):
+                with col:
+                    st.markdown(f"**Morceau {i + 1}** — {len(chunks[i])} caractères envoyés")
+                    with st.expander("Texte OCR envoyé"):
+                        st.text_area("OCR", chunks[i], height=300, key=f"ch_{doc_name}_{k}_{i}",
+                                     label_visibility="collapsed")
+                    with st.expander("Texte modernisé de ce morceau"):
+                        st.text_area("Modernisé", parts[i], height=300, key=f"pt_{doc_name}_{k}_{i}",
+                                     label_visibility="collapsed")
+
+    if data["omissions"]:
+        with st.expander(f"Omissions possibles dans un morceau ({len(data['omissions'])})"):
+            for n, (i, passage) in enumerate(data["omissions"], start=1):
+                note = judged.get(f"o{n}")
+                st.markdown(f"**{n}. Morceau {i}** — passage de l'OCR absent de la réponse :")
+                st.text(passage[:800])
+                if note:
+                    {"err": st.error, "warn": st.warning}.get(note[0], st.success)(
+                        f"{LEVEL_TEXT.get(note[0], note[0])} ({who}) : {note[1]}")
+
+    html_data = page.read_bytes()
+    st.download_button("💾 Télécharger la page de vérification (HTML)", data=html_data,
+                       file_name=f"verification_{doc_name}.html", mime="text/html", key=f"dl_recette_{doc_name}")
+    with st.expander("Page de vérification complète (toutes les coupures à la suite)"):
+        import streamlit.components.v1 as components
+
+        components.html(html_data.decode("utf-8"), height=900, scrolling=True)
 
 
 for _doc in document_list:

@@ -309,6 +309,94 @@ def test_recette_data_is_saved_with_exact_positions():
     assert data["consignes"] and data["texte_final"]["caracteres"] == len(final)
 
 
+def test_recette_llm_judges_cuts_and_writes_the_page():
+    # Étape de recette avec un faux LLM : prompts par lots (texte seul en navigateur, texte + images en API),
+    # verdicts JSON lus, fichier recette_<doc>.llm.json et page HTML écrits, vérification manuelle jamais écrasée.
+    import contextlib
+    import io
+    import json
+    import os
+    import re
+    import tempfile
+    from pathlib import Path
+
+    import ocr_text_to_modernized_text as m
+    import recette_llm
+    import recette_modernisation as R
+
+    def fake_modernize(site, prompts, timeout_s=300, document="", allow_partial=False):
+        return [re.search(r"\[TEXTE À RÉÉCRIRE\]\n(.*?)\n\[FIN DU TEXTE À RÉÉCRIRE\]", p, re.S).group(1) for p in prompts]
+
+    sent = []
+
+    def fake_judge(site, prompts, timeout_s=300, document="", allow_partial=False):
+        sent.extend(prompts)
+        out = []
+        for p in prompts:
+            text = p if isinstance(p, str) else " ".join(x for x in p if isinstance(x, str))
+            ids = re.findall(r"\[(?:COUPURE|OMISSION POSSIBLE) ([co]\d+)", text)
+            out.append("```json\n" + json.dumps([{"id": i, "verdict": "warn" if i == "c2" else "ok",
+                                                   "explication": f"jugé {i}"} for i in ids]) + "\n```")
+        return out
+
+    ocr = "".join(f"Paragraphe {n}. " + SENTENCE * 25 + "\n\n" for n in range(6))
+    saved = (m.run_prompts, m.write_log, m.CHUNK_MAX_CHARS, recette_llm.run_prompts, recette_llm.write_log,
+             R.ROOT, os.getcwd())
+    with tempfile.TemporaryDirectory() as tmp:
+        os.chdir(tmp)
+        m.run_prompts, m.write_log, m.CHUNK_MAX_CHARS = fake_modernize, lambda message: None, 1500
+        recette_llm.run_prompts, recette_llm.write_log, R.ROOT = fake_judge, lambda message: None, Path(tmp)
+        try:
+            Path("Doc_ocr_text.txt").write_text(ocr, encoding="utf-8")
+            Path("pages_textes/Doc").mkdir(parents=True)
+            Path("pages_textes/Doc/page0001-1.txt").write_text(ocr[:-1], encoding="utf-8")
+            with contextlib.redirect_stdout(io.StringIO()):
+                m.modernize_and_clean_ocr_text("Doc", "gemini", "français")
+                summary = recette_llm.run("Doc", "gemini")  # navigateur : texte seul
+                n_cuts = summary["coupures"]
+                assert all(isinstance(p, str) for p in sent) and len(sent) == -(-summary["elements"] // 10)
+                llm_notes = json.loads(Path("recette_Doc.llm.json").read_text(encoding="utf-8"))
+                assert llm_notes["_source"] == "llm" and llm_notes["2"] == ["warn", "jugé c2"]
+                assert summary["juges"] == summary["elements"] and summary["warn"] == 1 and summary["ok"] == n_cuts - 1
+                assert "Vérification par le LLM (gemini)" in Path("recette_Doc.html").read_text(encoding="utf-8")
+                # Une vérification manuelle existante reste prioritaire et n'est pas écrasée
+                Path("recette_Doc.notes.json").write_text(json.dumps({"1": ["err", "manuel"]}), encoding="utf-8")
+                sent.clear()
+                summary = recette_llm.run("Doc", "api:gemini-2.5-flash")  # API : liste texte (+ images si pages)
+                assert all(isinstance(p, list) for p in sent)
+                assert json.loads(Path("recette_Doc.notes.json").read_text(encoding="utf-8")) == {"1": ["err", "manuel"]}
+                assert summary["err"] == 1 and "Vérification manuelle" in Path("recette_Doc.html").read_text(encoding="utf-8")
+        finally:
+            (m.run_prompts, m.write_log, m.CHUNK_MAX_CHARS, recette_llm.run_prompts, recette_llm.write_log,
+             R.ROOT) = saved[:6]
+            os.chdir(saved[6])
+    # Lot sans réponse (réponse incomplète, constaté) : ses éléments sont rejugés par petits lots
+    calls = []
+
+    def flaky_judge(site, prompts, timeout_s=300, document="", allow_partial=False):
+        calls.append(len(prompts))
+        answers = fake_judge(site, prompts)
+        return [None] + answers[1:] if len(calls) == 1 else answers
+
+    with tempfile.TemporaryDirectory() as tmp:
+        os.chdir(tmp)
+        m.run_prompts, m.write_log, m.CHUNK_MAX_CHARS = fake_modernize, lambda message: None, 600
+        recette_llm.run_prompts, recette_llm.write_log, R.ROOT = flaky_judge, lambda message: None, Path(tmp)
+        try:
+            Path("Doc_ocr_text.txt").write_text(ocr, encoding="utf-8")
+            with contextlib.redirect_stdout(io.StringIO()):
+                m.modernize_and_clean_ocr_text("Doc", "gemini", "français")
+                summary = recette_llm.run("Doc", "gemini")
+            assert summary["elements"] > 10 and summary["juges"] == summary["elements"] and len(calls) == 2
+        finally:
+            (m.run_prompts, m.write_log, m.CHUNK_MAX_CHARS, recette_llm.run_prompts, recette_llm.write_log,
+             R.ROOT) = saved[:6]
+            os.chdir(saved[6])
+    assert recette_llm.parse_verdicts("pas de JSON", {"c1"}) == {}
+    assert recette_llm.parse_verdicts('Voici :\n[{"id": "c1", "verdict": "err", "explication": "x"}, '
+                                      '{"id": "c9", "verdict": "ok"}]', {"c1"}) == {"c1": ["err", "x"]}
+
+
 def test_residual_archaic():
     assert residual_archaic("Il estoit jusques à moy, et il croit qu'il doit.") == {"estoit": 1, "jusques": 1, "moy": 1}
 

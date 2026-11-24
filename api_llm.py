@@ -24,8 +24,7 @@ API_PREFIX = "api:"
 API_MODELS = [
     "gemini-2.5-flash",
     "gemini-2.5-pro",
-    "gemini-2.0-flash",
-    "gemini-2.5-flash-lite",
+    "gemini-2.5-flash-lite",  # (gemini-2.0-flash retiré : l'API répond « 404 no longer available », constaté)
     "gemini-3-flash-preview",
     "gemini-3-pro-preview",
 ]
@@ -43,9 +42,12 @@ _RETRYABLE_RE = re.compile(
 )
 _FATAL_RE = re.compile(
     r"API_KEY_INVALID|API key not valid|PERMISSION_DENIED|UNAUTHENTICATED|\b(400|401|403|404)\b|NOT_FOUND|"
-    r"CERTIFICATE_VERIFY_FAILED",
+    r"CERTIFICATE_VERIFY_FAILED|QUOTA_QUOTIDIEN",
     re.I,
 )
+# Quota gratuit par jour épuisé (429 « per day ») : réessayer dans la minute ne sert à rien (constaté : « retry in
+# 13h41m »). Chaque modèle a son propre quota : un autre modèle peut encore répondre.
+_DAILY_QUOTA_RE = re.compile(r"PerDay|per day", re.I)
 
 
 def set_api_key(key):
@@ -140,16 +142,20 @@ def _use_system_certificates():
 
 
 def _generate(model, prompt, api_key, timeout_s):
-    """Un appel à l'API Gemini (isolé pour pouvoir être remplacé dans les tests)."""
+    """Un appel à l'API Gemini (isolé pour pouvoir être remplacé dans les tests).
+
+    ``prompt`` : un texte, ou une liste de textes et d'images ``(octets, type MIME)`` (utilisé par la recette pour
+    joindre les extraits de pages scannées)."""
     _use_system_certificates()
     from google import genai
+    from google.genai import types
 
     try:
-        from google.genai import types
-
         client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=int(timeout_s * 1000)))
     except Exception:  # noqa: BLE001 - version de la bibliothèque sans HttpOptions
         client = genai.Client(api_key=api_key)
+    if isinstance(prompt, list):
+        prompt = [types.Part.from_bytes(data=p[0], mime_type=p[1]) if isinstance(p, tuple) else p for p in prompt]
     return client.models.generate_content(model=model, contents=prompt).text or ""
 
 
@@ -172,6 +178,10 @@ def ask(model, prompt, api_key, timeout_s=300, waits=(10, 30, 60), counter=None)
             return extract_answer(raw)
         except Exception as exc:  # noqa: BLE001
             message = _redact(f"{type(exc).__name__}: {exc}", api_key)
+            if _DAILY_QUOTA_RE.search(message):
+                raise RuntimeError(f"QUOTA_QUOTIDIEN : le quota gratuit du jour est épuisé pour le modèle {model}. "
+                                   "Choisissez un autre modèle Gemini (chacun a son propre quota) ou réessayez "
+                                   "demain.") from None
             if "CERTIFICATE_VERIFY_FAILED" in message:
                 message += " (antivirus ou proxy qui inspecte le HTTPS ? installez `pip install truststore`)"
             if wait is None or (_FATAL_RE.search(message) and not _RETRYABLE_RE.search(message)):

@@ -29,7 +29,7 @@ APP_ITEMS = [
     "convert_modernized_txt_to_word.py", "convert_modernized_word_to_pdf.py", "convert_modernized_txt_to_markdown.py",
     "dl_languages.py", "system_paths.py", "run_batch.py",
     # LLM (navigateur ou API) et contrôles qualité
-    "browser_llm.py", "api_llm.py", "site_login.py", "progress.py", "recette_data.py", "recette_modernisation.py", "quality_checks.py",
+    "browser_llm.py", "api_llm.py", "site_login.py", "progress.py", "recette_data.py", "recette_modernisation.py", "recette_llm.py", "quality_checks.py",
     # dépendances, modèle de clé API, préparation (première ouverture, réparation)
     "requirements.txt", ".env.example", "packaging",
 ]
@@ -40,7 +40,7 @@ VERSION_FILE = "VERSION"
 USER_DATA = [
     ".venv", "runtime", "browser_profile", "logs", ".env", "installation.json", "instance.json", "connexions.json", "modernisateur*.log",
     "preparation*.log", "pdf_uploads", "pages_images", "pages_textes", "pages_cleaned_textes", "*.pdf",
-    "*_ocr_text.txt", "*_modernization_prompt.txt", "*_modernized_cleaned_text.*", "*_recette.json", "recette_*.html", "recette_*.notes.json", "temp_no_double_spaces.txt",
+    "*_ocr_text.txt", "*_modernization_prompt.txt", "*_modernized_cleaned_text.*", "*_recette.json", "recette_*.html", "recette_*.notes.json", "recette_*.llm.json", "temp_no_double_spaces.txt",
 ]
 IGNORED = ["__pycache__", "*.pyc", ".DS_Store", "Thumbs.db"]
 
