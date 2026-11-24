@@ -86,6 +86,23 @@ class Systems(unittest.TestCase):
                 self.assertIn("API Gemini", reason)
         self.assertIsNone(load("linux").browser_unavailable())
 
+    def test_old_mac_tools(self):
+        """macOS < 10.15 : Python 3.12.7 (les suivants exigent macOS 10.15) ; macOS < 11 sur Intel : micromamba 2.5.0-2
+        (les suivants exigent macOS 11). Les Mac récents et les autres systèmes gardent les dernières versions."""
+        from unittest import mock
+
+        mac = load("macos")
+        module = sys.modules[type(mac).__module__]
+        for version, python, mamba in (("10.14.6", "3.12.7", "2.5.0-2"), ("10.15.7", "3.12", "2.5.0-2"),
+                                       ("11.7.10", "3.12", "latest"), ("14.5", "3.12", "latest"), ("", "3.12", "latest")):
+            with mock.patch.object(module.platform, "mac_ver", return_value=(version, ("", "", ""), "")),                     mock.patch.object(type(mac), "micromamba_platform", return_value="osx-64"):
+                self.assertEqual(mac.python_version(), python, version)
+                self.assertEqual(mac.micromamba_version(), mamba, version)
+        with mock.patch.object(module.platform, "mac_ver", return_value=("10.14.6", ("", "", ""), "")),                 mock.patch.object(type(mac), "micromamba_platform", return_value="osx-arm64"):
+            self.assertEqual(mac.micromamba_version(), "latest")
+        self.assertEqual(load("linux").python_version(), "3.12")
+        self.assertEqual(load("linux").micromamba_version(), "latest")
+
     def test_old_mac_requirements(self):
         """requirements.txt : sur macOS < 13 (Darwin < 22), versions qui existent toutes faites pour macOS 10.14."""
         from packaging.requirements import Requirement

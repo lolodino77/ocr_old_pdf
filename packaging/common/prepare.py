@@ -33,7 +33,7 @@ from system_base import PrepareError, System, current_platform, load  # noqa: E4
 STATE_FILE = "installation.json"
 INSTANCE_FILE = "instance.json"  # écrit par lancer_app.py quand le programme tourne
 NOT_READY = 10  # code de sortie de --check : préparation nécessaire
-MICROMAMBA_URL = "https://github.com/mamba-org/micromamba-releases/releases/latest/download/micromamba-{platform}"
+MICROMAMBA_URL = "https://github.com/mamba-org/micromamba-releases/releases/{where}/micromamba-{platform}"
 
 
 def step(n: int, total: int, text: str) -> None:
@@ -129,7 +129,7 @@ def install_python(root: Path, uv: Path, system: System) -> Path:
     if not _works([python, "-c", "import sys"]):  # première fois, ou dossier déplacé (le .venv garde l'ancien chemin)
         if (root / ".venv").exists():
             system.remove_tree(root / ".venv")
-        run([uv, "venv", "--quiet", root / ".venv", "--python", M.PYTHON_VERSION], "Python n'a pas pu être installé.",
+        run([uv, "venv", "--quiet", root / ".venv", "--python", system.python_version()], "Python n'a pas pu être installé.",
             env=env)
     run([uv, "pip", "install", "--python", python, "-r", root / "requirements.txt"],
         "Les bibliothèques du programme n'ont pas pu être installées. Vérifiez la connexion Internet ; si le "
@@ -162,7 +162,9 @@ def install_tesseract(root: Path, system: System) -> None:
     if not _works([mamba, "--version"]):
         info("Téléchargement de l'outil d'installation (micromamba)...")
         mamba.parent.mkdir(parents=True, exist_ok=True)
-        download(MICROMAMBA_URL.format(platform=system.micromamba_platform()), mamba)
+        version = system.micromamba_version()
+        where = "latest/download" if version == "latest" else f"download/{version}"
+        download(MICROMAMBA_URL.format(where=where, platform=system.micromamba_platform()), mamba)
         mamba.chmod(0o755)
     if tools.exists():
         system.remove_tree(tools)

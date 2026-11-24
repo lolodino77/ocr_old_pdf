@@ -114,9 +114,11 @@ def make_icns(png: Path, icns: Path) -> bool:
 
 
 def macos_version() -> tuple[int, ...]:
-    """Version de macOS, ex. (10, 14, 6) ; () si inconnue."""
+    """Version de macOS, ex. (10, 14, 6) ; () si inconnue. MODERNISATEUR_MACOS_VERSION la remplace (tests : choix
+    faits pour un vieux macOS, essayés sur un Mac récent)."""
     try:
-        return tuple(int(x) for x in platform.mac_ver()[0].split(".") if x.isdigit())
+        text = os.environ.get("MODERNISATEUR_MACOS_VERSION") or platform.mac_ver()[0]
+        return tuple(int(x) for x in text.split(".") if x.isdigit())
     except ValueError:
         return ()
 
@@ -124,6 +126,8 @@ def macos_version() -> tuple[int, ...]:
 # Le navigateur de Playwright (Node.js qui le pilote, Chromium) exige macOS 11 ou plus récent ; Google Chrome n'est
 # plus mis à jour non plus sur les macOS plus anciens (dernière version : 116 sur 10.13 et 10.14).
 BROWSER_MIN_MACOS = (11, 0)
+PYTHON_MIN_MACOS = (10, 15)  # Python 3.12.9 et suivants (python-build-standalone)
+MICROMAMBA_MIN_MACOS = (11, 0)  # micromamba >= 2.6.0 (Intel)
 
 
 def chromium_binary(root: Path) -> Path | None:
@@ -163,6 +167,19 @@ class MacOS(System):
         except OSError:
             arm = ""
         return "osx-arm64" if arm == "1" else "osx-64"
+
+    def python_version(self) -> str:
+        # Les Python de uv publiés depuis février 2025 (3.12.9 et suivants) exigent macOS 10.15 ; la 3.12.7 (octobre 2024)
+        # démarre dès macOS 10.9.
+        version = macos_version()
+        return "3.12.7" if version and version < PYTHON_MIN_MACOS else super().python_version()
+
+    def micromamba_version(self) -> str:
+        # Depuis la 2.6.0, micromamba (Intel) exige macOS 11 : avant, la dernière qui démarre est la 2.5.0-2 (macOS 10.13).
+        version = macos_version()
+        if self.micromamba_platform() == "osx-64" and version and version < MICROMAMBA_MIN_MACOS:
+            return "2.5.0-2"
+        return "latest"
 
     def ca_bundle(self, root: Path) -> Path | None:
         """Certificats racine du trousseau du Mac (dont celui d'un antivirus ou d'un réseau d'entreprise)."""

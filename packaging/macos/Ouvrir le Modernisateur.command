@@ -8,7 +8,8 @@
 #   l'application « Modernisateur de livres anciens » à côté de ce fichier (pour les fois suivantes, sans Terminal).
 # Rien n'est installé ailleurs sur le Mac. Désinstaller : supprimer ce dossier.
 # Écrit en sh POSIX (pas de bash ni de zsh requis).
-# Variables facultatives (tests) : MODERNISATEUR_OPTIONS, MODERNISATEUR_SANS_LANCEMENT, MODERNISATEUR_AUTOMATIQUE (pas
+# Variables facultatives (tests) : MODERNISATEUR_OPTIONS, MODERNISATEUR_SANS_LANCEMENT, MODERNISATEUR_MACOS_VERSION
+# (version de macOS supposée, ex. 10.14.6), MODERNISATEUR_AUTOMATIQUE (pas
 # de pause, pas de nouvelle fenêtre de Terminal).
 
 TITRE="Modernisateur de livres anciens"
@@ -132,5 +133,11 @@ UV_SYSTEM_CERTS=1
 UV_LINK_MODE=copy
 export UV_PYTHON_INSTALL_DIR UV_PYTHON_PREFERENCE UV_SYSTEM_CERTS UV_LINK_MODE
 # shellcheck disable=SC2086  # MODERNISATEUR_OPTIONS : plusieurs options séparées par des espaces
-"$UV" run --no-project --python 3.12 "$P/packaging/common/prepare.py" --root "$P" --uv "$UV" $MODERNISATEUR_OPTIONS || echec
+# Python de uv : les versions publiées depuis février 2025 (3.12.9 et suivantes) exigent macOS 10.15 ; avant, 3.12.7.
+# (même choix dans packaging/macos/system.py : python_version)
+PYV=3.12
+case "${MODERNISATEUR_MACOS_VERSION:-$(sw_vers -productVersion 2>/dev/null)}" in
+  10.[0-9] | 10.[0-9].* | 10.1[0-4] | 10.1[0-4].*) PYV=3.12.7 ;;
+esac
+"$UV" run --no-project --python "$PYV" "$P/packaging/common/prepare.py" --root "$P" --uv "$UV" $MODERNISATEUR_OPTIONS || echec
 ouvrir

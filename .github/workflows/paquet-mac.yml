@@ -1,0 +1,92 @@
+# Essai du paquet Mac sur de vrais Mac (GitHub) : fabrication du .zip, extraction, lanceur « Ouvrir le Modernisateur »
+# (préparation complète : uv, Python, bibliothèques, Tesseract, langues, navigateur), ouverture de l'application, OCR.
+# « comme-mojave » : Mac Intel récent, avec les choix faits pour macOS 10.14 (Python 3.12.7, micromamba 2.5.0-2,
+# pas de navigateur, bibliothèques de requirements.txt pour Darwin 18). Il n'existe plus de Mac 10.14 chez GitHub.
+name: Paquet Mac
+
+on:
+  push:
+    paths:
+      - "packaging/**"
+      - "requirements.txt"
+      - "*.py"
+      - ".github/workflows/paquet-mac.yml"
+  workflow_dispatch:
+
+jobs:
+  essai:
+    name: ${{ matrix.nom }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { nom: intel, runner: macos-15-intel, macos: "" }
+          - { nom: comme-mojave, runner: macos-15-intel, macos: "10.14.6" }
+          - { nom: apple, runner: macos-15, macos: "" }
+    env:
+      MODERNISATEUR_AUTOMATIQUE: "1"     # pas de pause, pas de nouvelle fenêtre de Terminal
+      MODERNISATEUR_MACOS_VERSION: ${{ matrix.macos }}
+      OCR_SANS_NAVIGATEUR: "1"           # l'application n'ouvre pas de navigateur
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"         # seulement pour fabriquer le .zip
+
+      - name: Fabriquer le paquet
+        run: python packaging/build_package.py macos
+
+      - name: Extraire le .zip (comme reçu par Internet)
+        run: |
+          xattr -w com.apple.quarantine "0083;00000000;Safari;" dist/ModernisateurLivresAnciens-Mac.zip
+          ditto -xk dist/ModernisateurLivresAnciens-Mac.zip "$HOME/essai"
+          ls -la "$HOME/essai/ModernisateurLivresAnciens-Mac"
+          echo "D=$HOME/essai/ModernisateurLivresAnciens-Mac" >> "$GITHUB_ENV"
+          sw_vers; uname -m
+
+      - name: Préparation (lanceur, première fois)
+        env:
+          MODERNISATEUR_SANS_LANCEMENT: "1"
+        run: '"$D/Ouvrir le Modernisateur.command"'
+
+      - name: Versions choisies pour ce macOS
+        working-directory: ${{ env.D }}/programme
+        run: |
+          .venv/bin/python -c "import platform; print('Python', platform.python_version())"
+          runtime/micromamba --version
+          ls runtime/browsers 2>/dev/null || echo "pas de navigateur téléchargé"
+          if [ -n "$MODERNISATEUR_MACOS_VERSION" ]; then
+            .venv/bin/python -c "import platform; assert platform.python_version() == '3.12.7'"
+            runtime/micromamba --version | grep -q '^2\.5\.0'
+            [ ! -d runtime/browsers ]
+          fi
+
+      - name: Bibliothèques de macOS 10.14 (comme-mojave)
+        if: matrix.macos != ''
+        working-directory: ${{ env.D }}/programme
+        run: |
+          python -m pip install --quiet packaging
+          python "$GITHUB_WORKSPACE/packaging/outils/essai_mac.py" mojave requirements.txt > "$RUNNER_TEMP/mojave.txt"
+          cat "$RUNNER_TEMP/mojave.txt"
+          runtime/uv pip install --python .venv/bin/python --only-binary :all: -r "$RUNNER_TEMP/mojave.txt"
+          .venv/bin/python -c "import sys; sys.path.insert(0, 'packaging/common'); import prepare; from pathlib import Path; prepare.check_program(Path('.venv/bin/python'), Path('.').resolve()); print('programme ok')"
+
+      - name: Ouverture (lanceur, déjà prêt)
+        run: '"$D/Ouvrir le Modernisateur.command"'
+
+      - name: L'application répond
+        run: '"$D/programme/.venv/bin/python" packaging/outils/essai_mac.py attendre "$D/programme"'
+
+      - name: OCR d'un PDF
+        run: '"$D/programme/.venv/bin/python" packaging/outils/essai_mac.py ocr "$D/programme"'
+
+      - name: Application « Modernisateur de livres anciens »
+        run: ls -la "$D" && ls "$D"/*.app/Contents/MacOS
+
+      - name: Journaux
+        if: always()
+        run: |
+          for f in "$D"/programme/*.log; do echo "=== $f"; tail -n 80 "$f"; done || true

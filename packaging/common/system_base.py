@@ -51,6 +51,16 @@ class System:
         """Nom de la plateforme de micromamba (« win-64 », « linux-64 », « osx-arm64 »…), qui installe Tesseract."""
         raise PrepareError("micromamba n'est pas disponible pour ce système")
 
+    def python_version(self) -> str:
+        """Version de Python du programme (celle de manifest.py, sauf système qui exige une version précise)."""
+        import manifest
+
+        return manifest.PYTHON_VERSION
+
+    def micromamba_version(self) -> str:
+        """Version de micromamba à télécharger (« latest » = la dernière)."""
+        return "latest"
+
     def micromamba_file(self, root: Path) -> Path:
         return root / "runtime" / "micromamba"
 
