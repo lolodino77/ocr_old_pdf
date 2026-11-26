@@ -1051,7 +1051,10 @@ def show_recette(doc_name: str) -> None:
     col1.metric("✗ Texte abîmé", counts.count("err"))
     col2.metric("⚠ Ponctuation perdue", counts.count("warn"))
     col3.metric("✓ Coupures continues", counts.count("ok"))
-    col4.metric("Omissions possibles", len(data["omissions"]))
+    cleared = sum(1 for n in range(1, len(data["omissions"]) + 1) if (judged.get(f"o{n}") or [""])[0] == "ok")
+    col4.metric("Omissions à vérifier", len(data["omissions"]) - cleared,
+                help=f"{len(data['omissions'])} passages suspects repérés par le programme, dont {cleared} écartés par le LLM "
+                     "(rien d'oublié).")
     st.caption(f"{len(chunks)} morceau(x) envoyé(s) au LLM, donc {len(cuts)} coupure(s). Verdicts donnés par "
                f"{who if notes else 'le contrôle automatique'}"
                + (f" ({len([k for k in judged if k.isdigit()])}/{len(cuts)} coupures jugées)" if by_llm and cuts else "")
@@ -1113,20 +1116,33 @@ def show_recette(doc_name: str) -> None:
                                      label_visibility="collapsed")
 
     if data["omissions"]:
-        with st.expander(f"Omissions possibles dans un morceau ({len(data['omissions'])})"):
-            st.caption("Le programme compare les mots de l'OCR avec ceux de la réponse du LLM. Quand une suite de mots de "
-                       "l'OCR ne se retrouve pas, il la signale ici : c'est soit un vrai passage oublié, soit un texte "
-                       "que l'OCR a mal lu (mots déformés) et que le LLM a corrigé. Le LLM de vérification cherche alors "
-                       "le passage dans le texte final et donne son verdict.")
-            omission_text = {"ok": "✓ Rien d'oublié", "warn": "⚠ Oubli possible", "err": "✗ Passage perdu"}
-            for n, (i, passage) in enumerate(data["omissions"], start=1):
-                note = judged.get(f"o{n}")
-                st.markdown(f"**{n}. Morceau {i}** — passage de l'OCR (brut, souvent déformé) que le programme ne retrouve pas "
-                            "mot pour mot dans la réponse :")
-                st.text(passage[:800])
-                if note:
-                    {"err": st.error, "warn": st.warning}.get(note[0], st.success)(
-                        f"**{omission_text.get(note[0], note[0])}** — jugé par {who} : {note[1]}")
+        omission_text = {"ok": "✓ Rien d'oublié", "warn": "⚠ Oubli possible", "err": "✗ Passage perdu"}
+        numbered = list(enumerate(data["omissions"], start=1))
+        is_cleared = lambda n: (judged.get(f"o{n}") or [""])[0] == "ok"
+        todo, done = [x for x in numbered if not is_cleared(x[0])], [x for x in numbered if is_cleared(x[0])]
+
+        def show_omission(n, i, passage):
+            note = judged.get(f"o{n}")
+            st.markdown(f"**{n}. Morceau {i}** — passage de l'OCR (brut, souvent déformé) que le programme ne retrouve pas "
+                        "mot pour mot dans la réponse :")
+            st.text(passage[:800])
+            if note:
+                {"err": st.error, "warn": st.warning}.get(note[0], st.success)(
+                    f"**{omission_text.get(note[0], note[0])}** — jugé par {who} : {note[1]}")
+
+        with st.expander(f"Omissions à vérifier ({len(todo)})", expanded=bool(todo)):
+            st.caption("Le programme compare les mots de l'OCR avec ceux de la réponse du LLM : une suite de mots de l'OCR "
+                       "introuvable est signalée comme suspecte. C'est soit un vrai passage oublié, soit un texte que l'OCR "
+                       "a mal lu et que le LLM a corrigé. Seuls les passages que le LLM de vérification n'a pas pu écarter "
+                       "apparaissent ici.")
+            if not todo:
+                st.success("Aucune omission à vérifier.")
+            for n, (i, passage) in todo:
+                show_omission(n, i, passage)
+        if done:
+            with st.expander(f"Passages suspects écartés par le LLM : rien d'oublié ({len(done)})"):
+                for n, (i, passage) in done:
+                    show_omission(n, i, passage)
 
     html_data = page.read_bytes()
     st.download_button("💾 Télécharger la page de vérification (HTML)", data=html_data,
