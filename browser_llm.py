@@ -399,10 +399,20 @@ def _shard_profile(k):
         return base
     copy = base.with_name(f"{base.name}_fenetre{k}")
     shutil.rmtree(copy, ignore_errors=True)
+
+    def copy_file(src, dst):
+        try:
+            return shutil.copy2(src, dst)
+        except OSError:  # fichier verrouillé ou disparu : sans importance pour une copie de connexion
+            return dst
+
     if base.exists():
-        shutil.copytree(base, copy, ignore=shutil.ignore_patterns(
-            "Cache", "Code Cache", "GPUCache", "GrShaderCache", "ShaderCache", "Service Worker", "Crashpad",
-            "Singleton*", "lockfile", "*.lock", "DawnCache", "component_crx_cache"), ignore_dangling_symlinks=True)
+        try:
+            shutil.copytree(base, copy, copy_function=copy_file, ignore=shutil.ignore_patterns(
+                "Cache", "Code Cache", "GPUCache", "GrShaderCache", "ShaderCache", "Service Worker", "Crashpad",
+                "Singleton*", "lockfile", "*.lock", "DawnCache", "component_crx_cache"), ignore_dangling_symlinks=True)
+        except (shutil.Error, OSError) as exc:
+            write_log(f"copie du profil du navigateur pour la fenêtre {k} incomplète : {str(exc)[:200]}")
     return copy
 
 
@@ -432,16 +442,22 @@ def _run_browser(site, prompts, timeout_s):
         # Morceaux répartis en alternance : chaque fenêtre reçoit des morceaux de tout le document.
         indices = [list(range(k, n, shards)) for k in range(shards)]
 
+        # Copies des profils faites AVANT d'ouvrir la moindre fenêtre (un Chrome ouvert verrouille des fichiers)
+        profiles = [_shard_profile(k) for k in range(shards)]
+
         def run_shard(k):
             src, dst = Path(tmp) / f"prompts{k}.json", Path(tmp) / f"answers{k}.json"
             src.write_text(json.dumps([prompts[i] for i in indices[k]], ensure_ascii=False), encoding="utf-8")
             if k:
                 time.sleep(4 * k)  # fenêtres ouvertes l'une après l'autre
-            profile = _shard_profile(k)
+            profile = profiles[k]
             cmd = [sys.executable, str(Path(__file__).resolve()), "batch", site, str(src), str(dst), str(timeout_s)]
             if shards > 1:
                 cmd += [str(profile), str(n), ",".join(str(i + 1) for i in indices[k])]
-            results[k] = (_stream_subprocess(cmd, max_s), dst)
+            try:
+                results[k] = (_stream_subprocess(cmd, max_s), dst)
+            except Exception as exc:  # noqa: BLE001 - une fenêtre en échec ne doit pas faire perdre les autres
+                results[k] = (f"{type(exc).__name__}: {exc}", dst)
 
         if shards == 1:
             run_shard(0)
@@ -452,7 +468,8 @@ def _run_browser(site, prompts, timeout_s):
             for t in threads:
                 t.join()
         answers, sent, errors, unknown = [None] * n, 0, [], False
-        for k, (output, dst) in enumerate(results):
+        for k, (output, dst) in enumerate(r if r else ("fenêtre non démarrée", Path(tmp) / f"answers{k}.json")
+                                          for k, r in enumerate(results)):
             if output is None:
                 errors.append(f"navigateur bloqué : aucune fin après {max_s} s, sous-processus arrêté")
                 unknown = True
