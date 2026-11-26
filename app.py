@@ -284,6 +284,15 @@ else:
     api_model = st.selectbox("Modèle Gemini", api_llm.API_MODELS, index=0)
     LLM_model_name = api_llm.spec(api_model)
 
+# Morceaux envoyés au LLM en même temps (OCR et conversion des pages : déjà en parallèle, un processus par cœur).
+llm_parallel = st.number_input(
+    "⚡ Envois au LLM en parallèle", min_value=1, max_value=8, value=4 if llm_mode == MODE_API else 1,
+    key=f"llm_parallel_{llm_mode}", disabled=_job_running(),
+    help="API : plusieurs requêtes en même temps (attention aux limites de débit du quota gratuit : en cas "
+         "d'erreurs 429, baissez). Navigateur : plusieurs fenêtres de Chrome en même temps, chacune avec une copie "
+         "de votre profil connecté ; essayez 2 ou 3 sur un document court avant un gros, car les sites peuvent "
+         "limiter ou demander un captcha.")
+
 # --- RECETTE FINALE : un LLM vérifie les coupures entre morceaux (mêmes deux modes que la modernisation) ---
 st.markdown("##### 🔎 Vérification finale")
 do_recette = st.checkbox(
@@ -620,6 +629,7 @@ elif start:
         _params = {"document_list": list(document_list), "tesseract_lang": tesseract_lang, "language": language,
                    "LLM_model_name": LLM_model_name, "do_recette": do_recette, "recette_site": recette_site,
                    "poppler_path": st.session_state.poppler_path, "n_uploaded": len(uploaded_files or [])}
+        os.environ["OCR_LLM_WORKERS"] = str(int(llm_parallel))
         pipeline_job.start(_job, lambda job: _run_job(job, _params))
         _busy = True
 

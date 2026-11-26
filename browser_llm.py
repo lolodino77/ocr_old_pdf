@@ -389,8 +389,26 @@ def log_prompts(document, site, chunks, sent, error=None):
     )
 
 
+def _shard_profile(k):
+    """Profil du navigateur numéro ``k`` (0 = le profil habituel). Deux Chrome ne peuvent pas partager un profil :
+    les autres fenêtres ont chacune une copie (connexions comprises), refaite à chaque envoi, sans les caches."""
+    import shutil
+
+    base = default_profile_dir()
+    if k == 0:
+        return base
+    copy = base.with_name(f"{base.name}_fenetre{k}")
+    shutil.rmtree(copy, ignore_errors=True)
+    if base.exists():
+        shutil.copytree(base, copy, ignore=shutil.ignore_patterns(
+            "Cache", "Code Cache", "GPUCache", "GrShaderCache", "ShaderCache", "Service Worker", "Crashpad",
+            "Singleton*", "lockfile", "*.lock", "DawnCache", "component_crx_cache"), ignore_dangling_symlinks=True)
+    return copy
+
+
 def _run_browser(site, prompts, timeout_s):
-    """Envoie les prompts au site dans un sous-processus. Retourne ``{"answers", "prompts_sent", "error"?}``.
+    """Envoie les prompts au site dans un ou plusieurs sous-processus (OCR_LLM_WORKERS fenêtres de navigateur en
+    même temps). Retourne ``{"answers", "prompts_sent", "error"?}``.
 
     Playwright tourne dans un **sous-processus** : il a besoin d'une boucle asyncio capable de lancer des
     processus, ce que le thread de Streamlit n'offre pas sous Windows (NotImplementedError).
@@ -398,24 +416,65 @@ def _run_browser(site, prompts, timeout_s):
     import json
     import subprocess
     import tempfile
+    import threading
+    import time
 
     n = len(prompts)
+    try:
+        shards = max(1, min(int(os.environ.get("OCR_LLM_WORKERS", "1")), n))
+    except ValueError:
+        shards = 1
+    # Durée maximale : chaque prompt peut épuiser son délai et ses nouveaux essais. Au-delà, le navigateur
+    # est considéré comme bloqué (constaté : sous-processus figé plus d'une heure) et il est arrêté.
+    max_s = -(-n // shards) * 3 * (timeout_s + 100) + 120
     with tempfile.TemporaryDirectory() as tmp:
-        src, dst = Path(tmp) / "prompts.json", Path(tmp) / "answers.json"
-        src.write_text(json.dumps(prompts, ensure_ascii=False), encoding="utf-8")
-        # Durée maximale : chaque prompt peut épuiser son délai et ses nouveaux essais. Au-delà, le navigateur
-        # est considéré comme bloqué (constaté : sous-processus figé plus d'une heure) et il est arrêté.
-        max_s = n * 3 * (timeout_s + 100) + 120
-        output = _stream_subprocess(
-            [sys.executable, str(Path(__file__).resolve()), "batch", site, str(src), str(dst), str(timeout_s)], max_s)
-        if output is None:
-            return {"answers": [None] * n, "prompts_sent": 0, "sent_unknown": True,
-                    "error": f"navigateur bloqué : aucune fin après {max_s} s, sous-processus arrêté"}
-        if not dst.exists():
-            return {"answers": [None] * n, "prompts_sent": 0, "sent_unknown": True,
-                    "error": f"Le sous-processus navigateur a échoué : {output[-500:]}"}
+        results = [None] * shards  # (sortie du sous-processus, chemin des réponses, indices globaux)
+        # Morceaux répartis en alternance : chaque fenêtre reçoit des morceaux de tout le document.
+        indices = [list(range(k, n, shards)) for k in range(shards)]
+
+        def run_shard(k):
+            src, dst = Path(tmp) / f"prompts{k}.json", Path(tmp) / f"answers{k}.json"
+            src.write_text(json.dumps([prompts[i] for i in indices[k]], ensure_ascii=False), encoding="utf-8")
+            if k:
+                time.sleep(4 * k)  # fenêtres ouvertes l'une après l'autre
+            profile = _shard_profile(k)
+            cmd = [sys.executable, str(Path(__file__).resolve()), "batch", site, str(src), str(dst), str(timeout_s)]
+            if shards > 1:
+                cmd += [str(profile), str(n), ",".join(str(i + 1) for i in indices[k])]
+            results[k] = (_stream_subprocess(cmd, max_s), dst)
+
+        if shards == 1:
+            run_shard(0)
+        else:
+            threads = [threading.Thread(target=run_shard, args=(k,), daemon=True) for k in range(shards)]
+            for t in threads:
+                t.start()
+            for t in threads:
+                t.join()
+        answers, sent, errors, unknown = [None] * n, 0, [], False
+        for k, (output, dst) in enumerate(results):
+            if output is None:
+                errors.append(f"navigateur bloqué : aucune fin après {max_s} s, sous-processus arrêté")
+                unknown = True
+            elif not dst.exists():
+                errors.append(f"Le sous-processus navigateur a échoué : {output[-500:]}")
+                unknown = True
+            else:
+                part = json.loads(dst.read_text(encoding="utf-8"))
+                for i, a in zip(indices[k], part.get("answers") or []):
+                    answers[i] = a
+                sent += part.get("prompts_sent", 0)
+                if part.get("error"):
+                    errors.append(part["error"])
+        if shards == 1 and unknown:
+            sent = 0
         progress.report(n, n, f"{n} morceau(x) traité(s)")
-        return json.loads(dst.read_text(encoding="utf-8"))
+        out = {"answers": answers, "prompts_sent": sent}
+        if unknown:
+            out["sent_unknown"] = True
+        if errors:
+            out["error"] = " | ".join(errors)
+        return out
 
 
 _CHUNK_LINE_RE = re.compile(r"morceau (\d+)/(\d+)")
@@ -511,12 +570,13 @@ def run_prompts(site, prompts, timeout_s=300, document="", allow_partial=False):
     return answers
 
 
-def _batch(site, src, dst, timeout_s):
+def _batch(site, src, dst, timeout_s, profile=None, total=None, numbers=None):
     import json
 
     prompts = json.loads(Path(src).read_text(encoding="utf-8"))
-    session = BrowserSession()
+    session = BrowserSession(profile)
     answers, errors = [], {}
+    numbers = [int(x) for x in numbers.split(",")] if numbers else None
     try:
         for i, prompt in enumerate(prompts, start=1):
             if len(errors) >= 2 and all(k in errors for k in (i - 2, i - 1)):
@@ -524,7 +584,7 @@ def _batch(site, src, dst, timeout_s):
                 answers.append(None)
                 errors[i] = "non envoyé (échecs précédents)"
                 continue
-            print(f"Modernisation du morceau {i}/{len(prompts)} via {site} ...", flush=True)
+            print(f"Modernisation du morceau {numbers[i - 1] if numbers else i}/{total or len(prompts)} via {site} ...", flush=True)
             try:
                 answers.append(ask_with_retries(session, site, prompt, timeout_s))
             except Exception as exc:  # noqa: BLE001 - un morceau en échec n'arrête pas les autres
@@ -546,7 +606,8 @@ if __name__ == "__main__":
             s.login(sys.argv[2:] or list(SITES))
         finally:
             s.close()
-    elif len(sys.argv) == 6 and sys.argv[1] == "batch":
-        _batch(sys.argv[2], sys.argv[3], sys.argv[4], int(sys.argv[5]))
+    elif len(sys.argv) in (6, 9) and sys.argv[1] == "batch":
+        _batch(sys.argv[2], sys.argv[3], sys.argv[4], int(sys.argv[5]),
+               *((sys.argv[6], int(sys.argv[7]), sys.argv[8]) if len(sys.argv) == 9 else ()))
     else:
         print("Usage : python browser_llm.py login [gemini] [gpt]")

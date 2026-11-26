@@ -14,6 +14,7 @@ Le mode API peut aussi servir de **repli** quand le navigateur échoue (``set_fa
 Un site désigne soit un LLM du navigateur (« gemini », « gpt »), soit un modèle de l'API (« api:gemini-2.5-flash »).
 """
 import os
+import threading
 import re
 import time
 from pathlib import Path
@@ -205,6 +206,60 @@ def _ask_with_progress(i, n, model, prompt, api_key, timeout_s, counter):
                 progress.chunk_waiting(i, n, time.monotonic() - started)
 
 
+def llm_workers(n, default):
+    """Requêtes envoyées en même temps (variable d'environnement OCR_LLM_WORKERS, réglée par l'interface)."""
+    try:
+        wanted = int(os.environ.get("OCR_LLM_WORKERS", ""))
+    except ValueError:
+        wanted = default
+    return max(1, min(wanted, n))
+
+
+def _run_batch_parallel(model, prompts, timeout_s, api_key, workers):
+    """Même contrat que run_batch, avec ``workers`` requêtes en même temps. Les morceaux sont indépendants (chacun
+    porte son propre contexte). Une erreur définitive (clé refusée…) ou trois échecs de suite arrêtent l'envoi."""
+    from concurrent.futures import ThreadPoolExecutor, wait, FIRST_COMPLETED
+
+    n = len(prompts)
+    counter, answers, errors = [], [None] * n, {}
+    lock, stop, streak = threading.Lock(), threading.Event(), [0]
+
+    def work(i):
+        if stop.is_set():
+            errors[i + 1] = "non envoyé (échecs précédents)"
+            return
+        print(f"Modernisation du morceau {i + 1}/{n} via {API_PREFIX}{model} ...", flush=True)
+        try:
+            answers[i] = ask(model, prompts[i], api_key, timeout_s, counter=counter)
+            with lock:
+                streak[0] = 0
+        except RuntimeError as exc:
+            with lock:
+                errors[i + 1] = str(exc)
+                streak[0] += 1
+                if streak[0] >= 3 or (_FATAL_RE.search(str(exc)) and not _RETRYABLE_RE.search(str(exc))):
+                    stop.set()
+
+    started = time.monotonic()
+    done = 0
+    progress.report(0, n, f"morceau 1/{n} envoyé ({workers} requêtes en parallèle)")
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        pending = {pool.submit(work, i) for i in range(n)}
+        while pending:
+            finished, pending = wait(pending, timeout=1, return_when=FIRST_COMPLETED)
+            done += len(finished)
+            if finished:
+                started = time.monotonic()
+                progress.report(done, n, f"morceau {done}/{n} reçu")
+            else:
+                progress.chunk_waiting(done + 1, n, time.monotonic() - started)
+    out = {"answers": answers, "prompts_sent": len(counter)}
+    if errors:
+        first = errors[min(errors)]
+        out["error"] = f"morceau(x) {', '.join(map(str, sorted(errors)))} en échec : {first}"
+    return out
+
+
 def run_batch(model, prompts, timeout_s=300, api_key=None):
     """Envoie les prompts un par un. Retourne ``{"answers": [...], "prompts_sent": n, "error": "..."}``.
 
@@ -217,6 +272,9 @@ def run_batch(model, prompts, timeout_s=300, api_key=None):
         return {"answers": [None] * n, "prompts_sent": 0,
                 "error": "clé API Gemini introuvable : définissez la variable d'environnement GEMINI_API_KEY "
                          "(ou saisissez la clé dans l'interface)"}
+    workers = llm_workers(n, default=4)
+    if workers > 1:
+        return _run_batch_parallel(model, prompts, timeout_s, api_key, workers)
     counter, answers, errors = [], [], {}
     for i, prompt in enumerate(prompts, start=1):
         if len(errors) >= 2 and all(k in errors for k in (i - 2, i - 1)):

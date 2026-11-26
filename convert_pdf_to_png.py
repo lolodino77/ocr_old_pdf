@@ -5,30 +5,68 @@ import shutil
 import progress
 
 
-def _pdf_to_png_pdfium(pdf_path, save_path, dpi):
-    """Même résultat que pdf2image (page0001-01.png, page0001-02.png…), avec pypdfium2 au lieu de Poppler."""
+def _render_pages(pdf_path, save_path, dpi, indices, width):
+    """Rend les pages ``indices`` (numérotées depuis 0) : tourne dans un processus à part (pypdfium2 n'est pas
+    utilisable depuis plusieurs fils à la fois ; chaque processus ouvre le PDF pour lui)."""
     import pypdfium2 as pdfium
 
     pdf = pdfium.PdfDocument(pdf_path)
     try:
-        n = len(pdf)
-        width = len(str(n))
-        paths = []
-        progress.report(0, n, f"{n} pages à convertir")
-        for i in range(n):
+        for i in indices:
             page = pdf[i]
             try:
                 image = page.render(scale=dpi / 72).to_pil()
             finally:
                 page.close()
-            path = os.path.join(save_path, f"page0001-{i + 1:0{width}d}.png")
-            image.save(path)
+            image.save(os.path.join(save_path, f"page0001-{i + 1:0{width}d}.png"))
             image.close()
-            paths.append(path)
-            progress.report(i + 1, n, f"page {i + 1}/{n}")
     finally:
         pdf.close()
-    print(f"✅ {len(paths)} pages converties (pypdfium2) et enregistrées dans '{save_path}'")
+    return len(indices)
+
+
+def pdf_workers(n_pages):
+    """Processus de conversion en parallèle : un par cœur moins un, au plus 8 (chacun garde une page en mémoire,
+    environ 100 Mo à 300 dpi). OCR_WORKERS=1 : une page à la fois."""
+    try:
+        wanted = int(os.environ.get("OCR_WORKERS", ""))
+    except ValueError:
+        wanted = max(1, min(8, (os.cpu_count() or 2) - 1))
+    return max(1, min(wanted, n_pages))
+
+
+def _pdf_to_png_pdfium(pdf_path, save_path, dpi):
+    """Même résultat que pdf2image (page0001-01.png, page0001-02.png…), avec pypdfium2 au lieu de Poppler,
+    en parallèle : les pages sont réparties entre plusieurs processus."""
+    import pypdfium2 as pdfium
+    from concurrent.futures import ProcessPoolExecutor, as_completed
+    from multiprocessing import get_context
+
+    pdf = pdfium.PdfDocument(pdf_path)
+    try:
+        n = len(pdf)
+    finally:
+        pdf.close()
+    width = len(str(n))
+    workers = pdf_workers(n)
+    progress.report(0, n, f"{n} pages à convertir ({workers} processus en parallèle)")
+    batch = 2  # pages par tâche : assez petit pour équilibrer (ouvrir le PDF est rapide)
+    tasks = [list(range(s, min(s + batch, n))) for s in range(0, n, batch)]
+    workers = min(workers, len(tasks))
+    done = 0
+    if workers == 1:
+        for indices in tasks:
+            done += _render_pages(pdf_path, save_path, dpi, indices, width)
+            progress.report(done, n, f"page {done}/{n}")
+    else:
+        # « spawn » : sûr depuis un fil de Streamlit (pas de fork d'un processus à plusieurs fils)
+        with ProcessPoolExecutor(max_workers=workers, mp_context=get_context("spawn")) as pool:
+            futures = [pool.submit(_render_pages, pdf_path, save_path, dpi, indices, width) for indices in tasks]
+            for future in as_completed(futures):
+                done += future.result()
+                progress.report(done, n, f"page {done}/{n}")
+    paths = [os.path.join(save_path, f"page0001-{i + 1:0{width}d}.png") for i in range(n)]
+    print(f"✅ {len(paths)} pages converties (pypdfium2, {workers} processus) et enregistrées dans '{save_path}'")
     return paths
 
 def pdf_to_png(document_name, poppler_path, output_dir="pages_images", dpi=300):
