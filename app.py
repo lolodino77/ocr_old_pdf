@@ -1114,13 +1114,19 @@ def show_recette(doc_name: str) -> None:
 
     if data["omissions"]:
         with st.expander(f"Omissions possibles dans un morceau ({len(data['omissions'])})"):
+            st.caption("Le programme compare les mots de l'OCR avec ceux de la réponse du LLM. Quand une suite de mots de "
+                       "l'OCR ne se retrouve pas, il la signale ici : c'est soit un vrai passage oublié, soit un texte "
+                       "que l'OCR a mal lu (mots déformés) et que le LLM a corrigé. Le LLM de vérification cherche alors "
+                       "le passage dans le texte final et donne son verdict.")
+            omission_text = {"ok": "✓ Rien d'oublié", "warn": "⚠ Oubli possible", "err": "✗ Passage perdu"}
             for n, (i, passage) in enumerate(data["omissions"], start=1):
                 note = judged.get(f"o{n}")
-                st.markdown(f"**{n}. Morceau {i}** — passage de l'OCR absent de la réponse :")
+                st.markdown(f"**{n}. Morceau {i}** — passage de l'OCR (brut, souvent déformé) que le programme ne retrouve pas "
+                            "mot pour mot dans la réponse :")
                 st.text(passage[:800])
                 if note:
                     {"err": st.error, "warn": st.warning}.get(note[0], st.success)(
-                        f"{LEVEL_TEXT.get(note[0], note[0])} ({who}) : {note[1]}")
+                        f"**{omission_text.get(note[0], note[0])}** — jugé par {who} : {note[1]}")
 
     html_data = page.read_bytes()
     st.download_button("💾 Télécharger la page de vérification (HTML)", data=html_data,
