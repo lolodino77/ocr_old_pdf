@@ -11,6 +11,7 @@ import browser_llm
 import api_llm
 import site_login
 import progress
+import pipeline_job
 import recette_llm
 import recette_modernisation
 from system_paths import find_poppler_path, find_tesseract_cmd
@@ -242,6 +243,11 @@ def _login_panel(selected: str) -> None:
                    "connecter dans sa propre fenêtre.")
 
 
+def _job_running():
+    job = pipeline_job.current()
+    return bool(job and job.running)
+
+
 # --- CONFIGURATION DU LLM : deux modes au choix ---
 #  - Navigateur : Gemini / ChatGPT piloté dans Chrome (Playwright), sans clé API, poste avec écran requis.
 #    Première utilisation avec un compte : python browser_llm.py login
@@ -313,17 +319,20 @@ if llm_mode == MODE_API or use_api_fallback or recette_needs_key:
         secret_key = st.secrets.get("GEMINI_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
     except Exception:  # noqa: BLE001
         pass
-    api_llm.set_api_key(typed_key or secret_key)
+    if not _job_running():
+        api_llm.set_api_key(typed_key or secret_key)
     if api_llm.key_source():
         st.caption(f"✅ Clé API trouvée ({api_llm.key_source()}).")
     else:
         st.warning("Aucune clé API Gemini : saisissez-la ci-dessus ou définissez la variable d'environnement GEMINI_API_KEY.")
-else:
+elif not _job_running():
     api_llm.set_api_key(None)
-api_llm.set_fallback(api_fallback_model if use_api_fallback else None)
+if not _job_running():
+    api_llm.set_fallback(api_fallback_model if use_api_fallback else None)
 
 # Bouton de lancement
-start = st.button("🚀 Démarrer la modernisation")
+_current_job = pipeline_job.current()
+start = st.button("🚀 Démarrer la modernisation", disabled=bool(_current_job and _current_job.running))
 
 class PipelineProgressBar:
     """Barre de progression Streamlit de tout le traitement (même principe que LLMProgressBar de cv-builder et
@@ -401,8 +410,6 @@ class PipelineProgressBar:
 
 
 # Zone d'affichage de logs et progression
-log_box = st.empty()
-progress_slot = st.empty()
 
 # if "open_word" not in st.session_state:
 #     st.session_state.open_word = False
@@ -413,32 +420,60 @@ if "download_word_file" not in st.session_state:
 if "delete_generated_files" not in st.session_state:
     st.session_state.delete_generated_files = False
 
-if start:
-    if not document_list:
-        st.error("Aucun fichier à traiter : téléversez d'abord des PDF.")
-    elif _login_window().is_open:
-        st.error("La fenêtre de connexion est encore ouverte (même profil de navigateur) : cliquez sur "
-                 "« C'est fait » dans l'encadré de connexion, puis relancez.")
-    elif (llm_mode == MODE_API or use_api_fallback or recette_needs_key) and not api_llm.get_api_key():
-        st.error("Clé API Gemini manquante : saisissez-la ou choisissez le mode navigateur sans secours API.")
-    else:
-        run_log = browser_llm.start_run_log()
-        st.caption(f"Log de l'exécution (prompts envoyés) : {run_log}")
-        generated_docx = []
-        generated_pdf = []
-        generated_markdown = []
-        total = len(document_list)
-        bar = PipelineProgressBar(progress_slot, total, with_recette=do_recette)
-        progress.set_callback(bar.update)
-        for idx, doc_name in enumerate(document_list, start=1):
+
+
+def _show(level, text):
+    {"title": st.markdown, "info": st.info, "warning": st.warning, "error": st.error,
+     "success": st.success}.get(level, st.info)(text)
+
+
+def _job_view(job):
+    """Affiche l'état du traitement en arrière-plan (la page ne fait que le regarder : elle peut être rechargée)."""
+    s = job.snapshot()
+    if s["run_log"]:
+        st.caption(f"Log de l'exécution (prompts envoyés) : {s['run_log']}")
+    st.progress(max(0, min(100, int(s["pct"]))), text=s["text"])
+    for level, text in [m for m in s["messages"] if m[0] == "title"][-1:]:
+        _show(level, text)
+    if s["last"][1] and s["last"][0] != "title":
+        _show(*s["last"])
+    problems = [m for m in s["messages"] if m[0] in ("warning", "error")]
+    if problems:
+        with st.expander(f"⚠️ {len(problems)} avertissement(s) ou erreur(s)", expanded=not s["running"]):
+            for level, text in problems:
+                _show(level, text)
+    with st.expander("Détail des étapes", expanded=False):
+        st.text("\n".join(t for lv, t in s["messages"] if lv != "title" or True))
+    return s
+
+
+@st.fragment(run_every=2)
+def _job_panel():
+    """Rafraîchie toutes les 2 s tant que le traitement tourne ; à la fin, recharge toute la page (fichiers à télécharger)."""
+    job = pipeline_job.current()
+    if job is None or not _job_view(job)["running"]:
+        st.rerun()
+
+
+def _run_job(job, p):
+    """Tout le traitement, dans un fil du serveur (voir pipeline_job) : aucun appel Streamlit ici, seulement job.log()."""
+    generated_docx, generated_pdf, generated_markdown = (job.generated["docx"], job.generated["pdf"],
+                                                         job.generated["markdown"])
+    tesseract_lang, LLM_model_name, language = p["tesseract_lang"], p["LLM_model_name"], p["language"]
+    do_recette, recette_site = p["do_recette"], p["recette_site"]
+    total = len(p["document_list"])
+    bar = PipelineProgressBar(pipeline_job.slot_for(job), total, with_recette=do_recette)
+    progress.set_callback(bar.update)
+    try:
+        for idx, doc_name in enumerate(p["document_list"], start=1):
             # doc_name est le nom sans extension du document à convertir
             try:
                 bar.start_document(idx, doc_name)
-                log_box.markdown(f"### 🛠️ Traitement : **{doc_name}**  ({idx}/{total})")
+                job.log("title", f"### 🛠️ Traitement : **{doc_name}**  ({idx}/{total})")
                 # verification si déjà modernisé
                 already_mod = check_if_already_modernized(doc_name, directory='.')
                 if already_mod:
-                    log_box.info(f"Le texte modernisé pour **{doc_name}** existe déjà. Ignoré (mais on vérifiera l'export Word).")
+                    job.log("info", f"Le texte modernisé pour **{doc_name}** existe déjà. Ignoré (mais on vérifiera l'export Word).")
                 else:
                     # assure les dossiers pages_images/{doc_name} etc.
                     os.makedirs(PAGES_IMAGES_DIR / doc_name, exist_ok=True)
@@ -446,46 +481,46 @@ if start:
                     os.makedirs(PAGES_CLEANED_DIR / doc_name, exist_ok=True)
 
                     # --- Étape 1 : conversion PDF -> PNG (pages_image) ---
-                    log_box.info("Étape 1/4 — Conversion du PDF en images (PNG) ...")
+                    job.log("info", "Étape 1/4 — Conversion du PDF en images (PNG) ...")
                     # Ton ancien script appelait pdf_to_png(document_name, output_dir="pages_images", dpi=300)
                     # On suppose qu'il attend le nom sans extension ; le fichier PDF doit exister à la racine ou dans pdf_uploads
                     # On copie le PDF dans le dossier racine si nécessaire (ou adapte pdf_to_png).
                     src_pdf_path = UPLOAD_DIR / (doc_name + ".pdf")
                     # Copie dans le cwd si ta fonction pdf_to_png attend le fichier là-bas :
                     shutil.copy2(src_pdf_path, ROOT_DIR / (doc_name + ".pdf"))
-                    poppler_path = st.session_state.poppler_path
+                    poppler_path = p["poppler_path"]
                     progress.set_stage("pdf")
                     pages = pdf_to_png(doc_name, poppler_path, output_dir=str(PAGES_IMAGES_DIR), dpi=300)
-                    log_box.info(f"✅ Conversion terminée : {len(pages)} images générées.")
+                    job.log("info", f"✅ Conversion terminée : {len(pages)} images générées.")
 
                     # --- Étape 2 : OCR PNG -> texte ---
-                    log_box.info("Étape 2/4 — OCR des images en cours ...")
+                    job.log("info", "Étape 2/4 — OCR des images en cours ...")
                     progress.set_stage("ocr")
                     progress.report(0, 1, "démarrage de Tesseract")
                     texte_total = png_to_txt(doc_name, input_dir=str(PAGES_IMAGES_DIR), 
                                             output_dir=str(PAGES_TEXTS_DIR), 
                                             lang=tesseract_lang)
-                    log_box.info("✅ OCR terminé.")
+                    job.log("info", "✅ OCR terminé.")
 
                     # --- Étape 3 : Modernisation du texte OCRisé ---
-                    log_box.info("Étape 3/4 — Modernisation et nettoyage du texte OCRisé ...")
+                    job.log("info", "Étape 3/4 — Modernisation et nettoyage du texte OCRisé ...")
                     modernized_cleaned_text = modernize_and_clean_ocr_text(doc_name, 
                                                                            LLM_model_name,
                                                                            language)
-                    log_box.info("✅ Modernisation effectuée.")
+                    job.log("info", "✅ Modernisation effectuée.")
 
                 # --- Étape 4 : Export en Word ---
                 progress.set_stage("export")
                 progress.report(0, 3, "Word")
                 already_exported_in_word = check_if_modernized_txt_already_exported_to_word(doc_name, directory='.')
                 if already_exported_in_word:
-                    log_box.info("Étape 4/4 — Fichier Word déjà exporté. Aucun nouvel export.")
+                    job.log("info", "Étape 4/4 — Fichier Word déjà exporté. Aucun nouvel export.")
                     # On peut retrouver le nom de sortie attendu
                     out_name = f"{os.path.splitext(doc_name)[0]}_modernized_cleaned_text.docx"
                     if (OUTPUT_DIR / out_name).exists():
                         generated_docx.append(str(OUTPUT_DIR / out_name))
                 else:
-                    log_box.info("Étape 4/4 — Conversion du texte modernisé en Word ...")
+                    job.log("info", "Étape 4/4 — Conversion du texte modernisé en Word ...")
                     modernized_txt_filename = f"{doc_name}_modernized_cleaned_text.txt"
                     modernized_word_filename = f"{doc_name}_modernized_cleaned_text.docx"
                     print("modernized_txt_filename =", modernized_txt_filename)
@@ -493,43 +528,43 @@ if start:
                     # vérifier l'existence du fichier de sortie
                     if (OUTPUT_DIR / modernized_word_filename).exists():
                         generated_docx.append(str(OUTPUT_DIR / modernized_word_filename))
-                    log_box.info(f"✅ Export Word généré : {modernized_word_filename}")
+                    job.log("info", f"✅ Export Word généré : {modernized_word_filename}")
 
                 # --- Étape 5 : Export en PDF ---
                 progress.report(1, 3, "PDF")
                 already_exported_in_pdf = check_if_modernized_txt_already_exported_to_pdf(doc_name, directory='.')
                 if already_exported_in_pdf:
-                    log_box.info("Étape 5/5 — Fichier PDF déjà exporté. Aucun nouvel export.")
+                    job.log("info", "Étape 5/5 — Fichier PDF déjà exporté. Aucun nouvel export.")
                     out_name_pdf = f"{os.path.splitext(doc_name)[0]}_modernized_cleaned_text.pdf"
                     if (OUTPUT_DIR / out_name_pdf).exists():
                         generated_pdf.append(str(OUTPUT_DIR / out_name_pdf))
                 else:
-                    log_box.info("Étape 5/5 — Conversion du document Word modernisé en PDF ...")
+                    job.log("info", "Étape 5/5 — Conversion du document Word modernisé en PDF ...")
                     modernized_word_filename = f"{doc_name}_modernized_cleaned_text.docx"
                     modernized_pdf_filename = f"{doc_name}_modernized_cleaned_text.pdf"
                     convert_modernized_word_to_pdf(modernized_word_filename)
                     # vérifier l'existence du fichier de sortie
                     if (OUTPUT_DIR / modernized_pdf_filename).exists():
                         generated_pdf.append(str(OUTPUT_DIR / modernized_pdf_filename))
-                    log_box.info(f"✅ Export PDF généré : {modernized_pdf_filename}")
+                    job.log("info", f"✅ Export PDF généré : {modernized_pdf_filename}")
 
                 # --- Étape 6 : Export en Markdown ---
                 progress.report(2, 3, "Markdown")
                 already_exported_in_markdown = check_if_modernized_txt_already_exported_to_markdown(doc_name, directory='.')
                 if already_exported_in_markdown:
-                    log_box.info("Étape 6/6 — Fichier Markdown déjà exporté. Aucun nouvel export.")
+                    job.log("info", "Étape 6/6 — Fichier Markdown déjà exporté. Aucun nouvel export.")
                     out_name_md = f"{os.path.splitext(doc_name)[0]}_modernized_cleaned_text.md"
                     if (OUTPUT_DIR / out_name_md).exists():
                         generated_markdown.append(str(OUTPUT_DIR / out_name_md))
                 else:
-                    log_box.info("Étape 6/6 — Ecriture du texte modernisé (variable string) dans un fichier Markdown .md ...")
+                    job.log("info", "Étape 6/6 — Ecriture du texte modernisé (variable string) dans un fichier Markdown .md ...")
                     modernized_txt_filename = f"{doc_name}_modernized_cleaned_text.txt"
                     modernized_markdown_filename = f"{doc_name}_modernized_cleaned_text.md"
                     convert_modernized_word_to_markdown(modernized_txt_filename, modernized_markdown_filename)
                     # vérifier l'existence du fichier de sortie
                     if (OUTPUT_DIR / modernized_markdown_filename).exists():
                         generated_markdown.append(str(OUTPUT_DIR / modernized_markdown_filename))
-                    log_box.info(f"✅ Export Markdown généré : {modernized_markdown_filename}")
+                    job.log("info", f"✅ Export Markdown généré : {modernized_markdown_filename}")
 
                 # update progress
                 progress.report(3, 3, "terminé")
@@ -539,52 +574,84 @@ if start:
                     llm_notes = recette_modernisation.notes_path(doc_name, llm=True)
                     final_txt = ROOT_DIR / f"{doc_name}_modernized_cleaned_text.txt"
                     if llm_notes.exists() and llm_notes.stat().st_mtime >= final_txt.stat().st_mtime:
-                        log_box.info("Étape 7/7 — Vérification déjà faite pour ce texte. Page de vérification mise à jour.")
+                        job.log("info", "Étape 7/7 — Vérification déjà faite pour ce texte. Page de vérification mise à jour.")
                         recette_modernisation.main(doc_name)
                     else:
-                        log_box.info(f"Étape 7/7 — Vérification par le LLM ({recette_site}) ...")
+                        job.log("info", f"Étape 7/7 — Vérification par le LLM ({recette_site}) ...")
                         try:
                             summary = recette_llm.run(doc_name, recette_site)
-                            log_box.info(f"✅ Vérification : {summary['coupures']} coupure(s), {summary['err']} texte(s) abîmé(s), "
+                            job.log("info", f"✅ Vérification : {summary['coupures']} coupure(s), {summary['err']} texte(s) abîmé(s), "
                                          f"{summary['warn']} ponctuation(s) perdue(s), {summary['juges']}/{summary['elements']} "
                                          "élément(s) jugé(s) par le LLM.")
                         except Exception as exc:  # noqa: BLE001 - la recette ne doit pas faire échouer le traitement
-                            st.warning(f"Vérification impossible pour {doc_name} : {exc}. Le texte modernisé et ses exports "
+                            job.log("warning", f"Vérification impossible pour {doc_name} : {exc}. Le texte modernisé et ses exports "
                                        "sont bien produits.")
-                
-                # generated_docx = ["caca"]
-                st.session_state["generated_docx"] = generated_docx
-                st.session_state["generated_pdf"] = generated_pdf
-                st.session_state["generated_markdown"] = generated_markdown
-                # st.session_state["generated_docx"] =  [f"{doc_name}_modernized_cleaned_text.docx" for doc_name in document_list]
-                if(len(uploaded_files) == 1):
-                    st.session_state["word_filename"] = (doc_name + "_modernized_cleaned_text.docx")
+                if(p["n_uploaded"] == 1):
+                    job.single_word_file = (doc_name + "_modernized_cleaned_text.docx")
 
             except Exception as e:
                 # Capture l'erreur mais continue avec le suivant
-                st.error(f"Erreur sur le document {doc_name} : {e}")
+                job.errors += 1
                 # log l'erreur dans la zone de logs
-                log_box.error(f"❌ Erreur sur {doc_name} : {e}")
+                job.log("error", f"❌ Erreur sur {doc_name} : {e}")
 
-        # Fin de boucle
+    finally:
         progress.set_callback(None)
         progress.set_stage(None)
-        bar.finish("✅ Traitement terminé")
-        st.success("🎉 Traitement terminé pour tous les documents (voir détails ci-dessous).")
+    bar.finish("✅ Traitement terminé")
+    job.log("success", "🎉 Traitement terminé pour tous les documents (voir détails ci-dessous).")
+
+
+_job = pipeline_job.current()
+_busy = _job is not None and _job.running
+if start and _busy:
+    st.warning("Un traitement est déjà en cours : il continue en arrière-plan, même si cette page est rechargée.")
+elif start:
+    if not document_list:
+        st.error("Aucun fichier à traiter : téléversez d'abord des PDF.")
+    elif _login_window().is_open:
+        st.error("La fenêtre de connexion est encore ouverte (même profil de navigateur) : cliquez sur "
+                 "« C'est fait » dans l'encadré de connexion, puis relancez.")
+    elif (llm_mode == MODE_API or use_api_fallback or recette_needs_key) and not api_llm.get_api_key():
+        st.error("Clé API Gemini manquante : saisissez-la ou choisissez le mode navigateur sans secours API.")
+    else:
+        _job = pipeline_job.Job(document_list)
+        _job.run_log = str(browser_llm.start_run_log())
+        _params = {"document_list": list(document_list), "tesseract_lang": tesseract_lang, "language": language,
+                   "LLM_model_name": LLM_model_name, "do_recette": do_recette, "recette_site": recette_site,
+                   "poppler_path": st.session_state.poppler_path, "n_uploaded": len(uploaded_files or [])}
+        pipeline_job.start(_job, lambda job: _run_job(job, _params))
+        _busy = True
+
+if _job is not None:
+    if _busy:
+        _job_panel()
+    else:
+        _job_view(_job)
+        st.session_state["generated_docx"] = _job.generated["docx"]
+        st.session_state["generated_pdf"] = _job.generated["pdf"]
+        st.session_state["generated_markdown"] = _job.generated["markdown"]
+        if _job.single_word_file:
+            st.session_state["word_filename"] = _job.single_word_file
+
+
+shown_documents = document_list or (list(_job.documents) if _job is not None else [])
 
 if "generated_docx" in st.session_state and "generated_pdf" in st.session_state and "generated_markdown" in st.session_state:
     st.markdown("### 📁 Fichiers générés")
     generated_docx = st.session_state["generated_docx"]
     generated_pdf = st.session_state["generated_pdf"]
     generated_markdown = st.session_state["generated_markdown"]
-    for i in range(len(generated_docx)):
-        st.write(f"- DOCX : {generated_docx[i]}")
-        st.write(f"- PDF  : {generated_pdf[i]}")
-        st.write(f"- MD   : {generated_markdown[i]}")
+    for path in generated_docx:
+        st.write(f"- DOCX : {path}")
+    for path in generated_pdf:
+        st.write(f"- PDF  : {path}")
+    for path in generated_markdown:
+        st.write(f"- MD   : {path}")
     
      # Affiche les fichiers disponibles
     if generated_docx or generated_pdf or generated_markdown:
-        for doc_name in document_list:
+        for doc_name in shown_documents:
             st.markdown(f"### 📘 {doc_name}")
 
             # Création du nom des fichiers attendus
