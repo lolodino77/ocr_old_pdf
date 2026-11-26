@@ -1,0 +1,3150 @@
+{
+ "_source": "llm",
+ "_modele": "gemini",
+ "_images": false,
+ "_": "Verdicts du LLM gemini sur 786/786 élément(s) (recette_llm.py).",
+ "1": [
+  "ok",
+  "La coupure « SANG AU ‖ milieu de toi » est continue et complète, fidèle à « efpandär lefang au ... milieu de toy »."
+ ],
+ "2": [
+  "ok",
+  "La transition entre « utiles ou expédientes. » et « Parquoi nul homme de bien ne pourrait approuver » est complète et cohérente."
+ ],
+ "3": [
+  "ok",
+  "Le passage de « vraie humilité et abjection. » à « Or ce ne sera point assez de reconnaître » forme une jointure complète et fidèle à l'original."
+ ],
+ "4": [
+  "ok",
+  "La jointure entre « à la porte, et on vous ouvrira. » et « Car quiconque demande, reçoit » est continue et sans manque."
+ ],
+ "5": [
+  "ok",
+  "Le passage de « quand il en est temps. » à « Ce serviteur est bien-heureux, lequel son seigneur trouvera » est continu et complet."
+ ],
+ "6": [
+  "ok",
+  "La coupure après « 1. De la parole de Dieu. » s'enchaîne correctement avec « De la source, autorité, excellence, et vertu de la parole »."
+ ],
+ "7": [
+  "ok",
+  "L'enchaînement entre « Du Baptême de feu. » et « Du baptême des sages femmes » est complet et fidèle au texte d'origine."
+ ],
+ "8": [
+  "ok",
+  "La coupure entre « entre les hommes. » et « Ceci appert ès choses qui ont été faites avec les Pères » est continue et complète."
+ ],
+ "9": [
+  "ok",
+  "La transition après « Abraham, Isaac, et Jacob. » vers « Nous avons ici treize fort excellents Patriarches » est complète et cohérente."
+ ],
+ "10": [
+  "err",
+  "Le passage « et qui a créé et formé toutes choses ‖ trois personnes, le Père, le Fils, et le Saint-Esprit » répète et déforme la fin du morceau précédent en sautant le membre de phrase sur la création et l'assujettissement à l'homme."
+ ],
+ "11": [
+  "ok",
+  "La transition entre « récitant les dix commandements. » et « Mais le peuple étant étonné de » est continue et complète."
+ ],
+ "12": [
+  "ok",
+  "La coupure après « été publiée par le héraut ou trompette. » s'enchaîne correctement avec « Quiconque aura méprisé Moïse, par la »."
+ ],
+ "13": [
+  "ok",
+  "La fin de phrase « lieux, aux temps, et aux personnages. » et le début suivant « Or la doctrine, les écrits et révélations » sont complets et cohérents."
+ ],
+ "14": [
+  "ok",
+  "La transition entre « poussés du saint Esprit, ont parlé. » et « Or combien que Dieu ait amplement, » est continue sans perte ni répétition."
+ ],
+ "15": [
+  "ok",
+  "La jointure entre « advenir à l'Église, jusques à la fin du monde. » et « Ain donc toute la doctrine de piété, » est continue (la coquille « Ain donc » pour « Ainsi donc » est antérieure à la coupure)."
+ ],
+ "16": [
+  "ok",
+  "Le passage de « elle enseigne pleinement la doctrine de vraie religion. » à « SERMON II. Vous avez ouï, mes » est net et complet."
+ ],
+ "17": [
+  "err",
+  "Le texte final après « satisfait à la Loi, » est corrompu par l'intrusion parasite de « et facilement répondre. » et la perte de la suite sur l'abolition des sacrifices avant « Cornille : comme il est récité ès »."
+ ],
+ "18": [
+  "ok",
+  "La transition entre « à celui qui heurte, la porte sera ouverte. » et « Et pour autant saint Jacques dit : » est continue et complète."
+ ],
+ "19": [
+  "err",
+  "Après « Jean 16, 1, verset 13. », le fragment résiduel « a défailli » est incohérent et coupé avant « Les écrits des autres Apôtres : »."
+ ],
+ "20": [
+  "ok",
+  "La coupure entre « vêtements, et ne toucher leurs femmes. » et « Après cela il marqua certaines bornes, » est continue et complète."
+ ],
+ "21": [
+  "ok",
+  "La phrase « et conjoint avec Dieu. Il y a davantage de plus » est complète et continue à la coupure."
+ ],
+ "22": [
+  "ok",
+  "La jointure « à la gloire de Dieu notre Père, et au salut de nos âmes. » est complète et sans coupure fautive."
+ ],
+ "23": [
+  "ok",
+  "La transition entre « certaines, claires et fermes. » et « Mais toutesfois et quantes qu'en matière » est complète et cohérente."
+ ],
+ "24": [
+  "ok",
+  "L'enchaînement « sans punition. Si est-ce que le Seigneur » est complet et fidèle au texte d'origine."
+ ],
+ "25": [
+  "ok",
+  "La coupure entre « substance de notre chair. » et « Outre plus, nous lisons que le Seigneur » est continue et sans perte."
+ ],
+ "26": [
+  "err",
+  "La phrase « directement à l'Esprit de Dieu » est coupée sans point (avec le titre « DE LA PAROLE DE DIEU. » inséré) et le début de phrase « ment à l'Esprit de Dieu. » est répété après."
+ ],
+ "27": [
+  "ok",
+  "La jointure « qu'on puisse désirer. En premier lieu, moyennant la » est complète et conforme au texte source."
+ ],
+ "28": [
+  "ok",
+  "La phrase « Mais toute notre suffisance est de Dieu. » s'achève proprement avant le titre et la phrase suivante."
+ ],
+ "29": [
+  "ok",
+  "L'enchaînement « augmente-nous la foi. Mais aussi cette prière par laquelle nous demandons » est complet et continu."
+ ],
+ "30": [
+  "ok",
+  "La coupure entre « et toute enquête chagrine. » et « Car la foi ne regarde point à » est nette et complète."
+ ],
+ "31": [
+  "ok",
+  "La phrase « ...Pour dire que Dieu peut toutes choses. Ce que nous entendrons mieux... » est complète et bien articulée de part et d'autre de la coupure."
+ ],
+ "32": [
+  "ok",
+  "La phrase « ...mais ma Parole ne passera point. La parole de Dieu est comparée... » s'enchaîne correctement sans perte ni répétition."
+ ],
+ "33": [
+  "err",
+  "Le texte final est interrompu avant la coupure sur « Ce que la vraie foi co » (mot coupé, fin de phrase manquante et point absent)."
+ ],
+ "34": [
+  "err",
+  "La phrase s'arrête sur « la vie éternelle » sans point et s'enchaîne avec un titre abîmé et corrompu par l'OCR : « a qu'une [enle Vraie foi... »."
+ ],
+ "35": [
+  "err",
+  "La phrase « Car la foi générale n'est... » est tronquée avant la coupure et suivie brusquement par « Or cette fiance reçoit accroissement... »."
+ ],
+ "36": [
+  "ok",
+  "La transition entre « ...le reste à considérer et observer. » et « Avant toutes choses nous disons que... » est complète et cohérente."
+ ],
+ "37": [
+  "ok",
+  "La jointure entre « Outreplus, la foi justifie. » et « Cet argument ne pourrait pour cette... » est propre et complète."
+ ],
+ "38": [
+  "ok",
+  "La fin de phrase « ...et entendent cette matière de la justification. » s'enchaîne normalement avec « Or je démontrerai premièrement qu'en cette... »."
+ ],
+ "39": [
+  "ok",
+  "La phrase « ...et sont faits héritiers du Royaume de Dieu. Christ a reçu nos péchés... » est complète et continue à la coupure."
+ ],
+ "40": [
+  "ok",
+  "La jointure entre « ...qu'il n'aura point souvenance de nos iniquités. » et « Mais comment se pourrait faire cela... » est complète et sans anomalie."
+ ],
+ "41": [
+  "ok",
+  "La phrase s'achève proprement sur « péchés par son nom. » et la suivante commence normalement par « Nous avons en ces choses un »."
+ ],
+ "42": [
+  "ok",
+  "La transition entre « Jésus-Christ, comme eux aussi. » et « En ce même chap. il dit, » est continue et fidèle au texte d'origine."
+ ],
+ "43": [
+  "ok",
+  "La phrase se termine bien sur « de la gloire de Dieu. » et s'enchaîne correctement avec « Parquoi le Prophète a défendu expressément »."
+ ],
+ "44": [
+  "ok",
+  "La question « n'enseignerons-nous ainsi aussi ? » est complète et la phrase suivante « Ceux qui ont opinion que la » démarre normalement."
+ ],
+ "45": [
+  "warn",
+  "Le point final manque après « choses qui nous sont nécessaires » avant « Vous aussi, quand vous aurez fait »."
+ ],
+ "46": [
+  "warn",
+  "La mention « le Symbole des Apôtres. » présente dans l'OCR (« les Apostres. ») a disparu avant « Epilogue. Vous avez entendu, mes frères, »."
+ ],
+ "47": [
+  "ok",
+  "La citation se conclut bien sur « Père, du Fils et du Saint-Esprit. » et la phrase suivante « Or nous devons noter ceci singulièrement, » est complète."
+ ],
+ "48": [
+  "err",
+  "La phrase est coupée en plein élan sur « et leur donna ce bel » et reprise de façon répétitive et brouillée par « SERMON VII incomparable : et leur » (avec en plus l'insertion du titre courant « SERMON VII »)."
+ ],
+ "49": [
+  "ok",
+  "La phrase s'achève bien sur « il n'a point aussi le Père. » et la suivante commence proprement par « Et si le Fils n'était point »."
+ ],
+ "50": [
+  "ok",
+  "La phrase se termine correctement sur « pourquoi notre Seigneur a pris chair. » et s'enchaîne avec « C'était fait des hommes, et tout »."
+ ],
+ "51": [
+  "ok",
+  "La phrase « en se vêtant de notre chair. » s'achève proprement avant ‖ et la phrase suivante « Nous verrons maintenant à expliquer le » commence clairement après ‖."
+ ],
+ "52": [
+  "ok",
+  "La phrase « est né de la vierge Marie. » se termine bien avant ‖ et « Le quatrième article de la foi chrétienne » débute normalement après ‖."
+ ],
+ "53": [
+  "ok",
+  "La phrase « comme il sera dit tantôt après. » est complète avant ‖ et « Or il nous faudra montrer en bref » enchaîne proprement après ‖."
+ ],
+ "54": [
+  "ok",
+  "La locution « Il est descendu » avant ‖ se complète naturellement avec « aux enfers. » après ‖."
+ ],
+ "55": [
+  "ok",
+  "La phrase « et avec utilité. » se clôt correctement avant ‖ et « Le 5. article de notre foi est » commence nettement après ‖."
+ ],
+ "56": [
+  "ok",
+  "La phrase « trois jours pour une partie. » est complète avant ‖ et « Le sixième article de notre foi est, » débute proprement après ‖."
+ ],
+ "57": [
+  "err",
+  "Le passage « pour le trône et habitation de Dieu » avant ‖ est répété presque à l'identique après ‖ avec « est mis pour le trône et habitation »."
+ ],
+ "58": [
+  "ok",
+  "La phrase « être assis à la dextre du Père. » s'achève bien avant ‖ et « La dextre de Dieu le Père en » commence clairement après ‖."
+ ],
+ "59": [
+  "ok",
+  "La phrase « que toutes nations me soient amenées. » est complète avant ‖ et « Ephe. dit ainsi, Par une similitude humaine » suit normalement après ‖."
+ ],
+ "60": [
+  "ok",
+  "L'annonce « Le septième article de notre foi est : » avant ‖ s'enchaîne correctement avec « De là il viendra juger les vifs » après ‖."
+ ],
+ "61": [
+  "ok",
+  "La transition entre « le guerdon de la vie éternelle. » et « Car comment est-ce que celui qui a dit » est complète et cohérente avec le texte d'origine."
+ ],
+ "62": [
+  "ok",
+  "Le passage de « DES DERNIERS ARTICLES de la foi Chrétienne » à « SERMON IX. Prions notre Père céleste par » enchaîne proprement les deux morceaux."
+ ],
+ "63": [
+  "ok",
+  "La phrase s'achève sur « croire en la sainte Église universelle. » et la suivante commence clairement par « Or il nous faut voir que c'est qu'Église, »."
+ ],
+ "64": [
+  "ok",
+  "La jointure entre « traitée par saint Paul. » et « Mais qui est-ce qui pourrait suffisamment déclarer l'excellence » est complète et fidèle à l'original."
+ ],
+ "65": [
+  "ok",
+  "La transition entre « trône de grâce par foi. » et « Et pourtant nous n'enseignons point que les hommes » forme un enchaînement complet."
+ ],
+ "66": [
+  "ok",
+  "La fin de phrase « de nous retirer au Seigneur. » et le début « Finalement le Seigneur nous pardonne tellement nos offenses, » s'enchaînent sans manque ni répétition."
+ ],
+ "67": [
+  "ok",
+  "La coupure entre « vérité de la résurrection de la chair. » et « Pour cette raison ceci n'est plus difficile à croire, » est continue et fidèle au texte source."
+ ],
+ "68": [
+  "ok",
+  "La phrase se termine correctement sur « et ce mortel-ci vête immortalité. » et reprend sans défaut par « De ce témoignage de saint Paul qui est »."
+ ],
+ "69": [
+  "ok",
+  "La transition entre « substance et ces membres ont été transformés. » et « En cela est montré que cette transformation ou » est complète et cohérente."
+ ],
+ "70": [
+  "warn",
+  "Un point (ou deux-points) manque après « il ajoute puis après » avant « Combien donc que ces mêmes corps et ces », le reste de la jointure étant complet."
+ ],
+ "71": [
+  "ok",
+  "La phrase « ...et en jouiront à perpétuité. Or veu que saint Paul dit après Esaïe... » est complète et cohérente avec le texte d'origine."
+ ],
+ "72": [
+  "ok",
+  "La conclusion du sermon précédent (« ...ès siècles des siècles, Amen. ») s'enchaîne proprement avec le titre du sermon suivant (« SERMON X. DE LA DILECTION de Dieu et du prochain. »)."
+ ],
+ "73": [
+  "ok",
+  "La transition entre « ...hors Dieu nous n'aimons autre bien. » et « Et pour la dilection de laquelle nous l'aimons... » est complète et fidèle à l'original."
+ ],
+ "74": [
+  "ok",
+  "La phrase citant l'Écriture (« ...ceux qui aiment Dieu. ») est suivie de manière continue et complète par « Cette dilection comprend aussi ceci... »."
+ ],
+ "75": [
+  "err",
+  "La phrase « ...et non » est interrompue avant « point par nécessité ou ennui » et suivie d'un titre de marge (« DE DIEU ET DU PROCHAIN. ») puis d'une répétition du passage « En cette rondeur nous comprenons l'allégresse volontaire et gaie... »."
+ ],
+ "76": [
+  "ok",
+  "La phrase « ...le levant lui-même de ses propres mains. Et finalement il lui sert de guide... » est complète et conforme à l'OCR."
+ ],
+ "77": [
+  "ok",
+  "La fin du volume (« ...ès siècles des siècles, Amen. FIN. ») enchaîne clairement sur le titre de la seconde décade et du premier sermon (« LA SECONDE DÉCADE DES SERMONS DE M. HENRY BULLINGER... »)."
+ ],
+ "78": [
+  "ok",
+  "La question « Mais comment l'ont-ils en eux-mêmes? » est suivie naturellement par « Il ajoute derechef l'interprétation... », correspondant au texte d'origine."
+ ],
+ "79": [
+  "err",
+  "L'expression « il est que la première réponde » manque du mot « raison » (ou d'un verbe/adjectif comparable) entre « est » et « que », rendant la tournure incomplète."
+ ],
+ "80": [
+  "ok",
+  "La phrase sur les Sacrificateurs des Païens s'achève proprement et s'enchaîne sans manque avec « Et jaçoit que saint Paul confesse... »."
+ ],
+ "81": [
+  "err",
+  "La coupure coupe le mot « mensonge » (« de la songe ») et répète ensuite un long passage (« la détraction, le parjure... discerner la vertu de la »)."
+ ],
+ "82": [
+  "ok",
+  "La phrase « ...le Fils de Dieu. C'est assez parlé de la... » se poursuit naturellement sans manque ni répétition."
+ ],
+ "83": [
+  "ok",
+  "Le passage « ...il n'y aura nul discord. Au demeurant, les... » est complet et continu à la jointure."
+ ],
+ "84": [
+  "err",
+  "Après « par écrit », une phrase est tronquée (« ce, sainteté, et quelle... » au lieu de « Quelle justice, sainteté... »)."
+ ],
+ "85": [
+  "ok",
+  "La transition entre « ...ou articles. » et « Or le Décalogue de la Loi a ceci... » est complète et cohérente."
+ ],
+ "86": [
+  "ok",
+  "La jointure « ...qu'il étoit notre Dieu. Dès le commencement il... » est continue et complète."
+ ],
+ "87": [
+  "err",
+  "La coupure relie « jusques à la fin » à « de nous, nous avons... » en omettant le début de la phrase (« Et quant à nous... » dans l'OCR)."
+ ],
+ "88": [
+  "ok",
+  "L'enchaînement « ...des herbes et médecins. Au 30. chap. d'Ésaïe les Juifs sont condamnés... » est complet et sans anomalie."
+ ],
+ "89": [
+  "ok",
+  "La phrase se termine proprement sur « ...que par révérence. » et la suivante commence normalement par « Voila comment nos ancêtres ont... »."
+ ],
+ "90": [
+  "ok",
+  "La jointure « ...suffisantes pour l'holocauste. Toutes les gens sont devant lui comme si... » est continue et complète."
+ ],
+ "91": [
+  "ok",
+  "La transition entre « aucune forme ou matière. » et « Or maintenant quant aux autres images » est complète et cohérente."
+ ],
+ "92": [
+  "ok",
+  "La phrase s'achève proprement sur « et la vie éternelle. » et enchaîne sans manque sur « En la seconde partie de ce commandement »."
+ ],
+ "93": [
+  "ok",
+  "La question « comment enseignerait-il la vérité ? » est suivie normalement de « Il n'y a nul esprit, nul »."
+ ],
+ "94": [
+  "ok",
+  "La phrase se termine correctement sur « et tourments plus terribles. » avant « Or le Seigneur dit, qu'il visitera »."
+ ],
+ "95": [
+  "ok",
+  "L'enchaînement entre « il est beaucoup plus excellent. » et « Car en son courroux il ne » est complet et fidèle à l'original."
+ ],
+ "96": [
+  "err",
+  "Le mot « demander » est coupé à la jointure en « demander » avant ‖ et « der » après ‖."
+ ],
+ "97": [
+  "ok",
+  "La phrase se clôt bien sur « aura nullement fait mention. » et laisse place à « Un tel couvre sa tromperie du »."
+ ],
+ "98": [
+  "ok",
+  "Le mot coupé « horri- » et sa suite « bles : tellement que je pense que » se raccordent correctement à la jointure."
+ ],
+ "99": [
+  "warn",
+  "Il manque un point final après « on ne fait grand cas de jurer » avant « Et cela qu'est-ce autre chose sinon »."
+ ],
+ "100": [
+  "ok",
+  "La jointure entre « a juré en cette façon. » et « Parquoy il ne faut point que » est continue et sans défaut."
+ ],
+ "101": [
+  "ok",
+  "La phrase « Ne fais point ce que tu as imprudemment voué. La promesse accomplie par quelque forfait est contre Dieu. » est complète et continue de part et d'autre de la coupure."
+ ],
+ "102": [
+  "err",
+  "Après la coupure, le texte répète deux fois « et en » dans « à ce que nous l'invoquions, et en et en fassions confession ouverte et franche »."
+ ],
+ "103": [
+  "warn",
+  "Il manque le point final à la fin de la phrase « ...et se portaient en tout et par tout saintement et religieusement » juste avant la coupure."
+ ],
+ "104": [
+  "err",
+  "La phrase est brisée à la coupure : « Le Seigneur » est suivi de l'intertitre « SERMON II. » puis de « quelque relâche et repos à leurs bêtes », ce qui fait perdre le passage « ...ordonné expressément d'octroyer quelque... »."
+ ],
+ "105": [
+  "ok",
+  "La transition entre « ...pourvu que cette congrégation soit vraiment sainte. » et « Premièrement que tous fidèles entrent en l'assemblée des saints... » est continue et fidèle à l'original."
+ ],
+ "106": [
+  "ok",
+  "La phrase « Ce sont les paroles de Jérémie. Parquoy les bons Empereurs Léon et Anthémius... » s'enchaîne correctement malgré la suppression de la référence marginale « Ier. 17.19... »."
+ ],
+ "107": [
+  "ok",
+  "La jointure entre « ...par occasion de quelque peu de temps. » et « Or Constantin ne donne pas congé par ces paroles... » est complète et cohérente."
+ ],
+ "108": [
+  "ok",
+  "La transition entre « ...la punition qui est ordonnée pour les rebelles. » et « Or il n'y a personne qui ne sache qui sont les parents. » est continue et sans manque."
+ ],
+ "109": [
+  "warn",
+  "Il manque le point après « ...selon le témoignage même de notre Seigneur Jésus-Christ » avant « quand les enfans sont soigneux d'eux »."
+ ],
+ "110": [
+  "ok",
+  "La phrase « ...et les principaux devoirs et les plus grans. Car un chacun doit penser que tout ce qu'il possède... » est continue et fidèle au texte d'origine."
+ ],
+ "111": [
+  "err",
+  "L'expression « et bataillons vaillamment » est altérée par rapport à l'OCR (« & bataillons vaillam- mét » / « bataillons » au lieu d'un verbe comme combattons)."
+ ],
+ "112": [
+  "ok",
+  "La transition entre la fin de la phrase sur les traîtres et « Quant au Magistrat, nous en parlerons ailleurs » est continue et fidèle au texte d'origine."
+ ],
+ "113": [
+  "ok",
+  "La coupure sépare deux phrases complètes (« ...ils méprisent Dieu en eux. » et « Qu'ils soient donc diligents, soigneux et fidèles... ») sans manque ni répétition."
+ ],
+ "114": [
+  "ok",
+  "La phrase sur le sang de Zacharie s'achève proprement (« ...et ce qui s'ensuit. ») avant « Et pourtant il nous faut bien garder... » sans perte ni doublon."
+ ],
+ "115": [
+  "ok",
+  "La phrase sur la bienveillance de Dieu se termine correctement avant « Il est certain que Dieu promet aux... » sans défaut à la jointure."
+ ],
+ "116": [
+  "ok",
+  "L'énumération « ...en quelque art ou métier. » est complète avant « Or quant à la religion, elle a... », la coupure ne casse aucune phrase."
+ ],
+ "117": [
+  "err",
+  "Le mot « commandez » est répété de part et d'autre de la coupure (« commandés commandez : »)."
+ ],
+ "118": [
+  "ok",
+  "La citation de saint Paul s'achève normalement (« ...vos enfants à dépit. ») avant « Car la rigueur trop excessive fait... »."
+ ],
+ "119": [
+  "ok",
+  "La phrase « Par ce moyen la paix et tranquillité est commandée à tous. » est complète avant « Or nous avons ici à considérer les... »."
+ ],
+ "120": [
+  "ok",
+  "La phrase « C'est un mal grand & implacable. » est entière avant « Les païens ont débattu cette matière, et... » sans erreur à la jointure."
+ ],
+ "121": [
+  "ok",
+  "La phrase se termine bien par « appelle la haine meurtre et homicide. » et la suivante commence proprement par « Mais il nous faut toucher les »."
+ ],
+ "122": [
+  "ok",
+  "La jointure est complète entre « pour la défense de ses gens. » et « Toutesfois ils peuvent faillir d'un côté »."
+ ],
+ "123": [
+  "err",
+  "La phrase « parviennent à la domination par mauvaises pratiques et faux » est coupée net avant la suite attendue (« faux faire ») et un point manque avant « Ce mot de Magistrat vient de »."
+ ],
+ "124": [
+  "ok",
+  "La phrase s'achève proprement sur « couleur de justice et droiture. » et la phrase suivante démarre avec « Celui qui voudra nier cela, montrera »."
+ ],
+ "125": [
+  "err",
+  "La phrase « abusait de son autorité ou puissance » est interrompue sans ponctuation ni suite du texte d'origine avant « amis et serviteurs de Dieu, ils »."
+ ],
+ "126": [
+  "ok",
+  "La phrase se termine correctement par « de quel côté qu'il voudra. » et la suivante s'enchaîne bien avec « En sorte que ceux qui jusques »."
+ ],
+ "127": [
+  "ok",
+  "La jointure est continue et complète entre « qu'il en donne de bons. » et « Or le Seigneur lui-même déclare qui »."
+ ],
+ "128": [
+  "err",
+  "La locution « D'autant » reste suspendue sans la suite de la phrase (« D'autant que l'avarice... ») avant « Vrai est qu'ici il a nommé »."
+ ],
+ "129": [
+  "ok",
+  "La phrase est complète avec « l'infélicité et le malheur. » et la phrase suivante commence correctement par « Oyons aussi ce que dit le »."
+ ],
+ "130": [
+  "ok",
+  "La phrase s'achève proprement sur « que ceux-ci appellent Judaïque. » et la suivante débute normalement par « Il n'y a point de doute, »."
+ ],
+ "131": [
+  "err",
+  "L'expression « la parole du Seigneur » est coupée en deux (« de » avant ‖, « la parole du Seigneur » après ‖) et le point final de la phrase manque avant « quelle paix Dieu »."
+ ],
+ "132": [
+  "ok",
+  "La phrase « ...sont vrais fidèles. » se termine proprement et la phrase suivante « Nous recueillons par ces paroles, » s'enchaîne sans perte ni répétition."
+ ],
+ "133": [
+  "ok",
+  "La phrase « ...et du bien. » est complète et « Car comme tout Magistrat est... » suit naturellement."
+ ],
+ "134": [
+  "ok",
+  "La phrase « ...et m'as jeté derrière toi. » est complète et s'enchaîne correctement avec « Pour cette raison j'amènerai le mal... »."
+ ],
+ "135": [
+  "ok",
+  "La phrase « ...d'un royaume ou république. » est complète et « Et c'est merveille comment aucuns... » suit sans problème."
+ ],
+ "136": [
+  "ok",
+  "La phrase « ...des Princes Païens. » est complète et s'enchaîne correctement avec « Mais quoy ? veu que ceux... »."
+ ],
+ "137": [
+  "ok",
+  "La phrase « ...soit chassé par les loix. » est complète et la phrase suivante « Que la justice soit munie par... » s'enchaîne bien."
+ ],
+ "138": [
+  "err",
+  "Il manque la fin de la phrase (« ...en cette matière. ») et le début d'une autre (« ...soient soigneusement... » ou « ...soient diligemment... ») ; la jointure « cette matière gemment attentifs » est tronquée et incohérente."
+ ],
+ "139": [
+  "err",
+  "« Au surplus » est coupé (« de Dieu » avant ‖, « surplus » après ‖) sans ponctuation entre les deux phrases, ce qui laisse un texte incomplet et mal raccordé."
+ ],
+ "140": [
+  "warn",
+  "La phrase « ...pèchent grandement » est complète mais il manque le point final avant « Car tout ainsi qu'ils ôtent une... »."
+ ],
+ "141": [
+  "warn",
+  "La phrase « acquièrent une louange pour » avant ‖ est complète mais manque d'un point final avant « La vengeance »."
+ ],
+ "142": [
+  "ok",
+  "L'enchaînement « punition cruelle et inique. Car il n'y aura » est continu et complet."
+ ],
+ "143": [
+  "ok",
+  "La jointure « la Reine Athalia. Le Roi Josias » est complète et sans répétition ni omission."
+ ],
+ "144": [
+  "err",
+  "La phrase « et reconnaissaient » est coupée net sans fin ni point avant « Semblablement quant aux supplices et punitions »."
+ ],
+ "145": [
+  "ok",
+  "Le groupe « ou les opinions perverses de l'Esprit » est continu et complet à la coupure."
+ ],
+ "146": [
+  "ok",
+  "La phrase « pour notre salut et bien. » se termine bien et la suivante « Penserions-nous que nul ne doive être » commence normalement."
+ ],
+ "147": [
+  "ok",
+  "La phrase « avaient appris par parole. » est achevée et suivie normalement de « Ce sont-ci les paroles de saint Augustin »."
+ ],
+ "148": [
+  "warn",
+  "La phrase « qu'il est licite au Magistrat de faire la guerre » est complète mais manque d'un point final avant « Dont nous recueillons »."
+ ],
+ "149": [
+  "ok",
+  "La phrase « et finalement en oraisons et prières continuelles. » est complète et suivie normalement de « On verra à l'opposite que »."
+ ],
+ "150": [
+  "ok",
+  "La phrase « dressé contre la parole du Seigneur. » est complète et suivie normalement de « Judas Machabée a combattu pour le »."
+ ],
+ "151": [
+  "warn",
+  "Un point final est manquant après « craignans Dieu » avant « Les autres lâches et couards, méchants, »."
+ ],
+ "152": [
+  "ok",
+  "La phrase « se sont adonnés au fait de la guerre. Tertullian : écrivant à Scapula, récite cette histoire » est complète et continue à la coupure."
+ ],
+ "153": [
+  "ok",
+  "La transition entre « auquel j'ai déclaré le cinquième commandement. » et « Or après avoir mis fin à ces choses, » est complète et cohérente."
+ ],
+ "154": [
+  "ok",
+  "La phrase « quitter et abandonner l'état et le fait de la guerre. Ils font encore une autre objection, que Jésus-Christ » est complète et bien enchaînée."
+ ],
+ "155": [
+  "ok",
+  "La jointure entre « ces choses au cinquième commandement. » et « D'avantage il faut que les sujets prient pour leurs » est complète et sans défaut."
+ ],
+ "156": [
+  "ok",
+  "La coupure entre « peu de la bénédiction de Dieu. » et « Cependant toutes- fois il faut que les Magistrats » conserve un texte complet et compréhensible."
+ ],
+ "157": [
+  "err",
+  "Le passage « mariage, & de s'entretenir saintement SERMON X. tes d'iceluy, et en forma la femme : » est coupé en pleine phrase, avec un intertitre inséré et le début de « côtes » tronqué en « tes »."
+ ],
+ "158": [
+  "ok",
+  "La transition entre « de la vraie et double bienveillance. » et « L'amitié conjugale est mêlée de toutes parts, » est complète et correcte."
+ ],
+ "159": [
+  "warn",
+  "Un point final manque après « de son corps, mais la femme » avant « Ne faudrez point l'un l'autre, si ce n'est »."
+ ],
+ "160": [
+  "ok",
+  "Le groupe nominal « les épîtres et ordonnances des Princes Chrétiens rendent témoignage qu'il y a bien » est complet et continu à la coupure."
+ ],
+ "161": [
+  "ok",
+  "La transition entre « et adorent le Seigneur. » et « Car telles œuvres du mariage... » est complète et continue."
+ ],
+ "162": [
+  "warn",
+  "Il manque seulement un point final après « d'un pays » avant « Car les villes ne peuvent être gardées »."
+ ],
+ "163": [
+  "ok",
+  "La phrase « Et toutesfois ce Roi-ci ayant emmené Sara femme d'Abraham, ne savait pas qu'elle fût sa femme. » se rejoint sans manque ni répétition."
+ ],
+ "164": [
+  "ok",
+  "La phrase « Et cette peine capitale n'a point été changée ou ôtée par les Païens. » est complète et s'enchaîne correctement avec « Car on sait quelle est la loi... »."
+ ],
+ "165": [
+  "ok",
+  "La coupure traverse normalement « envoyée de la ville de Jérusalem à tous les Gentils. » avant « Saint Pierre nombre la fornication... »."
+ ],
+ "166": [
+  "ok",
+  "La jointure « d'autant que le Roi Tarquin avait pris Lucrèce à force : » reconstitue la phrase sans perte ni répétition."
+ ],
+ "167": [
+  "ok",
+  "La phrase « Mais nous déclarerons pour le présent seulement celles qui sont ici récitées. » se termine bien avant « Premièrement il est requis de nous... »."
+ ],
+ "168": [
+  "err",
+  "Il manque un point après « pauvres » et le texte final est tronqué ou saute des mots après « convenable à sa profession et à son »."
+ ],
+ "169": [
+  "ok",
+  "La phrase « ...celles qui sont pour faire plaisir. » est complète et s'enchaîne proprement avec « Tu mêleras quelquefois des paroles joyeuses... »."
+ ],
+ "170": [
+  "err",
+  "Le mot « perpétuellement » est coupé et sa finale « ment. » est répétée juste après ‖ (« perpétuellement ment. »)."
+ ],
+ "171": [
+  "warn",
+  "Un point final manque après « ordonné un tel jeûne » avant « Saint Paul dit ouvertement, la viande »."
+ ],
+ "172": [
+  "ok",
+  "La transition entre « quelques lois ou statuts. » et « Apollonius auteur ancien et ecclésiastique, disputant » est complète et continue."
+ ],
+ "173": [
+  "ok",
+  "La phrase s'achève proprement sur « Tu ne dérobberas point. » et enchaîne naturellement avec « Or nous voyons derechef qu'en ce »."
+ ],
+ "174": [
+  "err",
+  "Le mot « Chrétiens » est coupé et répété à la jointure entre « Voilà comment les premiers Chrétiens » et « fliens possédaient des maisons propres, des »."
+ ],
+ "175": [
+  "ok",
+  "La jointure entre « selon la faculté d'un chacun. » et « Or quelle faculté eussent-ils pu avoir, » est complète et cohérente."
+ ],
+ "176": [
+  "ok",
+  "La phrase se termine correctement sur « Mais nous traiterons ci-après de l'usage. » et s'enchaîne bien avec « Maintenant considérons comment il faut acquérir »."
+ ],
+ "177": [
+  "err",
+  "La phrase « Mais toi, ô homme » est coupée et suivie de caractères parasites issus de l'OCR (« G. .7.8.9< IO.IL. Re tres nil »)."
+ ],
+ "178": [
+  "ok",
+  "La jointure entre « Car la figure de ce monde passe. » et « Outreplus nous ne lisons point que » est complète et continue."
+ ],
+ "179": [
+  "ok",
+  "La coupure du mot « s'en- / suivent. » est proprement recollée entre « des règles qui s'en- » et « suivent. Il faut premièrement qu'il se »."
+ ],
+ "180": [
+  "ok",
+  "La phrase « quelles sont les espèces de larcin. » est complète et s'enchaîne correctement avec « On dit que le larcin est »."
+ ],
+ "181": [
+  "ok",
+  "La phrase se termine bien sur « perte que gain. » et la suivante commence proprement par « On peut mettre en ce rang les choses trouvées »."
+ ],
+ "182": [
+  "err",
+  "Le mot « que » est répété à la jointure (« Car quiconque que refuse de faire le plaisir »)."
+ ],
+ "183": [
+  "ok",
+  "La transition entre « ne sont point illicites. » et « Usure est quand quelqu'un prête à autrui » est complète et cohérente."
+ ],
+ "184": [
+  "ok",
+  "Malgré la remarque automatique sur « icelle Elle », la fin de phrase « lamentera-t-il point en icelle ? » et la phrase suivante « Elle montera toute comme un fleuve, et cetera. » sont bien séparées et complètes."
+ ],
+ "185": [
+  "ok",
+  "La phrase sur « les menaces horribles contre les sacrilèges. » s'achève bien et « Le Prophète Aggée testifie qu'il n'y a point d'autre cause » suit normalement."
+ ],
+ "186": [
+  "ok",
+  "La phrase « et avec ce leurs biens foisonneront mieux. » est complète et « Or il nous est commandé de faire restitution » enchaîne correctement."
+ ],
+ "187": [
+  "ok",
+  "La locution « s'il advient quelques fois qu'ils acquièrent quelque bien » est continue et complète de part et d'autre de la coupure."
+ ],
+ "188": [
+  "ok",
+  "La phrase « il nous faut user de ces biens temporels saintement et modérément. » est complète et « Un chacun doit reconnaître » commence normalement."
+ ],
+ "189": [
+  "ok",
+  "La phrase se clôt bien sur « mangeants, buvants, et se réjouissants. » et la suivante « Ainsi lisons-nous au huitième du même livre » est intacte."
+ ],
+ "190": [
+  "err",
+  "Le passage « en toutes sortes fidèles, contre les ingrats » est tronqué et incohérent par rapport au texte d'origine (« …et en toutes sortes. Touchant nostre pere Abraham… / …paroles de l'Escriture… contre les infideles, contre les ingrats… »)."
+ ],
+ "191": [
+  "warn",
+  "La coupure entre « de saint Paul, disant » et « Fais commandement aux riches » manque d'une ponctuation (comme un point ou deux-points) introduisant la citation."
+ ],
+ "192": [
+  "err",
+  "Le passage après la coupure débute par « Ormes frères, » au lieu de « Or mes frères, » (mot collé/déformé en « Ormes »)."
+ ],
+ "193": [
+  "err",
+  "Un fragment de note marginale (« de calamités, ») s'est glissé juste avant la coupure après le point final de « par les Écritures. »."
+ ],
+ "194": [
+  "ok",
+  "La phrase « et même les maladies et tous les » s'enchaîne naturellement avec « maux du monde. Tous ceux qui rapportent ces »."
+ ],
+ "195": [
+  "ok",
+  "La phrase « si nous le renions, il nous reniera aussi. » se termine proprement et la phrase suivante « Et aux Romains il dit : Ceux qu'il a » commence sans manque."
+ ],
+ "196": [
+  "ok",
+  "La jointure entre « de l'histoire ecclésiastique d'Eusèbe. » et « Toutesfois je fais ici distinction entre les péchés. » est complète et continue."
+ ],
+ "197": [
+  "warn",
+  "La phrase interrogative « et qui vive tellement avec eux, qu'on doit vivre avec telles gens » perd son point d'interrogation final à la coupure avant « Car il advient volontiers »."
+ ],
+ "198": [
+  "ok",
+  "La phrase sur les « horribles maladies. » s'achève bien et la phrase suivante « La raison est, qu'ils ont péché contre Dieu, » commence proprement."
+ ],
+ "199": [
+  "err",
+  "Le mot « consumés » est coupé en deux à la coupure et suivi de « fumez de feu céleste » (« consumés / fumez » déforme « seront consumez »)."
+ ],
+ "200": [
+  "ok",
+  "La phrase « mais aussi par son exemple. » est complète et s'enchaîne correctement avec « Car il a gémi et pleuré même pour »."
+ ],
+ "201": [
+  "ok",
+  "La transition entre « est-ci votre heure, et la puissance des ténèbres. » et « À ceci appartient cette belle description que » est complète et continue."
+ ],
+ "202": [
+  "ok",
+  "La phrase « or si l'espérance est vue, ce n'est plus espérance. » se poursuit naturellement à travers la coupure."
+ ],
+ "203": [
+  "ok",
+  "La phrase se termine bien par « choses temporelles et éternelles. » avant « Et tout ainsi que la foi est »."
+ ],
+ "204": [
+  "ok",
+  "La phrase « et pour redresser les opprimés et affligés de toutes leurs chutes. » est complète avant « Premièrement l'homme affligé de maux doit considérer »."
+ ],
+ "205": [
+  "ok",
+  "La phrase s'achève proprement sur « et feux éternels en l'autre siècle. » et enchaîne sur « S. Paul a dit ouvertement, 32. Quand nous »."
+ ],
+ "206": [
+  "ok",
+  "La jointure entre « et ne vient après moi, ne peut être mon disciple. » et « Aussi près ces paroles le Seigneur Jésus » est complète."
+ ],
+ "207": [
+  "ok",
+  "La citation se termine bien par « sommes réputés comme brebis destinées à la boucherie. » avant « Mais en toutes ces choses nous surmontons »."
+ ],
+ "208": [
+  "ok",
+  "La phrase se clôt bien sur « de ce gras glouton enseveli et plongé en enfer. » avant « C'est une chose abominable voire-ment et horrible, »."
+ ],
+ "209": [
+  "err",
+  "Le point final manque après « crucifié entre deux brigands » et un fragment parasite (« onzième » issu d'une note de marge « Et onzieme ») s'est glissé avant « quant à saint Paul, parlant de »."
+ ],
+ "210": [
+  "ok",
+  "La coupure « moururent Pamphilus et Maximus, deux hommes notables. » est continue et complète, contrairement à la remarque automatique."
+ ],
+ "211": [
+  "warn",
+  "Un point d'interrogation manque après « en serez-vous quittes » avant « Certes vous n'en serez point quittes »."
+ ],
+ "212": [
+  "ok",
+  "La transition entre « en l'ordre du Décalogue. » et « Nous venons maintenant à exposer les » est complète et continue."
+ ],
+ "213": [
+  "ok",
+  "La phrase s'achève bien par « au milieu de toi. » suivie de « Et tu ne seras en cet » sans perte ni répétition."
+ ],
+ "214": [
+  "ok",
+  "Le passage de « était grièvement affligé. » à « Or aucuns d'entre les principaux théologiens » est propre et continu."
+ ],
+ "215": [
+  "ok",
+  "La coupure entre « calomniateurs ou détracteurs. » et « Item, il est dit aux Proverbes, » est complète et cohérente."
+ ],
+ "216": [
+  "ok",
+  "La jointure entre « et au mal. » et « Car David témoigne qu'il a été » est continue sans manquement."
+ ],
+ "217": [
+  "ok",
+  "La transition entre « vice naturel à tous ? » et « Étant donc trouvés en péchés devant » est complète et correcte."
+ ],
+ "218": [
+  "ok",
+  "Le passage de « d'un corps d'Église. » à « Louange et action de grâces soit » est continu et complet."
+ ],
+ "219": [
+  "ok",
+  "La coupure entre « qu'au service extérieur. » et « Et de fait le Seigneur crie » est propre et sans erreur."
+ ],
+ "220": [
+  "ok",
+  "La jointure entre « de tous les biens célestes. » et « Mais pour retourner à notre propos, » est complète et continue."
+ ],
+ "221": [
+  "warn",
+  "Un point manque après « Avant toutes choses » avant de commencer la phrase « Ce sayon était bien et proprement joint au corps »."
+ ],
+ "222": [
+  "ok",
+  "La transition entre « Pour le dernier il y a la lame d'or. » et « Car il y avait au chef du souverain Sacrificateur » est complète et cohérente."
+ ],
+ "223": [
+  "ok",
+  "La phrase « Ceux donc qui ont opinion... faillent grandement. » s'achève proprement avant « Et quant à la matière de ce que les sacrificateurs Lévitiques doivent enseigner »."
+ ],
+ "224": [
+  "ok",
+  "La jointure entre « ...quand il fallait partir d'un lieu à autre. » et « Quand donc les Israélites voulaient remuer leur ost » est continue et complète."
+ ],
+ "225": [
+  "ok",
+  "La phrase « À l'entrée il y avait un voile de vingt coudées, pendu à quatre piliers. » est complète avant « Le saint des saints était séparé du Sanctuaire »."
+ ],
+ "226": [
+  "ok",
+  "La transition entre « Le soubassement c'est Jésus-Christ. » et « Car nul ne peut mettre autre fondement que celui qui est mis » est fluide et complète."
+ ],
+ "227": [
+  "err",
+  "La fin de phrase « ...tenons nos biens cachés en notre... » est tronquée et du texte manque avant « Or ce Tabernacle a été dressé en Silo »."
+ ],
+ "228": [
+  "ok",
+  "La phrase sur les livres des Rois et des Chroniques s'achève correctement avant « Touchant le lieu du temple, il fut montré par l'Ange même à David »."
+ ],
+ "229": [
+  "ok",
+  "La conclusion sur le Temple (« J'ai touché ces choses en bref touchant le Temple. ») enchaîne normalement sur « Il reste que nous disions quelque chose des instruments »."
+ ],
+ "230": [
+  "err",
+  "Le mot « l'Évangile » est coupé et répété (« l'Évangile SERMON V. gile. ») à la coupure, avec un point manquant après « l'Évangile »."
+ ],
+ "231": [
+  "ok",
+  "La phrase « À quoy appartient aussi le mystère des mouchettes. » s'achève proprement avant « Au milieu entre la table et... »."
+ ],
+ "232": [
+  "ok",
+  "La phrase sur la cuve d'airain au Parvis se termine correctement avant « La description en est faite proprement... »."
+ ],
+ "233": [
+  "ok",
+  "La transition entre « ...puis après par mois. » et « De fait la première de chacun mois... » est continue et complète."
+ ],
+ "234": [
+  "ok",
+  "La phrase sur l'assemblée aux prédications se clôt bien avant « Pâque a été nommé en diverses sortes... »."
+ ],
+ "235": [
+  "ok",
+  "La conclusion sur les fêtes annuelles précède proprement « Il faut bien parler aussi en cet endroit de l'institution du Jubilé. »."
+ ],
+ "236": [
+  "err",
+  "La phrase « ...et qu'il son » (avec un « son » parasite de l'OCR) est brutalement interrompue avant « Or la Circoncision était une cérémonie sacrée... »."
+ ],
+ "237": [
+  "ok",
+  "La phrase d'annonce « ...de traiter de l'alliance qui a été faite avec Abraham. » est complète et s'enchaîne bien avec « En cette alliance... »."
+ ],
+ "238": [
+  "warn",
+  "La fin de la phrase « ...et les confirmant par le sceau » manque d'un point final avant « Mais ceci est tout notoire, que les signes... »."
+ ],
+ "239": [
+  "ok",
+  "La citation se termine bien par « ...afin que tu aimes le Seigneur ton Dieu. » avant « Or la circoncision externe et visible... »."
+ ],
+ "240": [
+  "warn",
+  "La phrase « ...étaient proposées devant les yeux de tous » manque d'un point final avant « C’est donc bien à propos que saint Paul... »."
+ ],
+ "241": [
+  "ok",
+  "La transition entre « utilité et bien inestimable. » et « Le temps aussi est montré, auquel » est continue et complète."
+ ],
+ "242": [
+  "ok",
+  "L'enchaînement entre « comme une prédication vive. » et « Pour cette raison Moïse interprétant cette cérémonie » est fluide et fidèle à l'original."
+ ],
+ "243": [
+  "ok",
+  "La phrase se poursuit naturellement de « aussi il y a un mystère caché. » vers « Car combien que notre Seigneur Jésus le »."
+ ],
+ "244": [
+  "ok",
+  "La coupure entre « qui parlait à lui du Propitiatoire. » et « Or comme l'avais naguère commencé à dire, » est complète et cohérente."
+ ],
+ "245": [
+  "ok",
+  "La transition entre « est la tourterelle et la colombe. » et « Au reste en la cérémonie de l'holocauste » ne présente ni manque ni répétition."
+ ],
+ "246": [
+  "ok",
+  "L'enchaînement entre « nécessités de tous les pauvres. » et « La troisième espèce des sacrifices est le » est net et complet."
+ ],
+ "247": [
+  "warn",
+  "Le point final manque à la fin de « à savoir la substance de notre chair » avant « Il y a ceci d'avantage, qu'Aaron (sous »."
+ ],
+ "248": [
+  "ok",
+  "La phrase « Et en mourant » se prolonge sans rupture dans « il a emmené le bouc voire le »."
+ ],
+ "249": [
+  "err",
+  "Le passage « Et ceue de la connaissance du péché, » est tronqué/corrompu et mal raccordé après « et la mettait en un lieu net. »."
+ ],
+ "250": [
+  "err",
+  "La phrase « ...c'est le sacrifice » est coupée et suivie de « souillés pour les sanctifier. Et cette eau » avec perte du texte sur les sacrifices et l'aspersion."
+ ],
+ "251": [
+  "ok",
+  "La transition entre « mangé en festin sacré. » et « Or en cette espèce de sacrifice » est complète et fidèle à l'original."
+ ],
+ "252": [
+  "err",
+  "La phrase s'interrompt sur la syllabe tronquée « RE » avant « De là est souvent répété que », omettant la fin de la proposition et la suite du texte."
+ ],
+ "253": [
+  "ok",
+  "L'expression « avec une » et « paillarde en une taverne bordelière : » se rejoint sans manque ni répétition."
+ ],
+ "254": [
+  "ok",
+  "La phrase se clôt par « soin du salut des âmes. » et la suivante commence proprement par « Mais que dirons-nous de ce que »."
+ ],
+ "255": [
+  "warn",
+  "Entre « que le Seigneur a défendues » et « À ceci appartient qu’avant que la », seul le point final de la phrase est absent."
+ ],
+ "256": [
+  "err",
+  "L'intertitre « DES LOIX JUDICIA- LES DE DIEU, » s'insère juste après « et au salut de vos âmes. » et la suite du texte final est tronquée ou brouillée."
+ ],
+ "257": [
+  "ok",
+  "La coupure entre « législateur qui est Dieu. » et « Or afin que nous traitions cette » est continue et sans défaut."
+ ],
+ "258": [
+  "ok",
+  "Le passage de « je n'y veux longuement insister. » à « Or pour ce que les lois » est complet et cohérent."
+ ],
+ "259": [
+  "ok",
+  "La jointure entre « été étrangers en Égypte. » et « Or Dieu après avoir tiré ton » est propre et complète."
+ ],
+ "260": [
+  "ok",
+  "La transition de « en la terre d'Égypte. » vers « Touchant les témoins et témoignages qu'on » est complète et fidèle."
+ ],
+ "261": [
+  "ok",
+  "La phrase « Et était permis à ceux qui étaient ainsi séparés, de se remarier. » s'achève proprement et la phrase suivante « Or à fin que l'équité et justice soit entretenue entre les hommes... » commence normalement."
+ ],
+ "262": [
+  "ok",
+  "La phrase sur le salaire retenu se termine par « ...et que cela ne te soit tourné en péché. » et la section suivante « Du dommage fait à un autre, ou reçu par un autre, et des réparations. » débute sans altération."
+ ],
+ "263": [
+  "ok",
+  "La phrase « ...contre les contempteurs et violateurs du jour du Repos. » est complète et suivie naturellement de « On trouvera aussi en la loi plusieurs choses écrites contre les faux accusateurs et calomniateurs, et les séditieux. »."
+ ],
+ "264": [
+  "err",
+  "Le mot « donne » est coupé en deux à la jointure (« donne ‖ ne ») au lieu de « donne des lois »."
+ ],
+ "265": [
+  "ok",
+  "Le titre « ...entre le vieil et le nouveau peuple et Testament. » s'achève et le sermon commence normalement avec « Pour combien que jusques ici j'aie interprété la loi de Dieu... »."
+ ],
+ "266": [
+  "ok",
+  "La phrase « ...de montrer à l'homme sa maladie ou son péché. » est complète et enchaîne correctement avec « Or ceux qui s'arrêtent à ceci... »."
+ ],
+ "267": [
+  "ok",
+  "La phrase « ...n'ayant point ce seul office de condamner. » est complète et suivie normalement de « On apprend aussi ceci de ces choses... »."
+ ],
+ "268": [
+  "err",
+  "Le mot « premier » est coupé en deux (« commandements ‖ mier usage ») et le point final après « commandements » manque."
+ ],
+ "269": [
+  "ok",
+  "La phrase « ...nul de nous n'accomplit la loi de Dieu. » est complète et enchaîne proprement avec « Aussi la dispute de saint Paul a lieu ici... »."
+ ],
+ "270": [
+  "ok",
+  "La phrase « ...à la dextre de Dieu son Père. » est complète et suivie normalement de « Lui aussi circoncit les fidèles spirituellement... »."
+ ],
+ "271": [
+  "ok",
+  "La transition entre « ...aimant Dieu. » et « Car saint Jean a dit... » est complète et cohérente avec le texte d'origine."
+ ],
+ "272": [
+  "ok",
+  "L'enchaînement entre « ...de la loi est telle. » et « Nous avons dit que les commandements de Dieu... » est continu et conforme à l'original."
+ ],
+ "273": [
+  "ok",
+  "La coupure entre « ...contre les adultères. » et « Quant au huitième publié contre les larrecins... » est propre et complète."
+ ],
+ "274": [
+  "ok",
+  "La jointure entre « ...nier notre coupe. » et « Il dit que nous avons été tellement délivrés... » est continue et fidèle au texte d'origine."
+ ],
+ "275": [
+  "ok",
+  "Le passage de « ...cérémonies de la loi. » à « Or ceci ne fait rien pour les Juifs... » est complet et sans anomalie."
+ ],
+ "276": [
+  "ok",
+  "La transition entre « ...de chacune Église. » et « Le Seigneur a laissé en liberté de choisir... » est complète et cohérente."
+ ],
+ "277": [
+  "ok",
+  "L'enchaînement entre « ...sacrée et nécessaire. » et « Mais pour ce que cet an auquel... » est intact et conforme au texte d'origine."
+ ],
+ "278": [
+  "ok",
+  "La jointure entre « ...épandu en la croix. » et « Or en lieu de l'Agneau Pascal... » est continue et complète."
+ ],
+ "279": [
+  "ok",
+  "Le passage de « ...de l'accomplir ? » à « Quant aux choses mondes et immondes... » est complet et fidèle à l'original."
+ ],
+ "280": [
+  "ok",
+  "La transition entre « ...mérite des œuvres. » et « Or les Apôtres ont attribué double effet... » est complète et sans défaut."
+ ],
+ "281": [
+  "ok",
+  "La phrase « ...et de semblable impiété sont aujourd'hui observées et maintenues. » se termine proprement avant la nouvelle phrase « C'est à dire, après que d'un... »."
+ ],
+ "282": [
+  "ok",
+  "La coupure sépare « ...la chose » de « étouffée. » puis enchaîne normalement avec « Il ajoute quant et quant... »."
+ ],
+ "283": [
+  "ok",
+  "La proposition « ...qui sont » rejoint « équitables. » sans perte ni répétition, suivie de « Or si quelqu'un veut faire... »."
+ ],
+ "284": [
+  "ok",
+  "La question « ...que nous avons aujourd'hui ? » est complète et la phrase suivante « Toutefois à celle fin que le... » démarre normalement."
+ ],
+ "285": [
+  "ok",
+  "L'expression « ...Nous avons un » se raccorde naturellement à « même Esprit de foi selon ce... » sans mot manquant ni répété."
+ ],
+ "286": [
+  "ok",
+  "La phrase « ...l'héritage invisible et éternel. » est complète et la suivante « Et ce n'a été à autre... » s'enchaîne correctement."
+ ],
+ "287": [
+  "warn",
+  "Il manque une ponctuation (deux-points ou point) entre « ...selon saint Jean » et « Abraham s'est égayé à ce qu'il... », alors que l'OCR avait « Ver. 56. »."
+ ],
+ "288": [
+  "ok",
+  "La phrase « ...qu'il les exauçât à cause du Messie. » est achevée et suivie normalement par « Car Dieu promettant délivrance au Roi... »."
+ ],
+ "289": [
+  "ok",
+  "La phrase « ...qu'ils ne faisaient. » se termine proprement avant « Car nous verrons face à face... »."
+ ],
+ "290": [
+  "ok",
+  "La phrase « ...nourrit, entretient et conserve. » est complète et s'enchaîne sans accroc avec « Or après que la paroi a... »."
+ ],
+ "291": [
+  "ok",
+  "La phrase « Car en toutes les régions il y a des enfants de Dieu. » s'achève proprement avant la nouvelle phrase « Or j'ai touché ces choses en brief »."
+ ],
+ "292": [
+  "err",
+  "Le titre en marge « DE L'USAGE DE LA LOI DIVINE » s'est inséré au milieu de la phrase « pour dire qu'il n'y ait point de serfs »."
+ ],
+ "293": [
+  "err",
+  "La phrase « Et afin que » est tronquée et enchaîne directement sur « justice à dextre et à senestre », omettant la suite du texte d'origine."
+ ],
+ "294": [
+  "ok",
+  "La phrase « Pour ceste raison la vraye liberté Chrestienne c'est d'estre perpetuellement serviteur de Dieu. » est complète et suivie normalement de « En saint Jean le Seigneur Jésus Christ »."
+ ],
+ "295": [
+  "err",
+  "La phrase « et enfantions une belle » est coupée et suivie de « mari vient à mourir, il lui est », en omettant la fin de la lignée et le début de la condition sur le mari."
+ ],
+ "296": [
+  "ok",
+  "La phrase « et outre cela elle transfère l'autorité de Dieu aux hommes. » se termine bien avant « Finalement les traditions humaines sont prisées à »."
+ ],
+ "297": [
+  "ok",
+  "La phrase « mais les scandalisent sans aucune considération. » est complète et enchaîne correctement sur « Il faut donc noter en cet endroit »."
+ ],
+ "298": [
+  "warn",
+  "Le point final manque après « pour suivre les erreurs et détroits égarez » avant « Car c'est ainsi que le Roi d'Égypte »."
+ ],
+ "299": [
+  "err",
+  "La fin de « Voilà ce que j'ai voulu dire touchant le scandale » perd son point et s'accole à « au commencement de ce sermon, je suis » avec perte du début de phrase (« Au commencement de ce sermon, je suis... » / « ...sont semblablement appelées »)."
+ ],
+ "300": [
+  "ok",
+  "La phrase « Et ceci se rapporte à une même cause, quand nous disons que les bonnes œuvres sont faites par foi. » est complète et suivie normalement de « Car la foi est un don de »."
+ ],
+ "301": [
+  "ok",
+  "La phrase « ne pouvant être retenu par le franc arbitre, mais bien précipité. » est complète et continue de part et d'autre de la coupure."
+ ],
+ "302": [
+  "err",
+  "La syllabe « parons » est répétée à la jointure (« séparons parons point »), conformément à la remarque du contrôle automatique."
+ ],
+ "303": [
+  "ok",
+  "La transition entre « ...leur façon et moyen. » et « On fait derechef cette objection... » est complète et cohérente."
+ ],
+ "304": [
+  "ok",
+  "La phrase « Il n'y a point de salut en autre quelconque. » s'achève proprement avant « Or puis après ils amassent... »."
+ ],
+ "305": [
+  "ok",
+  "La phrase « Saint Paul donc afferme qu'il a accompli ce reste en endurant. » est complète et enchaîne normalement sur « Outreplus... »."
+ ],
+ "306": [
+  "warn",
+  "Le point final manque après « ...l'autre ne serait point justice » avant « A quoi il faut encore ajouter ceci »."
+ ],
+ "307": [
+  "warn",
+  "Le point final manque après « ...et justifie seule » avant « Car c'est une chose toute certaine »."
+ ],
+ "308": [
+  "ok",
+  "La phrase « ...seulement par la foi. » est complète et la citation de saint Jean Chrysostome commence proprement après la coupure."
+ ],
+ "309": [
+  "warn",
+  "Le point final manque après « ...et semblablement au Grec » avant « Item, Il vous faut tous comparaître »."
+ ],
+ "310": [
+  "ok",
+  "La phrase « ...ains pour suivre la foi en l'acquisition de l'âme. » est complète et se raccorde correctement à « On ne doit toutefois abuser... »."
+ ],
+ "311": [
+  "warn",
+  "La phrase interrogative « ou qui lui fût donnée d'enhaut » manque de point d'interrogation avant « Mais ja n'advienne »."
+ ],
+ "312": [
+  "err",
+  "La syllabe « réser- » de « réserva » est répétée en « réserva va » à la jointure."
+ ],
+ "313": [
+  "ok",
+  "La phrase « Toutes les choses donc que vous voulez que les hommes vous fassent » est complète et continue sans répétition ni manque."
+ ],
+ "314": [
+  "warn",
+  "Un point final manque après « et sera donné à celui qui a davantage » avant la phrase suivante commençant par « Dieu est propice »."
+ ],
+ "315": [
+  "ok",
+  "L'expression « transgression de la loi » est complète et fidèle au texte d'origine malgré la mention marginale retirée."
+ ],
+ "316": [
+  "ok",
+  "La phrase « mais seulement ce que Dieu lui permet » se raccorde naturellement et sans perte de sens."
+ ],
+ "317": [
+  "ok",
+  "La transition entre « notre diligence et labeur. » et « Si l'homme est ici nonchalant » est complète et continue."
+ ],
+ "318": [
+  "ok",
+  "La jointure entre « qui ne sera point méchant. » et « De toutes ces choses nous faisons cette conclusion » est complète et sans défaut."
+ ],
+ "319": [
+  "err",
+  "Un long passage de l'OCR sur la corruption originelle et la racine du mal a disparu entre « ce qu'il voulait » et « nature, à savoir un germe pourri »."
+ ],
+ "320": [
+  "ok",
+  "La jointure entre « pouvait-on parler plus clairement, » et « Nous sommes jetés au mal par notre propre concupiscence. » est complète et continue."
+ ],
+ "321": [
+  "ok",
+  "La phrase « Car il montre ce qu'il voulait que l'homme fît en lui donnant loi. Et il montre qu'il ne voulait la mort ni la ruine d'Adam. » est complète et continue."
+ ],
+ "322": [
+  "ok",
+  "Le passage « ...que quelque fois son fils sera tué de glaive. Et n'aura point été déçu en sa prescience. » s'enchaîne sans manque ni répétition."
+ ],
+ "323": [
+  "ok",
+  "La phrase « ...et eux non seulement ont été ingrats à Dieu, mais plutôt s'appuyant sur leur sagesse... » est complète et continue malgré la remarque automatique."
+ ],
+ "324": [
+  "ok",
+  "La phrase « Or ceci est dit assez clairement en Amos, Il n'y a adversité en la cité que le Seigneur ne face. » se termine bien avant le début de la citation de saint Augustin."
+ ],
+ "325": [
+  "ok",
+  "La phrase « Car non seulement notre nature est pauvre & destituée de tout bien, mais aussi elle est fort fertile à produire le mal. » est complète et continue."
+ ],
+ "326": [
+  "ok",
+  "Le passage « ...et ma mère m'a tenu chaudement en péché. C'est à dire, dès lors même que je fus conçu... » est complet et bien articulé."
+ ],
+ "327": [
+  "warn",
+  "Un point d'interrogation manque après « ...quelque impureté de leur naissance » avant « Et pourtant ce que nous avons ouï de Célestin Pélagien... », le texte restant par ailleurs complet."
+ ],
+ "328": [
+  "ok",
+  "La phrase « Et le fait et l'expérience démontre assez ouvertement tant ès petits enfants qu'ès grands et âgés. Car de fait les petits enfants... » est complète et continue."
+ ],
+ "329": [
+  "err",
+  "La phrase « Et pourtant, » reste suspendue sur une virgule et enchaîne directement avec « Le Seigneur Jésus dit en l'Évangile à Nicodème : », indiquant une omission ou une coupure incomplète."
+ ],
+ "330": [
+  "ok",
+  "La phrase « Car le Seigneur hait toute impureté et ordure. Or ce que saint Paul dit... » est complète et continue."
+ ],
+ "331": [
+  "ok",
+  "La phrase se termine bien par « ou de la corruption des forces humaines. » et la suivante commence proprement par « Car tout ainsi qu'en ces choses »."
+ ],
+ "332": [
+  "ok",
+  "La jointure est complète et continue entre « péchés dedans son ventre. » et « Et ce qui s'ensuit. Car jusques ici »."
+ ],
+ "333": [
+  "warn",
+  "Il manque seulement le point final après « c'est la volonté même de Dieu » avant « Et Dieu veut que l'homme réponde »."
+ ],
+ "334": [
+  "ok",
+  "La phrase s'achève bien sur « par le feu de la géhenne. » et la suivante débute normalement par « En ces paroles de notre Seigneur »."
+ ],
+ "335": [
+  "ok",
+  "La transition entre « qu'il n'est venu à eux. » et « Car tous ceux qui n'ont point » est complète et cohérente."
+ ],
+ "336": [
+  "ok",
+  "La phrase est complète avec « le cœur saint d'un tel. » et s'enchaîne correctement avec « Comme si on avait lié pieds »."
+ ],
+ "337": [
+  "ok",
+  "La jointure entre « nous retournons à notre propos. » et « Outreplus on fait cette division des » est continue et sans manque."
+ ],
+ "338": [
+  "warn",
+  "Un point manque à la fin du titre en marge « À savoir si les œuvres vertueuses des Gentils ou païens » avant « On ne doit point cependant mépriser »."
+ ],
+ "339": [
+  "ok",
+  "La phrase est complète après « et la blasphèment et maudissent. » et la suivante commence bien par « Car blasphème est une maudisson ou »."
+ ],
+ "340": [
+  "err",
+  "La citation de saint Paul (« Et saint Paul dit, S'ils eussent connu ») est brutalement coupée avant « Mais le fait requiert maintenant que »."
+ ],
+ "341": [
+  "warn",
+  "La phrase avant la coupure (« ... et le malin ne le touche point ») manque d'un point final avant « Saint Jean raconte deux sortes de »."
+ ],
+ "342": [
+  "ok",
+  "La phrase « ... voire aux bêtes. » se termine correctement et la phrase suivante « Le passage est assez connu. » commence normalement après la coupure."
+ ],
+ "343": [
+  "ok",
+  "La doxologie « ... Gloire soit à lui éternellement. Amen. » est complète et suivie normalement par « À ceci appartient que notre bon... »."
+ ],
+ "344": [
+  "ok",
+  "La phrase « ... obtiennent la vie éternelle. » est complète et enchaîne proprement sur le titre « SERMON XI. Après la déclaration de... »."
+ ],
+ "345": [
+  "err",
+  "La phrase « ... le Fils unique qui est au sein de Dieu est celui qui » est interrompue brusquement avant « Au surplus, Christ est salutaire à... »."
+ ],
+ "346": [
+  "ok",
+  "La phrase « ... tant ici qu'en l'autre siècle. » est complète et la phrase suivante « Croyons donc à l'Évangile du Fils... » commence normalement."
+ ],
+ "347": [
+  "ok",
+  "La phrase « ... appelle l'Évangile annonciation de grâce. » est complète et enchaîne correctement sur « Ces témoignages sont assez clairs et... »."
+ ],
+ "348": [
+  "err",
+  "Après « Or avant que nous laissions encore... », la phrase est mal recollée (« ... il m'a semblé bon de donner pour l'amour de Jésus-Christ ton Fils... » sans complément d'objet direct pour « donner »)."
+ ],
+ "349": [
+  "ok",
+  "La phrase « ... Sans icelle il n'y a nulle vie ni repos. » est complète et suivie normalement par « Or les promesses que Dieu a... »."
+ ],
+ "350": [
+  "ok",
+  "La phrase « ... Toutes ces choses ont été figures de notre Seigneur Jésus. » est complète et enchaîne proprement sur « Les autres promesses aussi sont de... »."
+ ],
+ "351": [
+  "ok",
+  "La jointure « Octavien Auguste et Marc Antoine dominaient » est complète et fidèle à l'OCR après retrait de l'en-tête « DE L'EVANGILE »."
+ ],
+ "352": [
+  "ok",
+  "La transition entre « je suis envoyé devant lui. » et « Qui a épousé, il est époux » est complète et cohérente avec le texte d'origine."
+ ],
+ "353": [
+  "ok",
+  "Le passage de « Croyons donc que celui-ci est le vrai Messias. » à « Or notre Seigneur Jésus Christ a confessé » est complet sans manque ni répétition."
+ ],
+ "354": [
+  "ok",
+  "La coupure entre « éclaircit et déclare cette proposition. » et « Or ces témoignages si clairs et évidents » est continue et fidèle au texte d'origine."
+ ],
+ "355": [
+  "ok",
+  "La jointure entre « et ne sera jamais confus. » et « Il reste que nous exposions la dernière partie » est complète malgré le retrait de la note de marge."
+ ],
+ "356": [
+  "ok",
+  "Le passage de « je suis ici plus bref. » à « Or quant au salut éternel qui nous est pleinement préparé » est complet et fidèle à l'OCR."
+ ],
+ "357": [
+  "ok",
+  "La transition entre « et aussi ailleurs. » et « Or le Seigneur Jésus lui-même enseigne en l'Évangile » est complète et sans anomalie."
+ ],
+ "358": [
+  "ok",
+  "La jointure entre « élevé à la gloire céleste pour nous. » et « ANCGILE, Et combien que de toutes ces choses » est continue et fidèle à l'OCR."
+ ],
+ "359": [
+  "ok",
+  "Le passage de « mais il y en a bien peu d'élus. » à « Ce qu'encore il expose plus clairement et ouvertement » est complet et fidèle au texte d'origine."
+ ],
+ "360": [
+  "ok",
+  "La jointure entre « et les commandements s'accomplissent par œuvres. » et « Gal.3.18 Et pourtant saint Paul dit » est complète et fidèle à l'OCR."
+ ],
+ "361": [
+  "ok",
+  "La phrase « qu'est-ce autre chose que croire ? Sinon qu'on veuille dire qu'avoir le... » s'enchaîne correctement et correspond au texte d'origine."
+ ],
+ "362": [
+  "err",
+  "Le mot « sauvés » est coupé et suivi de « uez » (« sauvés ‖ uez par grâce ») au lieu de « sauvés par grâce, ce n'est plus par les œuvres : d'autant que ce n'est plus grâce : et si nous sommes sauvés »."
+ ],
+ "363": [
+  "ok",
+  "L'enchaînement « Certes il est aussi des Gentils. ‖ Car il y a un seul... » est complet et fidèle à l'original."
+ ],
+ "364": [
+  "ok",
+  "La transition « ...devant le jugement de Dieu. ‖ Il a donc recours à la... » est continue et conforme au texte d'origine."
+ ],
+ "365": [
+  "ok",
+  "La jointure « ...par foi sans œuvres. ‖ Or ce même passage de saint... » est complète et cohérente avec l'original."
+ ],
+ "366": [
+  "ok",
+  "Le passage « ...à l'encontre d'icelle. ‖ Comme s’il disait : Pierre, ce... » s'enchaîne sans manque ni répétition."
+ ],
+ "367": [
+  "ok",
+  "La coupure « ...à toute la semence. ‖ La quatrième cause est, que l'image... » est complète et fidèle au texte d'origine."
+ ],
+ "368": [
+  "ok",
+  "La jointure « ...et faits des hommes. ‖ Or on use de ce mot... » est continue et conforme à l'original."
+ ],
+ "369": [
+  "ok",
+  "L'enchaînement « ...attirer à repentance. ‖ Tout ainsi que je ne contredis... » est complet et correspond au texte d'origine."
+ ],
+ "370": [
+  "ok",
+  "La transition « ...la crainte de Dieu. ‖ Or pour le présent nous parlerons... » est complète et fidèle à l'original."
+ ],
+ "371": [
+  "err",
+  "La phrase « ...selon que saint Luc témoigne : Le » est brusquement interrompue avant « Or nous recueillons des choses susdites »."
+ ],
+ "372": [
+  "ok",
+  "La transition entre « ...desquelles choses j'ai traité ci-dessus. » et « Cependant je suis d'avis... » est complète et cohérente."
+ ],
+ "373": [
+  "ok",
+  "La jointure entre « ...ceux qui sont sanctifiés. » et « Outre plus saint Jean en son Épître... » est complète et sans manque."
+ ],
+ "374": [
+  "ok",
+  "La phrase s'achève bien sur « ...saints et justes. » avant de commencer « Il ne se peut faire que... »."
+ ],
+ "375": [
+  "err",
+  "Après « Or cette confession divinement in- », la suite de la phrase (« ...stituée... » ou équivalent) manque avant « déployons nos cœurs devant Dieu »."
+ ],
+ "376": [
+  "ok",
+  "La phrase se termine bien sur « ...purgé par feu. » avant d'enchaîner sur « Or la confession qui est faite au... »."
+ ],
+ "377": [
+  "ok",
+  "La jointure « ...noircir son corps de chair... » reconstitue correctement le texte sans coupure de mot ni omission."
+ ],
+ "378": [
+  "ok",
+  "La transition entre « ...tes plaies et navrures. » et « Outreplus ledit Chrysostome introduit le Seigneur... » est continue et complète."
+ ],
+ "379": [
+  "ok",
+  "La jointure entre « ...ains seulement une ou deux. » et « Quelle impiété est celle-ci, de renvoyer... » est complète et cohérente."
+ ],
+ "380": [
+  "ok",
+  "La jointure « ...résister. C'est une chose tant claire et manifeste... » est complète et sans erreur."
+ ],
+ "381": [
+  "warn",
+  "La phrase « et comment elle peut plaire à Dieu » se termine à la coupure sans point final avant « Or quant à ce qu'on propose »."
+ ],
+ "382": [
+  "ok",
+  "La phrase « à cause de cette absolution particulière. » s'achève proprement et la phrase suivante « Encore repliquent-ils » commence normalement après la coupure."
+ ],
+ "383": [
+  "ok",
+  "La phrase « quand je disputais des bonnes œuvres. » est complète et « En prononçant cet article de notre » enchaîne correctement."
+ ],
+ "384": [
+  "err",
+  "Un point et le début de la phrase « Mais il faisoit qu'un exemple de patience singulière » ont été perdus entre « annonçait l'Évangile aux Gentils » et « faisoit qu'un exemple de patience singulière »."
+ ],
+ "385": [
+  "ok",
+  "La coupure intervient au milieu du mot « Luy-même » (« Luy- » avant et « même Pierre prévoyant » après) sans perte ni répétition."
+ ],
+ "386": [
+  "ok",
+  "La phrase « qui est la vraie lumière. » est complète et « Le même Apôtre dit ailleurs, Nous » suit normalement."
+ ],
+ "387": [
+  "warn",
+  "Il manque un point final à « de nouveau pour être enfants de régénération » avant « Dieu et l'Esprit de Dieu fait »."
+ ],
+ "388": [
+  "ok",
+  "La phrase « contr'elle, et lui coupent la gorge. » est complète et « Au contraire, les repentans en tous » s'enchaîne correctement."
+ ],
+ "389": [
+  "ok",
+  "La phrase « assez dit des fruicts de penitence. » est complète et « Nous recueillons aussi de tout ce » commence normalement."
+ ],
+ "390": [
+  "ok",
+  "La phrase « parvint jusqu'au roi de Ninive. » se termine normalement et « Alors il se leva de son » suit sans altération."
+ ],
+ "391": [
+  "ok",
+  "La phrase « ...biens temporels et éternels. Et vous mes frères... » est complète et enchaîne correctement d'une phrase à l'autre."
+ ],
+ "392": [
+  "ok",
+  "Le titre du sermon se termine sur « ...trois personnes en la Divinité. » et le sermon débute nettement par « JUSQUES à présent j'ai traité... »."
+ ],
+ "393": [
+  "ok",
+  "Après « ...au livre de la Nature des dieux : », la nouvelle phrase « C'est une chose certaine que ceux qui nient... » s'enchaîne sans manque ni répétition."
+ ],
+ "394": [
+  "err",
+  "La phrase avant la coupure s'interrompt brusquement sur « ...que quelque occasion nous » sans point ni suite, et enchaîne sur « Sinon qu'en quelque sorte nous ne... » en laissant la proposition incomplète."
+ ],
+ "395": [
+  "ok",
+  "La phrase « ...il a commandé, et cela a été. » est complète et la phrase suivante « Et en Isaïe le Prophète, il dit... » débute normalement."
+ ],
+ "396": [
+  "ok",
+  "La phrase « ...pource que rien ne lui défaut. » est achevée et le passage suivant « Or quant à ce mot Elohim qui est pluriel... » démarre correctement."
+ ],
+ "397": [
+  "ok",
+  "L'énumération se clôt sur « ...semblable à moi en tout et par tout. » et la phrase « Finalement nous lisons en Exode, que Dieu dit... » suit sans coupure de phrase."
+ ],
+ "398": [
+  "ok",
+  "La phrase sur les pieds du Seigneur qui cheminait au jardin est complète et « Ils oient simplement ces choses, et rapportent... » enchaîne proprement."
+ ],
+ "399": [
+  "ok",
+  "La phrase « ...si on ne comprend toutes choses de tout temps. » est complète et « Ainsi donc c'est le Fils qui est toujours descendu... » suit logiquement."
+ ],
+ "400": [
+  "ok",
+  "La phrase « ...d'une même essence et substance avec le Père. » est complète et « Oyons maintenant comment Dieu s’est donné à voir à Moïse... » commence normalement."
+ ],
+ "401": [
+  "ok",
+  "La phrase s'achève bien sur « Seigneur Jésus. » et la phrase suivante commence correctement par « Car la plus claire manière de toutes, »."
+ ],
+ "402": [
+  "err",
+  "Après « connu par ses œuvres. », la phrase « Or peut être apaisée sinon par une si sainte oblation. » a perdu son début sur la justice de Dieu offensée par nos péchés."
+ ],
+ "403": [
+  "ok",
+  "La phrase se termine proprement par « prompte obéissance. » et la citation suivante débute bien par « Car Asaph dit, Ce nous avons vu »."
+ ],
+ "404": [
+  "warn",
+  "Le passage « ma louange aux images de fonte » est complet mais il manque un point final avant « Et, Je suis le premier, et je »."
+ ],
+ "405": [
+  "err",
+  "Le mot « aiguisées » est suivi du fragment répété « fees contre le ciel même. » qui coupe la fin du mot « aiguisées »."
+ ],
+ "406": [
+  "warn",
+  "Le texte est complet de part et d'autre de « ôtées aux personnes » et « Mais il vaut mieux de produire maintenant », mais il manque un point à la fin de « personnes »."
+ ],
+ "407": [
+  "warn",
+  "La phrase « plus excellents de toute la compagnie » est complète mais il manque un point final avant « Saint Pierre prêchant la parole de l'Évangile »."
+ ],
+ "408": [
+  "ok",
+  "La phrase se clôt bien par « procède du Père et du Fils. » et la suivante s'ouvre correctement sur « Or maintenant imagine ceci, et prends le »."
+ ],
+ "409": [
+  "ok",
+  "La phrase s'achève proprement sur « Ce sont les paroles de Cyrille. » et la phrase suivante commence bien par « Toutes ces choses seront confirmées par plus »."
+ ],
+ "410": [
+  "warn",
+  "Le passage « plus excellent de tous les Prophètes après Moïse dit » est complet mais il manque un signe de ponctuation (comme un point ou deux-points) avant « Les cieux ont été faits par la »."
+ ],
+ "411": [
+  "ok",
+  "La phrase « la mort en est bien prochaine. » se termine bien et « Or notre bon Dieu nous fasse » commence la phrase suivante sans anomalie."
+ ],
+ "412": [
+  "ok",
+  "La jointure entre « ont ainsi cru et enseigné. » et « Or combien qu'on ne pourrait pas » est continue et fidèle au texte d'origine."
+ ],
+ "413": [
+  "ok",
+  "Le passage de « admirable par toute la terre. » à « Item, il dit encores, Les cieux » est complet et continu, la référence marginale ayant été normalement retirée."
+ ],
+ "414": [
+  "ok",
+  "La transition entre « tête sont tous comptés. » et « Outreplus, il y a d'autres témoignages » est complète et cohérente avec le texte d'origine."
+ ],
+ "415": [
+  "err",
+  "Le texte est tronqué et abîmé à la coupure entre « et le Seigneur y assiste » et « fie, Je ne peux rien faire » (il manque la suite de « assiste » et « ne te défaill » / « ne te manque » avant « Je ne peux rien faire »)."
+ ],
+ "416": [
+  "warn",
+  "Entre « qui est mis en la nature » et « elle n'abolit nullement les devoirs », la ponctuation est absente à la jointure mais le sens reste continu et complet."
+ ],
+ "417": [
+  "err",
+  "Après « vie éternelle et bienheureuse. », le début de phrase « Au reste, Christ, ou par Christ » est incomplet et grammaticalement tronqué par rapport à l'original (« ...Christ, ou par Christ est-ce qu'il nous a élus »)."
+ ],
+ "418": [
+  "warn",
+  "Il manque le point final après « tardif à ire, et de grande bonté » avant « Comme un père est meu de », comme le signalait le contrôle automatique."
+ ],
+ "419": [
+  "ok",
+  "La jointure entre « ne rejetions l'attraction même. » et « Vrai est qu'il a usé de » est complète et conforme au texte d'origine."
+ ],
+ "420": [
+  "ok",
+  "La coupure entre « a-t-il séduit nos premiers pères. » et « Retenons ceci imprimé fermement dedans » est propre et complète."
+ ],
+ "421": [
+  "ok",
+  "La suite « que cette providence de Dieu » est complète et continue par rapport à l'OCR « que cete prouidéce de ... Dieu »."
+ ],
+ "422": [
+  "ok",
+  "L'enchaînement « rendez à tous, à qui honneur, à qui crainte » correspond bien au texte d'origine."
+ ],
+ "423": [
+  "ok",
+  "La phrase « et ses mains ont formé la terre ferme. Venez, prosternons-nous » est complète et bien articulée."
+ ],
+ "424": [
+  "ok",
+  "La transition entre « comme il est dit en S. Matthieu. » et « De fait, le Seigneur notre Dieu » est complète et cohérente."
+ ],
+ "425": [
+  "warn",
+  "Il manque seulement un point final après « en son Nom » avant « Au surplus, dès le commencement Dieu »."
+ ],
+ "426": [
+  "err",
+  "Le passage « et rivières et es oreilles. » est tronqué et corrompu par rapport à l'OCR (« périls en la mer et rivieres et fleuves »)."
+ ],
+ "427": [
+  "ok",
+  "La coupure entre « et invoquerai le nom du Seigneur. » et « Mais il y a incontinent après » est continue et complète."
+ ],
+ "428": [
+  "err",
+  "Le texte « à cause de ses iniquités. En cette sorte doncques : tout-puissants. » est amputé de plusieurs mots et phrases présents dans l'OCR."
+ ],
+ "429": [
+  "err",
+  "Le segment « médiateur d'intercession diateur de rédemption, aussi le propose-t-elle » est répété et coupé à la jointure."
+ ],
+ "430": [
+  "err",
+  "La phrase « Médiateur des ceux qui approcheront de Dieu » est abîmée et manque le passage « fidèles envers son Père ès cieux... » présent dans l'OCR."
+ ],
+ "431": [
+  "ok",
+  "La phrase « ou qu'il estime qu'un tel avocat ne soit point agréable à Dieu le Père. » est complète et continue de part et d'autre de la coupure."
+ ],
+ "432": [
+  "ok",
+  "La phrase « Car en cet endroit la charité de Dieu va devant la dilection du prochain. » s'enchaîne correctement sans manque ni répétition."
+ ],
+ "433": [
+  "ok",
+  "La phrase « comme aussi il n'y a que lui qui fonde les cœurs. » est complète et fidèle au sens du passage d'origine."
+ ],
+ "434": [
+  "ok",
+  "La phrase « qui peuvent être rapportées aussi au service extérieur de Dieu. » est continue et complète à la jointure."
+ ],
+ "435": [
+  "ok",
+  "La fin de la phrase « item, 1, Timothée 2, et ailleurs. » et le début de « Or avant que je fasse fin à ce propos » s'enchaînent normalement."
+ ],
+ "436": [
+  "ok",
+  "La phrase « Et jusques ici nous avons montré comment Dieu vivant et éternel doit être seul servi et honoré. » est complète de part et d'autre de la coupure."
+ ],
+ "437": [
+  "ok",
+  "L'énumération « ont adoré des dieux faux ou controuvés ou étranges. » est continue et complète à travers la coupure."
+ ],
+ "438": [
+  "ok",
+  "La phrase « Outre-plus nous avons ici à observer comment Dieu est superstitieusement honoré et servi en diverses sortes. » est complète sans mot perdu ni répété."
+ ],
+ "439": [
+  "ok",
+  "La prière finale « et les délivrer de toute vaine superstition, par Jésus-Christ son Fils notre Seigneur. Amen. » est complète à la jointure."
+ ],
+ "440": [
+  "ok",
+  "La comparaison « mais comme le resplendissement est du Soleil, ou comme la chaleur procède du feu. » est complète et continue de part et d'autre de la coupure."
+ ],
+ "441": [
+  "ok",
+  "La phrase se termine bien à « se faisant égal à Dieu. » avant ‖ et la suivante commence proprement par « Car le Seigneur lui-même dit en »."
+ ],
+ "442": [
+  "ok",
+  "La phrase s'achève bien sur « témoignages des saintes Écritures. » et la suivante débute normalement par « Arius avec ses complices a nié »."
+ ],
+ "443": [
+  "ok",
+  "La jointure est nette entre « à savoir que le Fils est vrai Dieu. » et « Outre plus lui-même notre Seigneur Jésus »."
+ ],
+ "444": [
+  "err",
+  "Il manque un point final après « dispensation » et le début de la phrase suivante (« Car c'est en lui que nous vivons, » dans l'OCR) a disparu avant « avons mouvement et être, comme dit »."
+ ],
+ "445": [
+  "err",
+  "La phrase avant ‖ est tronquée sur « de la chair et du » sans point final, avant de passer à « Il est certain que l'Écriture déduit »."
+ ],
+ "446": [
+  "ok",
+  "L'enchaînement « Car Christ est le fruit » suivi de « du ventre de David et de » forme une phrase continue et complète."
+ ],
+ "447": [
+  "ok",
+  "La phrase « Voilà ce qu'en dit Théodoret. » est complète avant ‖ et « Or quand nous faisons confession que » enchaîne proprement."
+ ],
+ "448": [
+  "ok",
+  "La phrase « lui semblablement y a participé. » est complète avant ‖ et la phrase suivante commence correctement par « Toutesfois il nous faut ici garder »."
+ ],
+ "449": [
+  "err",
+  "Le passage après ‖ répète « lon la puissance divine. Le même Apôtre... » et coupe une phrase commencée par « de toute »."
+ ],
+ "450": [
+  "ok",
+  "La phrase « Si aucun dit ou croit que la divinité puisse naître, qu'il soit anathématisé. » est complète et la suivante débute proprement par « Si aucun dit ou croit que »."
+ ],
+ "451": [
+  "err",
+  "La phrase est coupée entre « témoigne au chapitre des Hébreux » et « communiquee à l'autre », omettant la suite du texte d'origine qui relie la communication des propriétés à la fin de la phrase."
+ ],
+ "452": [
+  "ok",
+  "La transition entre « été mis au monument, etc. Ce » et « sont les paroles de Théodoret. Or » est complète et cohérente avec l'original."
+ ],
+ "453": [
+  "err",
+  "La phrase « Deuxièmement selon le règne de Christ » reste inachevée sans ponctuation finale et s'enchaîne brusquement avec « Le Royaume est tant la région »."
+ ],
+ "454": [
+  "ok",
+  "L'enchaînement « fait rois aussi, à ce qu'étant » suivi de « délivrés de la félonie du diable, » forme une proposition continue et fidèle au texte d'origine."
+ ],
+ "455": [
+  "ok",
+  "La jointure entre « veille toujours sur les fidèles, et » et « est victorieux en eux. Or les » est complète et sans altération du sens."
+ ],
+ "456": [
+  "ok",
+  "La coupure entre « Église glorieuse : et ce qui » et « s'ensuit. C'est assez parlé du royaume » est continue et conserve le sens de l'original."
+ ],
+ "457": [
+  "err",
+  "Le titre « Christ vrai Roi et Monarque du monde » s'insère sans ponctuation ni transition après « et son royaume unique et éternel. » et avant « Ayant surmonté ce prince de ce siècle »."
+ ],
+ "458": [
+  "ok",
+  "La transition entre « quand j'ai traité des Cérémonies. » et « D'autre part vu que notre Seigneur » est nette et complète."
+ ],
+ "459": [
+  "warn",
+  "Le texte est complet entre « pour nous avec grand cri et » et « larmes, Car maintenant il apparaît pour », mais une majuscule (« Car ») suit une virgule."
+ ],
+ "460": [
+  "ok",
+  "La jointure entre « s'il n'était Dieu et homme. » et « Et ce lieu requiert que nous » est complète et fidèle au passage d'origine."
+ ],
+ "461": [
+  "ok",
+  "La phrase « il est certain que nous sommes sacrificateurs, 1 Jean 5.4 Et de fait saint Jean dit... » s'enchaîne de manière continue et complète à la coupure."
+ ],
+ "462": [
+  "ok",
+  "La phrase « ...combien qu'il fût aussi aucunement connu de nom. Car Eusèbe récite en l'histoire ecclésiastique... » est complète et bien articulée de part et d'autre de la coupure."
+ ],
+ "463": [
+  "warn",
+  "La phrase interrogative « ...et où est le renoncement de ce monde » manque d'un point d'interrogation final à la coupure avant « Quelle miséricorde & bienfaisance y a-t-il en nous ? »."
+ ],
+ "464": [
+  "ok",
+  "Le titre « DU SAINT ESPRIT, QUI est la tierce personne en la Trinité, & de la vertu Divine d'icelui. » s'enchaîne logiquement avec « SERMON VIII. APRES avoir exposé les mystères... »."
+ ],
+ "465": [
+  "ok",
+  "La fin de phrase « ...de laquelle nous avons délibéré de traiter en ce sermon. » est suivie normalement de « Or combien que le Saint Esprit... »."
+ ],
+ "466": [
+  "warn",
+  "La citation biblique « ...et n'êtes point à vous-même » manque d'un point final à la coupure avant « Bientôt après lui-même prend pour une même chose... »."
+ ],
+ "467": [
+  "ok",
+  "La phrase « ...voire lui-même œuvre comme Seigneur souverain. Outre plus on lit de quelques autres... » est complète et continue à la coupure."
+ ],
+ "468": [
+  "ok",
+  "La conclusion « Nous recueillons de toutes ces choses que le Saint-Esprit procède du Père et du Fils. » est suivie sans rupture de « Or quant à la façon de laquelle... »."
+ ],
+ "469": [
+  "ok",
+  "La phrase « ...ont failli, voire failli bien lourdement. Didyme évêque d'Alexandrie... » s'enchaîne correctement sans perte ni répétition."
+ ],
+ "470": [
+  "ok",
+  "La phrase « ...criant, Abba Père. Davantage, notre Seigneur même en l'histoire Évangélique... » est complète à la coupure."
+ ],
+ "471": [
+  "ok",
+  "La phrase s'achève proprement sur « puissance de Dieu. » et la suivante commence clairement par « Les ouvriers besognent des doigts »."
+ ],
+ "472": [
+  "err",
+  "Après « et leur donne des langues, », le début de la phrase est perdu ou corrompu avec le mot parasite « nuô point des langues de glace »."
+ ],
+ "473": [
+  "ok",
+  "La transition entre « source et fontaine du saint Esprit. » et « Saint Paul décrivant la vertu merveilleuse du » est complète et fluide."
+ ],
+ "474": [
+  "ok",
+  "La phrase se termine bien sur « en tous. » et la nouvelle phrase débute sans rupture par « Or pour conclusion de tout ceci nous »."
+ ],
+ "475": [
+  "ok",
+  "La phrase s'achève nettement sur « la trinité en unité. » et la suivante commence correctement par « Cependant retenons en nos esprits, et confessons »."
+ ],
+ "476": [
+  "warn",
+  "Le texte est complet (« ministère de Dieu et des hommes. »), mais le point final de cette phrase est absent ou remplacé par un tiret après « hommes »."
+ ],
+ "477": [
+  "ok",
+  "La locution « en sorte que non seulement on les voyait des » est continue et fidèle au texte d'origine."
+ ],
+ "478": [
+  "ok",
+  "La phrase « de faire ce qu'ils font. » est complète et la phrase suivante « Aux Actes nous lisons que » suit normalement."
+ ],
+ "479": [
+  "ok",
+  "La fin de phrase « force et puissance des Anges. » et l'enchaînement avec « Mais en une chose si » sont complets et cohérents."
+ ],
+ "480": [
+  "err",
+  "L'adjectif « difficiles » est coupé à la jointure en « difficiles » avant ‖ et « les, » après ‖."
+ ],
+ "481": [
+  "ok",
+  "La phrase « quelle affection et amitié les Anges ont envers le genre humain. Car autrement ne pensons pas » est continue et complète à la coupure."
+ ],
+ "482": [
+  "ok",
+  "La transition entre « beaucoup de tels exemples. » et « Ils veillent pour notre salut, ayants soin de nous » est complète et sans défaut."
+ ],
+ "483": [
+  "ok",
+  "La phrase « maintenu ce qu'ils avaient commencé contre leurs adversaires. » se termine proprement et la phrase suivante commence normalement par « Au 10. chap. de Daniel »."
+ ],
+ "484": [
+  "err",
+  "Le mot « Semblablement » est répété à la coupure sous la forme « Semblablement blement »."
+ ],
+ "485": [
+  "err",
+  "Le titre marginal « Des mauvais anges » s'est glissé au milieu du mot coupé « tem- » et « ple à chacune créature »."
+ ],
+ "486": [
+  "warn",
+  "Un point manque à la fin de « précipités en enfer » avant la phrase suivante « Car nous lisons au livre de Job »."
+ ],
+ "487": [
+  "ok",
+  "La proposition « et a été fait diable. » est complète et s'enchaîne correctement avec « Or je sais qu'aucuns nient »."
+ ],
+ "488": [
+  "ok",
+  "La phrase « à savoir, du prince des diables. » est complète et la phrase « Car les ennemis de Christ crient ainsi » suit naturellement."
+ ],
+ "489": [
+  "warn",
+  "Un point manque après « De fait, le diable est » avant la phrase suivante « Merveilleusement fort et robuste »."
+ ],
+ "490": [
+  "ok",
+  "Le participe « conférée. » complète correctement « comme elle a été depuis conférée. » avant « Voilà ce que dit saint Augustin. »."
+ ],
+ "491": [
+  "warn",
+  "La phrase « ...se fourre dedans les cœurs des hommes Aussi ce malin... » manque d'un point final avant la majuscule d'« Aussi »."
+ ],
+ "492": [
+  "ok",
+  "La jointure « ...bienveillance de Dieu. Car tout ce qui jusqu'ici... » est complète et continue, avec un point et une majuscule."
+ ],
+ "493": [
+  "warn",
+  "La phrase « ...n'est point empêché pour cela Or ce mot d'Âme... » manque d'un point final avant « Or »."
+ ],
+ "494": [
+  "ok",
+  "La jointure « ...vive immortelle à tout jamais. Aucuns nient que l'âme... » est complète et correctement ponctuée."
+ ],
+ "495": [
+  "ok",
+  "La jointure « ...comment elle est limitée. Cependant nous n'approuvons point... » est complète et bien ponctuée."
+ ],
+ "496": [
+  "ok",
+  "La jointure « ...mouvement de cette matière. Et certes la sainte Écriture... » est complète et correctement ponctuée."
+ ],
+ "497": [
+  "ok",
+  "La jointure « ...ne la laissant jamais en repos. Mais ici aussi étant fortifiée... » est complète et bien ponctuée."
+ ],
+ "498": [
+  "err",
+  "La phrase « ...sont de beaucoup plus grands Ce qui veut être fait ; si ainsi était que les âmes... » est tronquée et incohérente à la coupure (manque le comparatif attendu et un verbe/sens complet)."
+ ],
+ "499": [
+  "ok",
+  "La jointure « ...après la mort du corps. Item le Seigneur dit... » est complète et bien ponctuée."
+ ],
+ "500": [
+  "ok",
+  "La jointure « ...à faire toute méchanceté. Or j'ai montré que les âmes... » est complète et correctement ponctuée."
+ ],
+ "501": [
+  "ok",
+  "La phrase « ...auquel elles seront jetées. Comment nous avons montré... » enchaîne correctement deux phrases complètes."
+ ],
+ "502": [
+  "err",
+  "La fin de la phrase interrogative (« soit donnée au feu ? ») est coupée sans point d'interrogation avant « Mais Dieu aurait-il »."
+ ],
+ "503": [
+  "ok",
+  "La phrase « ...où ils sont tombés. Le Sage donc nous admoneste... » est complète et continue de part et d'autre de la coupure."
+ ],
+ "504": [
+  "ok",
+  "La phrase « ...devant la face de Dieu. Et c'est ceci vraiment qu'il fallait proposer... » est continue sans perte ni répétition."
+ ],
+ "505": [
+  "ok",
+  "La phrase « ...détruire la vérité par œuvres. Reçoive donc qui voudra... » est complète et bien raccordée."
+ ],
+ "506": [
+  "err",
+  "La phrase « ...ressuscités de mort » est interrompue sans fin de phrase ni point avant « Comment donc nous laisserions-nous abuser... »."
+ ],
+ "507": [
+  "ok",
+  "La jointure « ...Reçois mon esprit. Et saint Paul désirait... » est complète et fidèle au texte d'origine."
+ ],
+ "508": [
+  "err",
+  "La coupure laisse le mot « Ourreplus » non corrigé à la place de « Outreplus » après « ...en vie éternelle. »."
+ ],
+ "509": [
+  "ok",
+  "La phrase « ...fournies d'ailleurs. Or à Dieu tout-puissant... » est complète et continue à la coupure."
+ ],
+ "510": [
+  "ok",
+  "La jointure « ...et à l'Agneau. Et tantôt après, Et l'un des anciens... » est continue et conforme au texte d'origine."
+ ],
+ "511": [
+  "err",
+  "La jointure « ceux qui comprend bien mauvais et de tous les Anges » est déformée et tronquée par rapport à l'OCR (« mais aussi ceux qui combien mauvais » / « et de tous les Anges »)."
+ ],
+ "512": [
+  "ok",
+  "La transition « l'Église est perpétuelle. Et de fait, nous lisons ainsi : » est complète et fidèle au texte d'origine."
+ ],
+ "513": [
+  "ok",
+  "Le passage « opiniâtrement attachée. Or je sais qu'on me mettra » s'enchaîne correctement sans perte ni répétition."
+ ],
+ "514": [
+  "ok",
+  "La coupure « quelques paraboles ou similitudes. Or nous disons que les malins » est propre et conforme à l'original."
+ ],
+ "515": [
+  "warn",
+  "Le point final après « de nous » et la majuscule initiale de « Il ajoute la raison » manquent à la jointure « pas de nous ajoute la raison »."
+ ],
+ "516": [
+  "ok",
+  "L'enchaînement « le Sacrement avec la Parole. Ce qu'il avait appris du Seigneur » est complet et exact."
+ ],
+ "517": [
+  "ok",
+  "La jointure « du peuple de Dieu. Or cependant entre les gens et » est continue et fidèle au texte source."
+ ],
+ "518": [
+  "ok",
+  "La transition « de la Parole de Dieu. Ce que nous avons dit de » ne présente ni manque ni répétition."
+ ],
+ "519": [
+  "err",
+  "Le mot « demeurons » est coupé avec trait d'union avant la coupure et répété intégralement après (« nous de- demeurons en lui »)."
+ ],
+ "520": [
+  "ok",
+  "Le passage « ou si tu n'en es point. Outreplus nous pouvons recueillir de tout » est complet et conforme à l'original."
+ ],
+ "521": [
+  "warn",
+  "À la coupure entre « voire par la seule Parole » et « Or nous avons ici à considérer », le point final de la phrase manque."
+ ],
+ "522": [
+  "ok",
+  "La phrase s'achève bien sur « ou de l'Église. » et la suivante commence proprement par « Mais ce n'est pas à dire qu'iceux »."
+ ],
+ "523": [
+  "ok",
+  "La jointure entre « Des prescriptions des hérétiques. » et « Voici que nous avons à noter » est complète et continue."
+ ],
+ "524": [
+  "ok",
+  "La phrase se termine correctement par « et polluent les élus. » avant « Sur ceci il me semble que »."
+ ],
+ "525": [
+  "ok",
+  "La transition entre « et comme ne pouvant errer ou faillir. » et « David crie haut et clair, Dieu » est complète et sans défaut."
+ ],
+ "526": [
+  "ok",
+  "La phrase « en la hiérarchie Ecclésiastique. » est complète et s'enchaîne correctement avec « Quant à la puissance de l'administration »."
+ ],
+ "527": [
+  "ok",
+  "La jointure entre « jamais séparé de son corps. » et « La définition de puissance est telle » est continue et fidèle au sens."
+ ],
+ "528": [
+  "ok",
+  "La phrase se clôt bien sur « ès saintes Écritures. » et la suite « Or ce ministère d'enseigner n'est » est complète."
+ ],
+ "529": [
+  "ok",
+  "La coupure entre « selon la règle de la parole de Dieu. » et « Après avoir ainsi considéré ces choses, » est propre et complète."
+ ],
+ "530": [
+  "ok",
+  "La phrase « qu'elle est mère et vierge. » est complète et enchaîne correctement sur « SERMON II Frères, je vois que »."
+ ],
+ "531": [
+  "ok",
+  "La phrase s'achève bien par « lumière, ne vérité. » avant la jointure et la phrase suivante « Car hors les haies et clôtures... » commence normalement après ‖."
+ ],
+ "532": [
+  "warn",
+  "La question « que peuvent puis après désirer ces petits clergez fantastiques, combien qu'il soit requis que ceux qui enseignent, sachent bien parler, et soient rhétoriciens » manque d'un point d'interrogation final avant « La doctrine des Apôtres et Prophètes »."
+ ],
+ "533": [
+  "ok",
+  "La phrase « Il est certain qu'il a commandé de fuir les faux prophètes. » est complète avant ‖ et « Or la mauvaise vie ne fait... » enchaîne correctement."
+ ],
+ "534": [
+  "ok",
+  "Le groupe nominal « le fruit de la » se poursuit sans perte ni répétition par « doctrine Évangélique n'apparaissait pas manifestement. » de part et d'autre de ‖."
+ ],
+ "535": [
+  "ok",
+  "La phrase se termine correctement par « fruit de nos labeurs et œuvres. » avant ‖, suivie de « L'Apôtre a dit en son Épître : »."
+ ],
+ "536": [
+  "ok",
+  "La phrase « Car si quelqu'un par la parole de Dieu enseigne choses meilleures, nous ne refusons pas de les recevoir. » est complète avant ‖ et « Qui plus est, nous condamnons ouvertement... » suit normalement."
+ ],
+ "537": [
+  "ok",
+  "La phrase « L'Écriture nous enseigne que Jésus Christ est qui intercesseur, ou Médiateur, ou Sacrificateur, et oblation et Pape. » est complète avant ‖, suivie de « Or que dirai-je des marques externes... »."
+ ],
+ "538": [
+  "ok",
+  "La phrase se clôt correctement sur « se rendre schismatique. » avant ‖ et la phrase « On dira, Par ce moyen il... » commence normalement après."
+ ],
+ "539": [
+  "ok",
+  "La phrase se termine correctement par « ne s'estimassent point catholiques. » avant ‖ et « Mais il est certain qu'ils ont... » enchaîne proprement."
+ ],
+ "540": [
+  "ok",
+  "La phrase « Ce que notre Seigneur et les Prophètes et Apôtres ont prédit devoir advenir. » est complète avant ‖ et « Outreplus, le Seigneur a pu se... » commence normalement."
+ ],
+ "541": [
+  "ok",
+  "La phrase « Et certes tous les sermons des Prophètes condamnent ces sacrifices et telle église. Et eux aussi pour cette même raison étaient condamnés... » est complète et continue de part et d'autre de la coupure."
+ ],
+ "542": [
+  "ok",
+  "La jointure entre « ...obtenir une sainteté plus parfaite. » et « De quoi nous avons suffisamment parlé un peu auparavant. » est complète et cohérente."
+ ],
+ "543": [
+  "ok",
+  "La phrase « Qui croira, ne se hâtera point. Le Seigneur Jésus exposant cet oracle... » est complète et bien enchaînée autour de la coupure."
+ ],
+ "544": [
+  "warn",
+  "Le point final manque à la fin de la phrase « ...pour être un tabernacle de Dieu en Esprit » avant « Par cette autorité donc du saint apôtre... »."
+ ],
+ "545": [
+  "ok",
+  "La fin de la phrase « ...au 7. sermon de la 4. Décade. » et le début de « Or nous avons dit assez de fois... » sont complets et sans anomalie."
+ ],
+ "546": [
+  "ok",
+  "La transition entre « ...comme celui qui sert. » et « Ainsi donc cette primauté de l'Église Romaine... » est complète et continue."
+ ],
+ "547": [
+  "warn",
+  "Le point final manque après « ...lesquelles j'ai rachetées par mon sang » avant « Car saint Paul dit : Prenez garde à vous... »."
+ ],
+ "548": [
+  "ok",
+  "La phrase « ...et paillardise spirituelle. Tous les sermons des Prophètes sont pleins de telles allégories. » est complète et continue à la coupure."
+ ],
+ "549": [
+  "ok",
+  "La jointure entre « ...parle à nous par son propre Fils. » et « Dieu pourrait bien par illumination secrète de son Esprit... » est complète et correcte."
+ ],
+ "550": [
+  "ok",
+  "La phrase « Ce que l'Écriture enseigne ouvertement par tout. Il n'a conféré à personne cette gloire et autorité... » est complète et bien raccordée."
+ ],
+ "551": [
+  "ok",
+  "La phrase s'achève par un point d'interrogation avant ‖ et la phrase suivante commence normalement après ‖ par « Le planteur de l'arbre est extérieur »."
+ ],
+ "552": [
+  "ok",
+  "L'expression « Docteur et Maître à tout le monde. » se complète naturellement de part et d'autre de ‖ et enchaîne sur « Icelui a annoncé »."
+ ],
+ "553": [
+  "ok",
+  "La phrase se termine proprement par « voire à perpétuité. » avant ‖ et le nouveau paragraphe débute normalement après ‖ par « Nous avons dit ces choses en général »."
+ ],
+ "554": [
+  "ok",
+  "La fin de phrase « et en la doctrine des pasteurs. » est complète et cohérente à travers ‖, suivie de « Les Docteurs sont ceux qui »."
+ ],
+ "555": [
+  "warn",
+  "La phrase « ...et la sainte Théologie » n'a pas de point final avant ‖ (et la remarque automatique signale le point manquant), bien que le sens soit complet et que la phrase suivante commence par « Il me semble qu'en cet endroit »."
+ ],
+ "556": [
+  "ok",
+  "La phrase se clôt par « qui y était du commencement. » avant ‖ et la suivante s'ouvre sans accroc après ‖ par « Combien que ces commencements semblent être beaucoup »."
+ ],
+ "557": [
+  "ok",
+  "La phrase s'achève correctement par « d'autant que l'un empêche l'autre. » avant ‖ et la transition « Or quant aux clercs, qui sont de » suit normalement après ‖."
+ ],
+ "558": [
+  "ok",
+  "La proposition « Car qui est celui qui ne voie bien que ce qu'ils récitent de Salomon, est... » se raccorde sans manque ni répétition de part et d'autre de ‖."
+ ],
+ "559": [
+  "ok",
+  "La phrase se termine par « et n'en ont point aucune récompense. » avant ‖ et le passage suivant commence clairement après ‖ par « Mais nous retournons à notre propos. »."
+ ],
+ "560": [
+  "ok",
+  "L'énoncé « ...soit par-dessus les évêques, et nécessaire. » est complet avant ‖ et la phrase suivante débute normalement après ‖ par « Or qui peut ouïr ces choses, que »."
+ ],
+ "561": [
+  "ok",
+  "La phrase « il ne l'a donc point donné. » s'achève proprement et « Mais Constantin a fait donation à Sylvestre, » ouvre une nouvelle phrase continue conforme à l'original."
+ ],
+ "562": [
+  "err",
+  "La coupure relie « comme antechrist » directement à « chasser : ce qui se fait par... » en omettant le titre marginal « DE LA PAROLE » et un segment de texte entre les deux morceaux."
+ ],
+ "563": [
+  "ok",
+  "La phrase « Car je ne pense point qu'il soit nécessaire ou utile de démontrer par plusieurs paroles que l'ordre et charge que Jésus-Christ... » se poursuit sans rupture de sens ni mot manquant."
+ ],
+ "564": [
+  "warn",
+  "Le texte est complet et fidèle à l'original, mais le point final de la citation « Ils couraient et je ne les envoyais point » manque avant « Saint Cyprien »."
+ ],
+ "565": [
+  "ok",
+  "La phrase « Et Moïse dit au peuple, Donnez d'entre vous des hommes sages qui soient constitués gouverneurs. » est complète et suivie normalement de « Tout ainsi doncques que Moïse n'a... »."
+ ],
+ "566": [
+  "ok",
+  "La transition entre « Tout ceci est de saint Paul pris de ces deux Épîtres susdites. » et « Pourquoi il sera requis d'avoir ici... » est complète et cohérente avec l'OCR."
+ ],
+ "567": [
+  "ok",
+  "L'expression « avec le Père et le Saint-Esprit : qui vraiment a enduré en... » est continue et fidèle au texte d'origine malgré la remarque automatique sur l'absence de point."
+ ],
+ "568": [
+  "ok",
+  "La phrase « Que si quelqu'un présume de demander quelque profit de cela, qu'il soit soumis à la condamnation sous l'examen rigoureux de Dieu tout-puissant. » est complète et suivie de « Toutefois il ajoute incontinent après : Mais... »."
+ ],
+ "569": [
+  "ok",
+  "La phrase « Or je ne pense point qu'on se puisse plus étroitement obliger à aucun. » se termine bien et laisse place à « Et il est assez notoire qui sont... »."
+ ],
+ "570": [
+  "ok",
+  "La phrase « Ils estiment choses légères toutes celles qui restent puis après. » est complète et enchaîne correctement sur « Or j'ai honte et me fâche de... »."
+ ],
+ "571": [
+  "ok",
+  "La phrase s'achève proprement sur « la même histoire faite au jour de la résurrection. » avant d'enchaîner sur « S. Luc dit : Lors il ouvrit »."
+ ],
+ "572": [
+  "err",
+  "La citation « Et tout ce que tu auras délié en » est tronquée et passe sans transition à « Par cela nous faisons maintenant cette conclusion, »."
+ ],
+ "573": [
+  "err",
+  "Entre « législateur, qui peut sauver et perdre » et « doctrine qu'ils ont reçue de Christ, n'y ajoutant », il manque la fin de la phrase et le début de la suivante (« Dieu s'attribue ceci... »)."
+ ],
+ "574": [
+  "err",
+  "Le mot « principalement » est coupé en deux à la jointure entre « principal » et « palement en l'exposition de la sainte Écriture. »."
+ ],
+ "575": [
+  "ok",
+  "La phrase se termine bien sur « use de consolation douce et vive. » et enchaîne naturellement sur « Car il y a plusieurs affligés, il y »."
+ ],
+ "576": [
+  "ok",
+  "La transition entre « quand il en sera temps. » et « Au surplus, il nous faut voir comment » est complète et continue."
+ ],
+ "577": [
+  "ok",
+  "La phrase « L'autorité donc est requise ès pasteurs. » est complète et s'enchaîne bien avec « Plusieurs se plaignent que cette authorité est »."
+ ],
+ "578": [
+  "err",
+  "Le mot « notre » est coupé à la jointure entre « Prions donc tous » et « noître Dieu, que son bon plaisir soit »."
+ ],
+ "579": [
+  "ok",
+  "La phrase « monde ne les a point réprouvées. » est complète et s'enchaîne correctement avec « Car tout ainsi qu'ès grosses assemblées et »."
+ ],
+ "580": [
+  "warn",
+  "Il manque le point final après « pour l'arracher, dépecer, et détruire » avant « Mais si cette nation se retourne de »."
+ ],
+ "581": [
+  "warn",
+  "La phrase « ...étant faits participants de toutes les grâces de Christ » manque d'un point final avant « Le Péager (comme on peut voir... »."
+ ],
+ "582": [
+  "ok",
+  "La jointure entre « ...connaît leur être bon et expédient. » et « Or le Seigneur diffère de donner... » est complète et continue."
+ ],
+ "583": [
+  "ok",
+  "La transition entre « ...ont invoqué seul. » et « Or puis qu'ainsi est qu'il n'y... » est complète et cohérente."
+ ],
+ "584": [
+  "err",
+  "La fin du mot « compassions » est répétée à la coupure sous la forme « compassions fions. »."
+ ],
+ "585": [
+  "ok",
+  "La jointure entre « ...persisteront à faire oraison pour tels. » et « Car comme Jérémie priait d'affection ardente... » est complète et sans défaut."
+ ],
+ "586": [
+  "ok",
+  "La coupure entre « ...ainsi notre oraison pénétrera les cieux. » et « On peut conjoindre avec ce qui... » est propre et complète."
+ ],
+ "587": [
+  "ok",
+  "La jointure entre « ...ce qui est bon devant ses yeux. » et « Or il est nécessaire que nous... » est complète et continue."
+ ],
+ "588": [
+  "ok",
+  "La transition entre « ...chambre secrètement. » et « Et pour faire valoir cette rêverie, » est complète et sans erreur."
+ ],
+ "589": [
+  "err",
+  "Le texte final répète « et soyons approuvés selon son » et insère « jugement. » au milieu de la phrase « Car comme c'est à faire à un homme impudent de faire de grands bruits... »."
+ ],
+ "590": [
+  "ok",
+  "La jointure entre « ...pussent parler à toutes nations. » et « Et pour ce qu'en ce temps... » est complète et continue."
+ ],
+ "591": [
+  "ok",
+  "La phrase « incités de plus grande dévotion à chanter les louanges de Dieu. » s'achève proprement et la phrase suivante commence normalement par « Oriaçoit que »."
+ ],
+ "592": [
+  "ok",
+  "La phrase « Et les Églises Occidentales ont bien tard reçu la psalmodie, ou la coutume de chanter. » est complète et suivie normalement de « On peut savoir cela par le »."
+ ],
+ "593": [
+  "ok",
+  "La phrase « et de ne le souffrir point au temple de Dieu. » est complète et enchaîne correctement avec « Mais ceux qui »."
+ ],
+ "594": [
+  "ok",
+  "La phrase sur la lecture annuelle de la Bible et hebdomadaire du Psautier se termine bien par « voire par chacune semaine. » et passe à « Les Psaumes étaient en lieu de prières »."
+ ],
+ "595": [
+  "ok",
+  "La question se termine normalement par « pour former nos prières. » et la réponse commence bien par « Je réponds que le Seigneur »."
+ ],
+ "596": [
+  "err",
+  "Le point final manque après « six pétitions », collant la fin de phrase « et puis s'ensuivent six pétitions » au début de la phrase suivante « Aucuns en nombrent sept. »."
+ ],
+ "597": [
+  "ok",
+  "La phrase sur le fils prodigue s'achève proprement par « lequel son père reçoit en grâce. » et enchaîne avec « Ce mot Notre est ajouté »."
+ ],
+ "598": [
+  "ok",
+  "L'énoncé « La première est, Ton Nom soit sanctifié. » est complet et suivi normalement de « Nous avons appelé Dieu notre Père, »."
+ ],
+ "599": [
+  "ok",
+  "La phrase se termine correctement par « à notre profit et grande utilité. » et passe normalement à « En cet endroit les fidèles »."
+ ],
+ "600": [
+  "ok",
+  "La phrase « voire de l'homme fidèle entièrement. » est complète et suivie normalement de « Car lui-même témoigne qu'il est le pain »."
+ ],
+ "601": [
+  "err",
+  "La phrase « Ces mots donc sont ajoutés encore pour autres causes des reliques, voire ès plus saints hommes » est incomplète et perd la transition sur les hommes régénérés et la rémission des péchés présente dans l'OCR."
+ ],
+ "602": [
+  "warn",
+  "Un point final manque après « nuisibles » avant « Le Pere celeste sait fort bien quelles sont ces choses », bien que le texte reste complet."
+ ],
+ "603": [
+  "ok",
+  "La phrase se termine bien par un point après « son Nom. » et la suivante commence proprement par « Or afin que nous puissions offrir à Dieu... »."
+ ],
+ "604": [
+  "warn",
+  "Il manque un point final après « réitéré » avant la nouvelle phrase « Car non seulement la louange et action de grâces... »."
+ ],
+ "605": [
+  "ok",
+  "La phrase se clôt par « Amen. » puis enchaîne sur le titre « SERMON VI » et la phrase « Il reste que nous traittions des sacremens... » sans perte de mots."
+ ],
+ "606": [
+  "ok",
+  "La phrase sur la corde pendue à la fenêtre se termine par un point et la phrase suivante « Voilà, la corde était un signe de fidélité et de vérité... » suit naturellement."
+ ],
+ "607": [
+  "ok",
+  "La phrase s'achève par un point après « société. » et le passage suivant « Or nous lisons qu'il y a eu aucuns signes manifestés aux hommes... » est complet et continu."
+ ],
+ "608": [
+  "ok",
+  "La phrase se termine par un point après « commandées. » et la suivante « Les sacrements sont cérémonies et observations sacrées... » débute normalement."
+ ],
+ "609": [
+  "err",
+  "La phrase « ...de la célébration desquels le commun populaire était » est tronquée et interrompue brusquement avant « Au demeurant, plusieuis d'entre les Docteurs Grecs... »."
+ ],
+ "610": [
+  "warn",
+  "Un point (ou deux-points) manque après « selon ce que dit S. Paul » avant la citation « Quand vous avez reçu de nous la Parole de la prédication de Dieu... », sans perte de mots."
+ ],
+ "611": [
+  "err",
+  "La phrase s'interrompt brutalement après « mais aussi a un singulier » et enchaîne sans transition sur « Ainsi par une chose sensible l'eau »."
+ ],
+ "612": [
+  "err",
+  "La phrase « Ceux qui ont écrit de cette matière, en ont parlé » est incomplète et coupée avant « Outreplus ceci était coutumier »."
+ ],
+ "613": [
+  "ok",
+  "La phrase se termine correctement par « lesquels on lit ès cinq livres de Moyse. » et s'enchaîne avec « Or il faut noter que saint Augustin »."
+ ],
+ "614": [
+  "ok",
+  "La phrase s'achève proprement sur « laquelle est reçue de l'âme fidèle. » et passe naturellement à « En cette même sorte l'Écriture testifiant aussi »."
+ ],
+ "615": [
+  "err",
+  "La fin de « aucun danger, moyennant que par ce mot » et le début « entendent par ce mot de cérémonie un » sont tronqués et répètent « par ce mot »."
+ ],
+ "616": [
+  "warn",
+  "Le texte s'enchaîne après « elle semble vile et contemptible. », mais la jointure présente « en par tout » (avec un « par » parasite dans « Ceci sera plus clairement montré en par tout »)."
+ ],
+ "617": [
+  "ok",
+  "La phrase « S'ensuit puis après le moyen, Au lavement d'eau par la Parole. » est complète et continue de part et d'autre de la coupure."
+ ],
+ "618": [
+  "ok",
+  "La phrase se conclut normalement sur « et s'est livré soi-même pour icelle. » suivie de « Lis ce que dit l'Apôtre, et »."
+ ],
+ "619": [
+  "ok",
+  "La phrase se termine correctement par « toutes sortes de superstitions et enchantements. » et enchaîne sur « Or je sais ce que les adversaires »."
+ ],
+ "620": [
+  "ok",
+  "La phrase s'achève proprement sur « qu'ils mettent l'un pour l'autre. » et passe sans manque à « Le lecteur tant peu soit attentif »."
+ ],
+ "621": [
+  "ok",
+  "La phrase sur la force des paroles humaines s'achève bien avant la coupure et « Cependant je n'entends pas par ce j'ai dit » enchaîne proprement (malgré l'omission légère de « que » dans « par ce [que] j'ai dit »)."
+ ],
+ "622": [
+  "err",
+  "Le segment « ou commandement de Dieu, et par la confirmation ou sceau de la parole de Dieu » est répété à l'identique autour de la coupure."
+ ],
+ "623": [
+  "warn",
+  "La phrase « Combien y en a-t-il qui reçoivent de l'autel, et meurent en recevant » manque d'un point d'interrogation final avant « Pour cela l'Apôtre dit »."
+ ],
+ "624": [
+  "err",
+  "Il manque un point avant « C'est et impugnation principalement de ceux qui ont mis en leur fantaisie », qui est de plus mal formulé (« C'est et impugnation » au lieu d'une phrase complète sur l'impugnation de cette doctrine)."
+ ],
+ "625": [
+  "ok",
+  "La phrase sur la Transsubstantiation se termine par un point et « Ceci aussi est une cavillation sophistique » commence normalement la phrase suivante."
+ ],
+ "626": [
+  "err",
+  "Le mot « contemplation » est coupé puis répété sous la forme « contemplation templation » à cheval sur la coupure."
+ ],
+ "627": [
+  "warn",
+  "Un point d'interrogation manque à la fin de la question « Et qui est-ce qui ne voit que l'agneau n'est pas le passage » avant « Toutesfois pour autant qu'il est un signe »."
+ ],
+ "628": [
+  "ok",
+  "La question rhétorique se clôt bien par un point d'interrogation et « Ainsi donc ceux qui entendent bien les sciences » enchaîne de manière cohérente."
+ ],
+ "629": [
+  "ok",
+  "La phrase se termine correctement par un point sur « spirituellement » et « Lui-même en ce même livre, chapitre 15 » débute la phrase suivante."
+ ],
+ "630": [
+  "ok",
+  "La phrase s'achève bien par un point sur « ci-après » et la proposition conditionnelle « Que s'il n'est licite de déduire argument » suit normalement."
+ ],
+ "631": [
+  "ok",
+  "La transition entre « Louons le Seigneur. » et le titre « IL FAUT PARLER EN révérence des sacrements. » est complète et cohérente."
+ ],
+ "632": [
+  "ok",
+  "La phrase s'achève bien sur « qui ont frappé Égypte ? » et la suivante commence proprement par « Mais oyons maintenant ce qui est advenu, »."
+ ],
+ "633": [
+  "ok",
+  "La question « et de quitter l'autorité des hommes ? » est complète et suivie sans accroc de « Voyons donc ce qu’on peut recueillir de »."
+ ],
+ "634": [
+  "ok",
+  "La phrase se termine bien sur « lui avait été donné en garde. » et la suivante démarre normalement par « On trouvera aussi en plusieurs passages de »."
+ ],
+ "635": [
+  "warn",
+  "Il manque un point (ou deux-points) à la fin de « Je n'anéantis point la grâce de Dieu » avant « Car si la justice est par la Loi, »."
+ ],
+ "636": [
+  "warn",
+  "Il manque un point final après « par la pure grâce du Seigneur Jésus Christ » avant la phrase « Bien est vrai, que les adversaires ont »."
+ ],
+ "637": [
+  "ok",
+  "La phrase est complète avec « ne les confèrent & ne les baillent point. » et la suivante commence bien par « Et de ceci nous sourd une nouvelle »."
+ ],
+ "638": [
+  "warn",
+  "Un point manque après « et la terre est mon marchepied » avant la citation « Quelle maison m'édifierez-vous ? dit le Seigneur »."
+ ],
+ "639": [
+  "ok",
+  "Le groupe nominal « transmuer la grâce de » se raccorde parfaitement à « Dieu sur ceux qui baptisaient. L'eunuque éthiopien »."
+ ],
+ "640": [
+  "err",
+  "La réplique « Et Philippe lui dit, Si tu » est coupée et suivie directement de « baptême ? Pour autant donc que Corneille », laissant une phrase incomplète et incohérente."
+ ],
+ "641": [
+  "ok",
+  "La transition entre « richement revêtus. » et « Pour cette raison les sacrements sont » est complète et cohérente."
+ ],
+ "642": [
+  "ok",
+  "L'enchaînement entre « avait été promis. » et « Or jusques ici par occasion nous » est continu et sans manque."
+ ],
+ "643": [
+  "ok",
+  "Le passage de « matière des sacrements. » à « S. Paul use de deux mots » forme une coupure propre."
+ ],
+ "644": [
+  "ok",
+  "La jointure entre « envers le prince. » et « Car en cette sorte notre Seigneur » est fidèle au texte d'origine."
+ ],
+ "645": [
+  "ok",
+  "La transition entre « en la vraie foi. » et « On répliquera, Les enfants des Chrétiens » est complète et correcte."
+ ],
+ "646": [
+  "ok",
+  "Le passage de « renouvelé et confirmé. » à « Il me semble que je peux » s'enchaîne sans altération."
+ ],
+ "647": [
+  "ok",
+  "La coupure entre « ont parlé. » et « Or combien que les sacrements ne » conserve le sens et la ponctuation."
+ ],
+ "648": [
+  "ok",
+  "L'enchaînement entre « et Fils de Dieu. » et « Ceux donc qui auparavant ont été » est continu et complet."
+ ],
+ "649": [
+  "err",
+  "Entre « devant les yeux aussi » et « anciens ont appelé la Cène communion », il manque le point ainsi que toute la phrase sur les sacrements appelés Paroles visibles par les anciens."
+ ],
+ "650": [
+  "warn",
+  "La phrase « en telle manière aussi est Christ » se termine à la coupure sans point final avant « Car nous sommes »."
+ ],
+ "651": [
+  "ok",
+  "La phrase « ...et par son sang épandu. » s'achève proprement avant « D'avantage il a à ceux qui... » sans manque ni répétition à la coupure."
+ ],
+ "652": [
+  "ok",
+  "La jointure entre « ...C'est ce que dit Zuingle. » et « On peut facilement entendre de tout... » est complète et continue."
+ ],
+ "653": [
+  "ok",
+  "La phrase se termine correctement par « ...Jésus Christ. » et enchaîne sans anomalie sur « Or pour ce qu'en tout ce... »."
+ ],
+ "654": [
+  "ok",
+  "Le passage « ...celui qui repousse. » est complet et suivi normalement de « Saint Augustin aussi a ainsi disputé... »."
+ ],
+ "655": [
+  "ok",
+  "La phrase « ...Je renvoie là le lecteur. » est complète et s'enchaîne normalement avec « Mais voici qu'ils disent... »."
+ ],
+ "656": [
+  "ok",
+  "La jointure entre « ...et boive ce calice. » et « Au reste, cette épreuve se fait... » est continue et sans défaut."
+ ],
+ "657": [
+  "ok",
+  "La phrase se clôt bien sur « ...la doctrine de Christ. » avant « Finalement le Seigneur par sa bonté... »."
+ ],
+ "658": [
+  "warn",
+  "Le point final manque après « ...vertu ou efficace du Baptême » à la coupure avant « Or c'est Dieu lui-même et non... »."
+ ],
+ "659": [
+  "ok",
+  "La phrase s'achève proprement sur « ...du S. Esprit. » et enchaîne normalement avec « Or quant à ce que Jean... »."
+ ],
+ "660": [
+  "ok",
+  "La phrase « ...il y avait là beaucoup d'eau, et a baptisé au... » se raccorde sans mot perdu ni répété à la coupure."
+ ],
+ "661": [
+  "warn",
+  "À la coupure entre « sommes plongés par trois fois » et « On fait encore une autre question, », le point final est manquant."
+ ],
+ "662": [
+  "warn",
+  "À la coupure entre « pris de la façon de la guerre » et « car par un tel présent le baptisé », le point final manque et « car » ne prend pas de majuscule."
+ ],
+ "663": [
+  "ok",
+  "La jointure entre « représenter bien proprement ce mystère. » et « Mais j'ai parlé de ceci au » est complète et bien ponctuée."
+ ],
+ "664": [
+  "warn",
+  "Après « Seulement. », un point parasite a été ajouté à la place d'une virgule devant « ils ont excepté le temps »."
+ ],
+ "665": [
+  "err",
+  "Entre « est nullement permis d'enseigner publiquement. » et « Colombe : et si tu n'es », tout un passage sur les ordonnances apostoliques et la colombe a été perdu."
+ ],
+ "666": [
+  "err",
+  "La phrase s'interrompt sur « qu'il eut de Bethsabée, et ce en la » avant « Car murmurant contre son mari, voire », omettant la suite sur la présence des nobles et le cas de Séphora/Moïse."
+ ],
+ "667": [
+  "err",
+  "À la jointure entre « était abrégée, et comme liée à la figure. » et « Sans cela l'enseigne en toutes sortes », le pronom sujet « on » (« l'on enseigne ») manque et la phrase est incomplète."
+ ],
+ "668": [
+  "err",
+  "Entre « qu'il a enfreint mon alliance » et « sauvé en eux, pour ce qu'il », plusieurs lignes sur l'argument des Pélagiens (« ne sont point perdus, et qu'il n'y a rien qui puisse être sauvé en eux ») ont été omises."
+ ],
+ "669": [
+  "ok",
+  "La jointure entre « n'a rien qu'il en puisse dire pour certain. » et « Il dit bien ailleurs premier livre » est continue et complète."
+ ],
+ "670": [
+  "ok",
+  "La jointure entre « reçoit et avoue pour siens, sans commettre grande offense contre Dieu. » et « Or Dieu promet d'être Dieu non » est complète et bien ponctuée."
+ ],
+ "671": [
+  "ok",
+  "La phrase « Davantage, Croire va devant, Baptiser suit après. » se termine bien avant « Les enfans ne croyent point ; » sans perte ni répétition."
+ ],
+ "672": [
+  "err",
+  "La fin de la phrase « ...et nous montrer plus » est coupée avant « forts que lui, ou plus sages. », laissant un mot manquant (« Dieu ») et une phrase incomplète à la coupure."
+ ],
+ "673": [
+  "ok",
+  "La phrase « ...maintenant sous le nouveau Testament. » est complète et enchaîne normalement avec « Car le Baptême est succédé au lieu de la Circoncision. »."
+ ],
+ "674": [
+  "ok",
+  "La phrase précédente se termine par un point et « Or maintenant nous pouvons démontrer par... » commence proprement à la coupure."
+ ],
+ "675": [
+  "ok",
+  "La phrase « Au demeurant, les Anabaptistes nous proposent deux passages sur ceci. » est complète et suivie normalement par « Le premier est du cinquième chapitre... »."
+ ],
+ "676": [
+  "ok",
+  "La phrase sur le troisième chapitre de saint Jean est complète avant « Aux Actes saint Pierre répond au peuple... » sans anomalie à la jointure."
+ ],
+ "677": [
+  "ok",
+  "La phrase « ...et que nous sommes ses cohéritiers. » s'achève par un point et « Saint Augustin donc a bien dit... » débute proprement après la coupure."
+ ],
+ "678": [
+  "ok",
+  "La phrase « Il faut donc que nous parlions conséquemment de la sainte Cène du Seigneur. » est complète et enchaîne correctement avec « On a donné divers noms à la Cène : »."
+ ],
+ "679": [
+  "ok",
+  "La phrase « ...quand je serai venu quasi à la fin de ce sermon. » est achevée avant « Or en cette description de la Cène... » sans perte ni répétition."
+ ],
+ "680": [
+  "ok",
+  "La phrase « Ce sont-ci les paroles solennelles et sacrées de la Cène du Seigneur de mot à mot. » est complète et suivie proprement par « Notre Seigneur Jésus-Christ... »."
+ ],
+ "681": [
+  "warn",
+  "La fin de la phrase « en la Loi comme s'il eût commis un meurtre » est placée après ‖ et il manque un point final avant « Nadab et Abiu furent frappés »."
+ ],
+ "682": [
+  "ok",
+  "La phrase « Car nous tenons d'eux ce que nous célébrons, et ce que nous débatons que tous fidèles doivent célébrer. » se termine proprement et la phrase suivante « Or ceci est assez clair... » commence normalement après ‖."
+ ],
+ "683": [
+  "warn",
+  "Le texte est complet et continu autour de ‖, mais il manque un point à la fin de « a fait le premier » avant « Car nous ne devons point suivre »."
+ ],
+ "684": [
+  "err",
+  "Le verbe « octroyer » est coupé à la jointure et répété sous la forme « octroyer ettroyer sinon à ceux qui sont présents »."
+ ],
+ "685": [
+  "ok",
+  "La phrase « Cela est bien vrai, que la louange et action de grâces est un sacrifice... » traverse ‖ sans omission ni répétition."
+ ],
+ "686": [
+  "err",
+  "Le passage « me des calices et coupes et vases, il n'y a rien en tout cela de quoi l'Église fidèle ne puisse user en liberté. » est répété à la jointure ‖."
+ ],
+ "687": [
+  "ok",
+  "La question « Ou s'il faut faire la Cène tous ensemble ? » s'achève bien avant ‖ et la question suivante « Ou s'il la faut prendre à jeun... » suit normalement."
+ ],
+ "688": [
+  "ok",
+  "La phrase « ...que cela doit être fait. » est complète et la phrase suivante « Car ne les uns ne les autres ne déshonorent... » s'enchaîne correctement après ‖."
+ ],
+ "689": [
+  "ok",
+  "La phrase « ...que nous avons reçu un bénéfice plus excellent que les Israélites. » est complète et « Il y a d'autres questions qui approchent de celle-ci... » commence bien après ‖."
+ ],
+ "690": [
+  "ok",
+  "La phrase « ...qu'on prie diligemment pour les opprimés et affligés. » est complète et « Saint Jacques montre soigneusement... » commence normalement après ‖."
+ ],
+ "691": [
+  "ok",
+  "La phrase se termine par « cela nous appartienne en rien. » et la suivante commence normalement par « Car sans contradiction nous croyons à »."
+ ],
+ "692": [
+  "warn",
+  "Le texte est complet et continu, mais il manque un point final à la fin de « ...piété qui le commande » avant « Or en nerf ou oblation, nous faisons »."
+ ],
+ "693": [
+  "ok",
+  "La phrase s'achève proprement sur « ...considération générale des sacrements. » et la suivante débute naturellement par « Avant que je vienne à parler des »."
+ ],
+ "694": [
+  "warn",
+  "Le passage est complet et cohérent, mais un point final manque après « ...la Parole a été faite chair » avant « Que si nous nous voulons arrêter »."
+ ],
+ "695": [
+  "ok",
+  "La jointure entre « ...que je vous ai conférés. » et « Or combien que cette interprétation ait » est complète et sans défaut."
+ ],
+ "696": [
+  "warn",
+  "Le texte est complet de part et d'autre, mais il manque un point d'interrogation à la fin de « ...corporellement nous sentissions la vie » avant « Mais toute l'Écriture canonique nous enseigne »."
+ ],
+ "697": [
+  "err",
+  "Un long passage de l'OCR (sur le feu ardent sans chaleur, la lumière sans clarté, et la présence en qualité ou quantité) a été amputé entre « ...rémission des péchés. » et « Et toutefois ce serait sans clarté ? »."
+ ],
+ "698": [
+  "warn",
+  "L'enchaînement entre « ...seront faits conformes en la résurrection » et « Or nos corps seront vrais corps, » est continu, mais un point final manque à la fin de la première phrase."
+ ],
+ "699": [
+  "err",
+  "La phrase est coupée et incomplète entre « ...serait étendu bien loin » et « eût dénié son corps à manger », avec perte du début de la proposition (« ...s'il eût dénié... »)."
+ ],
+ "700": [
+  "warn",
+  "Le texte est complet à la coupure, mais il manque un point final après « ...il ne peut ce qu'il ne veut pas » avant « Théodoret dit au 3e dialogue de »."
+ ],
+ "701": [
+  "ok",
+  "La transition entre « tous les jours jusqu'à la fin du monde. » et « Mais selon la chair que la Parole a prise... » est complète et fidèle à l'OCR."
+ ],
+ "702": [
+  "ok",
+  "La phrase s'achève bien par « vous baillera. » avant de reprendre naturellement avec « Lui-même a ajouté incontinent après par forme d'interprétation : »."
+ ],
+ "703": [
+  "warn",
+  "Le point final manque après « n'aurez point la vie en vous » avant « Et le Seigneur aussi dit : », le reste du texte étant complet."
+ ],
+ "704": [
+  "ok",
+  "La phrase « ...de la quelle la vie provient. » est complète et enchaîne correctement sur « Or après avoir ainsi déclaré et confirmé ces choses... »."
+ ],
+ "705": [
+  "ok",
+  "La coupure se fait proprement après « Jésus était assis avec les douze. » suivie de « Et même saint Luc déduit tellement son propos... »."
+ ],
+ "706": [
+  "ok",
+  "La jointure entre « ...comme s'ils l'avaient trahi. » et « Il adviendra que quelque rebelle foulera aux pieds... » est continue et complète."
+ ],
+ "707": [
+  "ok",
+  "La phrase « Mais nous avons parlé de ceci ailleurs. » est complète et s'enchaîne sans manque avec « Or t'ai bien voulu répéter ces choses... »."
+ ],
+ "708": [
+  "err",
+  "La phrase est brusquement interrompue sur « établissent opiniâtrement leur abus avec grand » (il manque la fin du groupe nominal, par exemple « scandale » ou « orgueil », et la ponctuation) avant « Car saint Paul dit ainsi : »."
+ ],
+ "709": [
+  "ok",
+  "La citation se termine bien par « ...du corps et du sang du Fils de Dieu. » et la phrase suivante « Et par ceci nous apprenons... » est complète."
+ ],
+ "710": [
+  "ok",
+  "La jointure après « ...pour autant que la foi avait profondes racines. » vers « Car ils ne trouvent point ces choses... » est continue et sans perte de mots."
+ ],
+ "711": [
+  "err",
+  "Le mot « particulier » est coupé à la jointure (« particul ‖ tie ») et la suite (« la superstition étrange du peuple... ») ne s'y rattache pas grammaticalement."
+ ],
+ "712": [
+  "ok",
+  "La phrase « ...sans avoir égard à ceux qui y pouvaient être idoines. » est complète et continue de part et d'autre de la coupure."
+ ],
+ "713": [
+  "ok",
+  "Les deux phrases (« ...réputant la crainte de Dieu être gain. » puis « Sépare-toi de ceux qui sont tels. ») s'enchaînent proprement avec leur ponctuation."
+ ],
+ "714": [
+  "ok",
+  "La phrase sur les dissensions s'achève par un point avant la nouvelle phrase « Il faut donc que la vraie crainte... »."
+ ],
+ "715": [
+  "ok",
+  "La phrase « ...car de fait l'ouvrier est digne de son salaire. » est complète et suivie normalement de « Ainsi la primitive Église... »."
+ ],
+ "716": [
+  "ok",
+  "La proposition « À savoir si quelque ouvrier offre à Dieu quelque chose de son salaire et guerdon, c'est à dire qu'il en baille... » reste continue malgré la coupure."
+ ],
+ "717": [
+  "ok",
+  "La phrase sur les bœufs qui travaillent est terminée et la phrase suivante (« Derechef, afin que nul ne débatît... ») débute correctement."
+ ],
+ "718": [
+  "ok",
+  "La phrase « ...ne rejetons point du tout les institutions et ordonnances anciennes. » est complète et suivie de « Or ce que saint Paul lui-même... »."
+ ],
+ "719": [
+  "warn",
+  "Le texte est complet (« ...établi ès nues en cette façon » suivi de « Venez les bien-heureux de mon Père, »), mais il manque la ponctuation (deux-points ou point) avant la citation."
+ ],
+ "720": [
+  "ok",
+  "La phrase « On defraude les pauvres de leurs biens en toutes ces deux sortes. » est complète et suivie normalement de « Touchant la bénéficence... »."
+ ],
+ "721": [
+  "ok",
+  "La coupure sépare proprement deux phrases complètes : « ...vertu de chasser la tempête. ‖ Anciennement quand on voyait venir quelque... »."
+ ],
+ "722": [
+  "ok",
+  "La jointure est nette entre deux phrases complètes : « ...et dommage et longuement. ‖ Nous nous devons bien garder et... »."
+ ],
+ "723": [
+  "ok",
+  "La transition entre les deux phrases est continue et complète : « ...le décret de Justinien. ‖ Que les Évêques donc avisent que... »."
+ ],
+ "724": [
+  "ok",
+  "Les deux phrases sont complètes et bien séparées à la coupure : « ...en son office. ‖ Or ce sont-ci les institutions particulières... »."
+ ],
+ "725": [
+  "ok",
+  "La coupure laisse intactes la fin de phrase et la mention « Divorce. » qui suit : « ...au saint mariage. ‖ Divorce. Que si à cause des... »."
+ ],
+ "726": [
+  "ok",
+  "La phrase précédente se termine normalement et la suivante commence sans manque : « ...comme les laïcs. ‖ Saint Jérôme disputant de la première... »."
+ ],
+ "727": [
+  "err",
+  "Le mot « ordres » est coupé et répété (« ...autres ordres ‖ dres de moines... ») à la jointure."
+ ],
+ "728": [
+  "ok",
+  "La coupure tombe proprement entre deux phrases complètes : « ...malheureux et corrompu. ‖ On ne pourra connaître que ceux-ci... »."
+ ],
+ "729": [
+  "ok",
+  "Les deux phrases sont complètes et la jointure ne présente ni manque ni répétition : « ...durait encore en l'Église. ‖ Nous en avons quelque chose en... »."
+ ],
+ "730": [
+  "ok",
+  "Malgré la remarque automatique, la phrase « ...choisi une sépulture en ‖ Hébron. » est complète et continue sans ponctuation manquante."
+ ],
+ "731": [
+  "ok",
+  "La phrase « chacun en son exemplaire. » s'achève proprement avant l'en-tête de tableau « CHAP. VERS. PAG. »."
+ ],
+ "732": [
+  "ok",
+  "La jointure entre « XXIIIT xXFIIF. » et « Xi. 6 227 » dans l'index est continue et sans manque."
+ ],
+ "733": [
+  "ok",
+  "La mention « 10 8; d'Esdras. » se raccorde normalement à « Li 2 11 = a n8 » dans la table."
+ ],
+ "734": [
+  "ok",
+  "Malgré la remarque sur « XVI XVII », il s'agit d'entrées distinctes de l'index des chapitres de Jérémie sans altération à la coupure « «ve T5. » / « Xxvir 5 536 »."
+ ],
+ "735": [
+  "ok",
+  "Le passage de « XXIIIT xXFIIF. » à « XXV. xxv. xxv. » s'effectue sans rupture dans l'index."
+ ],
+ "736": [
+  "ok",
+  "La transition entre « xIl. x x1k. » et « XITE- xaIx xIIr. » est continue dans la table."
+ ],
+ "737": [
+  "ok",
+  "Les entrées d'index « v.. Ve. » et « Vo v. vs » s'enchaînent sans anomalie à la coupure."
+ ],
+ "738": [
+  "ok",
+  "L'intitulé « 300 Des Ephefiens. » précède logiquement les références « Li 37 Le 6,7 »."
+ ],
+ "739": [
+  "ok",
+  "L'acclamation « 147 LOUE SOIT DIEU. » est complète avant la reprise de l'index « Ce v. P IS. »."
+ ],
+ "o1": [
+  "warn",
+  "Le texte principal (« les péchés et forfaits, la déloyauté, l'incrédulité ») est conservé, seules des notes ou références marginales (« Gen. 49. », « L'alliance divine ») ayant été retirées."
+ ],
+ "o2": [
+  "ok",
+  "Le passage « quelles sont ses ordonnances, ses mandements, ses promesses, ses menaces horribles, et finalement tout ce qui est utile et nécessaire de croire » est bien présent dans le texte final."
+ ],
+ "o3": [
+  "ok",
+  "Le passage « il y a un seul Dieu en substance, et toutefois il y a trois personnes en cette Divinité » figure bien dans le texte final."
+ ],
+ "o4": [
+  "ok",
+  "Le passage « tous ceux qui se forgent Dieu d'une autre façon qu'il n'est, adorent images taillées contre ce commandement » est bien présent dans le texte final."
+ ],
+ "o5": [
+  "ok",
+  "Le passage « il sera licite d'appareiller la viande, et selon la nécessité faire quelque chose pour la santé du corps. Il sera aussi licite de bailler médecine aux malades » est présent dans le texte final."
+ ],
+ "o6": [
+  "ok",
+  "Le passage « Ce n'est point la volonté de notre Père céleste, qu'un seul de ces plus petits périsse » est bien présent dans le texte final."
+ ],
+ "o7": [
+  "err",
+  "L'extrait du texte final s'arrête brusquement sur « et même le » et le passage signalé de l'OCR n'y figure pas."
+ ],
+ "o12": [
+  "ok",
+  "Le passage entourant « figure les mystères de Christ et de l'Église par le Mariage, à savoir une chose divine par une chose très-sainte et approuvée de Dieu » est présent dans le texte final."
+ ],
+ "o13": [
+  "ok",
+  "Le passage sur les fêtes à dévotion (« Il y avait outre celles-ci des fêtes à dévotion, qui n'étaient point ordonnées de Dieu... ») figure bien dans le texte final."
+ ],
+ "o14": [
+  "err",
+  "Le passage de l'OCR correspondant à Romains 8,3 (« Dieu a condamné le péché en la chair... ») a disparu du texte final entre « leur a donné le Baptême. » et « Il est notre Pâque »."
+ ],
+ "o15": [
+  "err",
+  "La suite de ce même passage (« a condamné le péché en la chair, afin que la justification de la loi fût accomplie en nous... ») est également absente du texte final."
+ ],
+ "o16": [
+  "err",
+  "Le développement de l'OCR sur le sens large du mot « œuvres » (travaux manuels, défense de la loi, « Que signifient les œuvres ? ») manque dans le texte final, qui passe directement à « fruits de pénitence »."
+ ],
+ "o17": [
+  "err",
+  "Le texte final complet du morceau 338 est absent de l'extrait fourni, ce qui empêche de retrouver le passage entouré par « Outreplus on fait cette division des » et « qu'il nous soit ordonné ou permis de Dieu »."
+ ],
+ "o22": [
+  "ok",
+  "Le passage « Joint que nous croyons la rémission des péchés. Si un débiteur paie à son créditeur » figure bien dans le texte final complet."
+ ],
+ "o23": [
+  "ok",
+  "Le passage « que la mort de plusieurs saints et fidèles ait été la propitiation ou l'appointement du monde » figure bien dans le texte final complet."
+ ],
+ "o24": [
+  "ok",
+  "Le passage « et que c'est d'être renouvelé d'esprit » figure bien dans le texte final complet."
+ ],
+ "o25": [
+  "ok",
+  "Le passage « ce sera réciter et expliquer aucune chose de lui plutôt que lui-même » figure bien dans le texte final complet."
+ ],
+ "o26": [
+  "ok",
+  "Le passage « que le ciel et la terre, et toutes les choses qui y sont » figure bien dans le texte final complet."
+ ],
+ "o32": [
+  "ok",
+  "Le passage principal « qu'aucuns hommes craignans Dieu prirent le soin d'Étienne pour l'ensevelir » figure bien dans le texte final, seules des notes ou références marginales étant absentes."
+ ],
+ "o33": [
+  "ok",
+  "Le texte final présente une suite cohérente autour de « la tierce personne en la Trinité, vrai Dieu » et ne comporte que l'absence normale de renvois bibliques en marge."
+ ],
+ "o34": [
+  "err",
+  "Un morceau de texte principal sur l'opération du diable (« Or iaçoit qu'on puisse recueillir... ») manque entre « de tout son effort tâche de » et « lui contredire »."
+ ],
+ "o35": [
+  "err",
+  "Le développement sur le naturel des vrais membres de Christ qui n'abandonnent jamais le Fils de Dieu et persévèrent manque dans le texte final."
+ ],
+ "o36": [
+  "warn",
+  "Le mot « destruction » est bien présent dans « La puissance donc qui tourne en destruction », seules des références marginales et un titre courant ayant été retirés."
+ ],
+ "o42": [
+  "err",
+  "Le passage OCR « pronôcees par les ucrons point q le Fils de Dieu air promis » correspond à un manque dans le texte final entre « prononcées » et « les ministres de telle façon que »."
+ ],
+ "o43": [
+  "ok",
+  "Le passage relatif au sens du mot de bénédiction dans les Écritures est présent dans le texte final à partir de « Au surplus, on ne trouvera en aucun passage des Écritures ce mot de bénédiction en telle signification que ceux-ci disent »."
+ ],
+ "o44": [
+  "ok",
+  "Le passage sur la communion, la compagnie ou le corps avec le Seigneur figure bien dans le texte final juste après la référence à Éphésiens 2."
+ ],
+ "o45": [
+  "err",
+  "Un long développement du texte OCR sur la promesse de vie et de rémission des péchés dès le commencement du monde (Adam, Noé, Abraham, Moïse, David) est absent du texte final."
+ ],
+ "o46": [
+  "ok",
+  "Le passage de l'OCR sur la promesse du vrai corps et du sang sous les espèces du pain et du vin est présent dans le texte final (« car ils débattent que le Seigneur a promis son vrai corps et sang sous les espèces du pain et du vin »)."
+ ],
+ "o47": [
+  "err",
+  "Le texte final s'arrête brusquement sur « mais » sans contenir le développement de l'OCR sur les temples, les patriarches, la loi et les anciens."
+ ],
+ "o8": [
+  "warn",
+  "Le passage OCR absent correspond à des titres/notes en marge (« DE LA LOY DIVINE » etc.), tandis que le texte principal (« tant de belles sentences touchant les lois ») est complet."
+ ],
+ "o9": [
+  "warn",
+  "Le passage OCR absent contient des notes/titres en marge (« SERMON IX », chapitre/verset) et des scories d'OCR, tandis que le texte principal est présent et continu."
+ ],
+ "o10": [
+  "warn",
+  "Le passage OCR absent est un saut de mise en page/marge (« Maux » / « guerre ») tandis que le texte principal (« et en cette sorte encourent griefve indignation du Seigneur. Et certes presque tous les maux du monde ont lieu en cause de guerre. ») est complet."
+ ],
+ "o11": [
+  "warn",
+  "Le passage OCR absent provient d'un saut de colonnes/marge (« guerre... ») et d'une autre partie du texte, alors que la phrase principale est continue dans le texte final."
+ ],
+ "o18": [
+  "err",
+  "Le passage de l'OCR sur l'absence de mérites ou d'œuvres qui sauvent de la mort éternelle, de la violence du péché ou du venin est absent du texte final, où l'on passe directement de « Le prix de la rançon est en Christ, et non pas en nous. » à « Si nous satisfaisons pour nous-mêmes... »."
+ ],
+ "o19": [
+  "err",
+  "Le passage principal de l'OCR (hormis la référence marginale « Rom.2.21 » et le code « #7AB- ») évoquant le vieux serpent, la foi qui vivifie et le salut est absent du texte final entre « ...soutient sans grande difficulté tous les arguments de la fausseté de nos œuvres. » et « Car décrivant la forme de purger les péchés... »."
+ ],
+ "o20": [
+  "err",
+  "Le passage principal de l'OCR citant « Dieu a tant aimé le monde... » et commentant la foi est absent du texte final, qui passe directement de « ...figuré par les anciens. » à « Il y a ceci d'avantage... »."
+ ],
+ "o21": [
+  "err",
+  "Le passage principal de l'OCR sur Jésus-Christ et ce qui est fait aux pauvres est absent du texte final avant « Et lui dit : Que tes péchés soient rachetés en justice, et tes offenses en miséricorde faite aux pauvres. »."
+ ],
+ "o27": [
+  "warn",
+  "Seule la mention marginale « vers. 24. 25. 26. » a été omise dans le texte final, le texte principal étant complet."
+ ],
+ "o28": [
+  "warn",
+  "Seule la référence marginale « Rom. 11. 33-34-35. Eccli. 3. 23. » a été retirée, tandis que le texte principal « rien qui soit passé ou à venir devant lui » est présent."
+ ],
+ "o29": [
+  "err",
+  "Le passage principal « à savoir sentant la foi que Dieu lui avait donnée au cœur : et toutefois il la connaît être si faible, qu'il a besoin du secours de Dieu : il demande donc : supporte ou aide à » manque entre ces deux phrases."
+ ],
+ "o30": [
+  "err",
+  "Le passage principal « mon infirmité, c'est-à-dire à ma foi, laquelle étant comparée avec une foi parfaite... » est absent du texte final entre ces deux phrases."
+ ],
+ "o31": [
+  "ok",
+  "Le passage « ils ne sont point faits seigneurs des Anges et de toutes créatures » figure bien dans le texte final complet du morceau."
+ ],
+ "o37": [
+  "err",
+  "Une grande partie du texte principal après « et n'en rejette pas une seule » (sur la prophétie, l'interprétation des langues, les causes de mariage, la censure des mœurs et l'excommunication) est absente du texte final complet."
+ ],
+ "o38": [
+  "err",
+  "Le passage « À savoir il est utile qu'un seul soit par-dessus les évêques, et nécessaire » est présent à la fin du texte final, mais la section précédente du texte principal sur les références et la nécessité qu'un seul soit au-dessus des évêques manque ou est tronquée."
+ ],
+ "o39": [
+  "ok",
+  "Le passage « Car tout ainsi que S. Pierre n'est point pape, aussi les douze ou onze Apôtres ne sont point tout le monde » est bien présent dans le texte final complet."
+ ],
+ "o40": [
+  "ok",
+  "Le passage autour de cette mention est présent dans le texte final sous la forme « Or la femme Syrophénicienne, de laquelle il est parlé Matthieu 15, nous propose un exemple d'une prière ou invocation assiduelle et constante »."
+ ],
+ "o41": [
+  "warn",
+  "Le texte principal est bien présent avec « à savoir pourquoi choses spirituelles et célestes nous ont été données ou proposées sous signes ou espèces et cérémonies visibles », seules les notes et références marginales de l'OCR ayant été écartées."
+ ]
+}
