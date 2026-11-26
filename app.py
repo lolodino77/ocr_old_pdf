@@ -286,12 +286,12 @@ else:
 
 # Morceaux envoyés au LLM en même temps (OCR et conversion des pages : déjà en parallèle, un processus par cœur).
 llm_parallel = st.number_input(
-    "⚡ Envois au LLM en parallèle", min_value=1, max_value=8, value=4 if llm_mode == MODE_API else 1,
+    "⚡ Envois au LLM en parallèle", min_value=1, max_value=8, value=4 if llm_mode == MODE_API else 3,
     key=f"llm_parallel_{llm_mode}", disabled=_job_running(),
     help="API : plusieurs requêtes en même temps (attention aux limites de débit du quota gratuit : en cas "
          "d'erreurs 429, baissez). Navigateur : plusieurs fenêtres de Chrome en même temps, chacune avec une copie "
-         "de votre profil connecté ; essayez 2 ou 3 sur un document court avant un gros, car les sites peuvent "
-         "limiter ou demander un captcha.")
+         "de votre profil connecté ; par défaut 3 ; baissez à 1 si le site limite le débit ou demande des captchas "
+         "à répétition.")
 
 # --- RECETTE FINALE : un LLM vérifie les coupures entre morceaux (mêmes deux modes que la modernisation) ---
 st.markdown("##### 🔎 Vérification finale")
