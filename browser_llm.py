@@ -346,6 +346,49 @@ def ask_with_retries(session, site, prompt, timeout_s=300, waits=(10, 30)):
             time.sleep(wait)
 
 
+# --- Reprise : chaque réponse reçue est écrite tout de suite sur disque (dossier reprise/). Si le traitement
+# s'arrête (erreur, panne, fenêtre fermée), une nouvelle exécution ne renvoie au LLM que les morceaux sans réponse.
+# La clé est le site + le texte exact du prompt : changer la consigne ou le texte renvoie tout au LLM. Pour tout
+# refaire de zéro, supprimer le dossier reprise/.
+import hashlib
+import json
+import threading
+
+CACHE_DIR = Path(__file__).resolve().parent / "reprise"
+_cache_lock = threading.Lock()
+_cache_memory = None
+
+
+def _cache_key(site, prompt):
+    return hashlib.sha256(f"{site}|{prompt}".encode("utf-8")).hexdigest()
+
+
+def cache_load():
+    """Réponses déjà obtenues : {clé: réponse}, toutes les exécutions précédentes confondues."""
+    answers = {}
+    for file in sorted(CACHE_DIR.glob("*.jsonl")) if CACHE_DIR.exists() else []:
+        try:
+            for line in file.read_text(encoding="utf-8").splitlines():
+                try:
+                    item = json.loads(line)
+                    answers[item["k"]] = item["a"]
+                except (ValueError, KeyError):  # ligne coupée par un arrêt brutal : ignorée
+                    continue
+        except OSError:
+            continue
+    return answers
+
+
+def cache_put(site, prompt, answer):
+    """Écrit la réponse sur disque ; sans effet pour un prompt qui n'est pas du texte seul (images)."""
+    if not isinstance(prompt, str) or not answer:
+        return
+    CACHE_DIR.mkdir(exist_ok=True)
+    file = CACHE_DIR / f"{os.getpid()}.jsonl"
+    with _cache_lock, open(file, "a", encoding="utf-8") as f:
+        f.write(json.dumps({"k": _cache_key(site, prompt), "a": answer}, ensure_ascii=False) + "\n")
+
+
 LOG_DIR = Path(__file__).resolve().parent / "logs"
 _run_log = None
 _run_total = 0
@@ -557,6 +600,23 @@ def run_prompts(site, prompts, timeout_s=300, document="", allow_partial=False):
     """
     import api_llm
 
+    n_all = len(prompts)
+    cache = cache_load()
+    known = {i: cache[_cache_key(site, p)] for i, p in enumerate(prompts)
+             if isinstance(p, str) and _cache_key(site, p) in cache}
+    if known:
+        note = f"{len(known)} morceau(x) sur {n_all} déjà traité(s) lors d'une exécution précédente (dossier reprise/)"
+        print(note, flush=True)
+        write_log(f"document={document} | reprise | {note}")
+    todo = [i for i in range(n_all) if i not in known]
+    if not todo:
+        progress.report(n_all, n_all, f"{n_all} morceau(x) déjà traité(s)")
+        return [known[i] for i in range(n_all)]
+    if known:
+        sub = run_prompts(site, [prompts[i] for i in todo], timeout_s, document=document, allow_partial=allow_partial)
+        merged = dict(known)
+        merged.update(zip(todo, sub))
+        return [merged[i] for i in range(n_all)]
     n = len(prompts)
     if api_llm.is_api(site):
         result = api_llm.run_batch(api_llm.model_of(site), prompts, timeout_s)
@@ -604,6 +664,7 @@ def _batch(site, src, dst, timeout_s, profile=None, total=None, numbers=None):
             print(f"Modernisation du morceau {numbers[i - 1] if numbers else i}/{total or len(prompts)} via {site} ...", flush=True)
             try:
                 answers.append(ask_with_retries(session, site, prompt, timeout_s))
+                cache_put(site, prompt, answers[-1])
             except Exception as exc:  # noqa: BLE001 - un morceau en échec n'arrête pas les autres
                 answers.append(None)
                 errors[i] = str(exc)

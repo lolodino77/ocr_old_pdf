@@ -176,7 +176,11 @@ def ask(model, prompt, api_key, timeout_s=300, waits=(10, 30, 60), counter=None)
                 raise RuntimeError("réponse vide")
             if END_MARKER not in raw:
                 raise RuntimeError("réponse incomplète (ligne de fin absente)")
-            return extract_answer(raw)
+            answer = extract_answer(raw)
+            if isinstance(prompt, str):
+                from browser_llm import cache_put
+                cache_put(f"{API_PREFIX}{model}", prompt, answer)
+            return answer
         except Exception as exc:  # noqa: BLE001
             message = _redact(f"{type(exc).__name__}: {exc}", api_key)
             if _DAILY_QUOTA_RE.search(message):

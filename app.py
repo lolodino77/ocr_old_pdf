@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import json
 import re
 import sys
 import shutil
@@ -490,26 +491,40 @@ def _run_job(job, p):
                     os.makedirs(PAGES_CLEANED_DIR / doc_name, exist_ok=True)
 
                     # --- Étape 1 : conversion PDF -> PNG (pages_image) ---
-                    job.log("info", "Étape 1/4 — Conversion du PDF en images (PNG) ...")
-                    # Ton ancien script appelait pdf_to_png(document_name, output_dir="pages_images", dpi=300)
-                    # On suppose qu'il attend le nom sans extension ; le fichier PDF doit exister à la racine ou dans pdf_uploads
-                    # On copie le PDF dans le dossier racine si nécessaire (ou adapte pdf_to_png).
+                    # Reprise : si ce PDF (même taille, même langue) a déjà été converti et OCRisé en entier, on
+                    # ne refait ni la conversion ni l'OCR (plusieurs heures pour un gros livre).
                     src_pdf_path = UPLOAD_DIR / (doc_name + ".pdf")
-                    # Copie dans le cwd si ta fonction pdf_to_png attend le fichier là-bas :
-                    shutil.copy2(src_pdf_path, ROOT_DIR / (doc_name + ".pdf"))
-                    poppler_path = p["poppler_path"]
-                    progress.set_stage("pdf")
-                    pages = pdf_to_png(doc_name, poppler_path, output_dir=str(PAGES_IMAGES_DIR), dpi=300)
-                    job.log("info", f"✅ Conversion terminée : {len(pages)} images générées.")
+                    ocr_signature = {"size": src_pdf_path.stat().st_size, "lang": tesseract_lang}
+                    ocr_marker = ROOT_DIR / f"{doc_name}_ocr_done.json"
+                    try:
+                        ocr_reusable = (json.loads(ocr_marker.read_text(encoding="utf-8")) == ocr_signature
+                                        and (ROOT_DIR / f"{doc_name}_ocr_text.txt").exists())
+                    except (OSError, ValueError):
+                        ocr_reusable = False
+                    if ocr_reusable:
+                        job.log("info", "Étapes 1 et 2/4 — Conversion et OCR déjà faits pour ce PDF : réutilisés.")
+                    else:
+                        job.log("info", "Étape 1/4 — Conversion du PDF en images (PNG) ...")
+                        # Ton ancien script appelait pdf_to_png(document_name, output_dir="pages_images", dpi=300)
+                        # On suppose qu'il attend le nom sans extension ; le fichier PDF doit exister à la racine ou dans pdf_uploads
+                        # On copie le PDF dans le dossier racine si nécessaire (ou adapte pdf_to_png).
+                        src_pdf_path = UPLOAD_DIR / (doc_name + ".pdf")
+                        # Copie dans le cwd si ta fonction pdf_to_png attend le fichier là-bas :
+                        shutil.copy2(src_pdf_path, ROOT_DIR / (doc_name + ".pdf"))
+                        poppler_path = p["poppler_path"]
+                        progress.set_stage("pdf")
+                        pages = pdf_to_png(doc_name, poppler_path, output_dir=str(PAGES_IMAGES_DIR), dpi=300)
+                        job.log("info", f"✅ Conversion terminée : {len(pages)} images générées.")
 
-                    # --- Étape 2 : OCR PNG -> texte ---
-                    job.log("info", "Étape 2/4 — OCR des images en cours ...")
-                    progress.set_stage("ocr")
-                    progress.report(0, 1, "démarrage de Tesseract")
-                    texte_total = png_to_txt(doc_name, input_dir=str(PAGES_IMAGES_DIR), 
-                                            output_dir=str(PAGES_TEXTS_DIR), 
-                                            lang=tesseract_lang)
-                    job.log("info", "✅ OCR terminé.")
+                        # --- Étape 2 : OCR PNG -> texte ---
+                        job.log("info", "Étape 2/4 — OCR des images en cours ...")
+                        progress.set_stage("ocr")
+                        progress.report(0, 1, "démarrage de Tesseract")
+                        texte_total = png_to_txt(doc_name, input_dir=str(PAGES_IMAGES_DIR), 
+                                                output_dir=str(PAGES_TEXTS_DIR), 
+                                                lang=tesseract_lang)
+                        job.log("info", "✅ OCR terminé.")
+                        ocr_marker.write_text(json.dumps(ocr_signature), encoding="utf-8")
 
                     # --- Étape 3 : Modernisation du texte OCRisé ---
                     job.log("info", "Étape 3/4 — Modernisation et nettoyage du texte OCRisé ...")

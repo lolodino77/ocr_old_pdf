@@ -239,3 +239,5 @@ preparation*.log
 runtime/
 browser_profile/
 !packaging/**/LISEZ-MOI.txt
+reprise/
+*_ocr_done.json
